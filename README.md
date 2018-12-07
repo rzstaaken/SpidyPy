@@ -4,7 +4,8 @@
 >  :hammer: :date: Nun ist unser **Spidy-Projekt** online :hammer:
 
 ## Die Mechanik stammt vom YouTube:
-## ![How to Make a Spider Robot 🕷](https://www.youtube.com/watch?v=LB8VLnVpoPY)
+## How to Make a Spider Robot 🕷
+https://www.youtube.com/watch?v=LB8VLnVpoPY
 
 ![spidyundfreunde](https://user-images.githubusercontent.com/33986851/49640008-b0f1fa80-fa0c-11e8-8d91-6d8d7d36c248.jpg)
 
