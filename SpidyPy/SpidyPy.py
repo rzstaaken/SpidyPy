@@ -14,6 +14,7 @@ class ShowScale1(tkinter.Frame):
         self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
         master.title("Spidy Move Application ")
         self.lockMe=threading.Lock()
+        self.tr=None
         ###self.tr=TrialPCA01.Trial()
         self.createWidgets()
 
@@ -203,7 +204,8 @@ class ShowScale1(tkinter.Frame):
 
         #print(scale.Nummer,scale.get())
         x=scale.get()
-        self.tr.schritt(pos=x,channel=scale.Nummer)
+        if self.tr != None:
+            self.tr.schritt(pos=x,channel=scale.Nummer)
 
     def onCallbackAction(self, scale):
         return lambda xxx: self.onAction(scale)
