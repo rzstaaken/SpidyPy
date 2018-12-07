@@ -19,12 +19,5 @@ https://www.youtube.com/watch?v=LB8VLnVpoPY
       
 ## Hardware Elektrik, Mechanik und Weiteres siehe Wiki
       
-TODO: **Wiederholen Button** implementieren! Ja ich weiß, es sollte als **Issue** geschieben werden!
-
-TODO: Nachdem eine Position übernommen wurde, diese sofort in der Listbox sichtbar machen.
-
-TODO: Hier weiter dokumentieren.
-
-
 Hier habe ich noch einen Spider in der Maker-Zeitschrift gefunden!
 ![Alternativ Spider](https://stat.heiseshop.de/media/static/Make/Newsletter/6_18/07_mf_Neu1.JPG)
