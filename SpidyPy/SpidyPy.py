@@ -204,6 +204,7 @@ class ShowScale1(tkinter.Frame):
 
         #print(scale.Nummer,scale.get())
         x=scale.get()
+        #Nur mit RPi schritt ausführen
         if self.tr != None:
             self.tr.schritt(pos=x,channel=scale.Nummer)
 
