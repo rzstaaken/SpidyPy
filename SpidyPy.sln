@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SpidyPy", "SpidyPy\SpidyPy.pyproj", "{701584EB-093C-41B1-A5C3-FF263D6B8026}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{701584EB-093C-41B1-A5C3-FF263D6B8026}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{701584EB-093C-41B1-A5C3-FF263D6B8026}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B136A5EC-CF5C-426B-9289-F106E5A58646}
+	EndGlobalSection
+EndGlobal
