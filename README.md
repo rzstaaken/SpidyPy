@@ -3,6 +3,11 @@
 
 >  :hammer: :date: Nun ist unser **Spidy-Projekt** online :hammer:
 
+## Die Mechanik stammt vom YouTube:
+## ![How to Make a Spider Robot 🕷](https://www.youtube.com/watch?v=LB8VLnVpoPY)
+
+
+
 ## Die Startdatei ist **SpidyPy**.
   Es werden 12 Schieberegler gezeigt, die die Spinnenbeine direkt steuern.
   
