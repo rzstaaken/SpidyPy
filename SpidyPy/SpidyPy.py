@@ -1,3 +1,9 @@
+"""
+SpidyPy.py
+https://github.com/rzstaaken/SpidyPy
+"""
+
+
 import tkinter
 from JasonIO import *
 import SpiderDefaults
@@ -57,8 +63,6 @@ class ShowScale1(tkinter.Frame):
         self.btnRep["command"] = self.onRep
         self.btnRep.grid(column=i+1, columnspan=3, row=2, sticky='ne')
 
-
-
         #Die Scrollbar funktioniert noch nicht
         self.scrollbar = tkinter.Scrollbar(self, orient='vertical')
         self.listboxMoves= tkinter.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
@@ -70,14 +74,6 @@ class ShowScale1(tkinter.Frame):
 
         #lb = Listbox(frame, name='lb')
         #lb.bind('<<ListboxSelect>>', onselect)
-
-        #self.btnExit = tkinter.Button(self)
-        #self.btnExit["text"] = "Exit"
-        #self.btnExit["command"] = self.onExit  #self.quit
-        #self.btnExit.grid(column=i+1,columnspan=3, row=1,sticky='ne')
-        #self.rev["textvariable"] = self.name 
-
-
 
     def onSelectListbox(self, evt):
         #self.lockMe.acquire()
@@ -174,7 +170,8 @@ class ShowScale1(tkinter.Frame):
         j=JasonIO()
         j.WriteP(dic, SpiderDefaults.posiPath + "/" + fname + nummer + ".json")
         self.setNum(int(nummer) + 1)
-        self.onReset()
+        self.onReset()      
+        self.fillListBox(self.listboxMoves) #Die Listbox aktualisieren
 
     def move(self,posName):
         selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + x + '.json')
@@ -192,7 +189,6 @@ class ShowScale1(tkinter.Frame):
         self.move(x)
         sleep(1.1)
         print(x)
-
 
     def onReset(self):
         for i in range(0, len(self.legScale)):
