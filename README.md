@@ -19,5 +19,5 @@ https://www.youtube.com/watch?v=LB8VLnVpoPY
       
 ## Hardware, Elektrik, Mechanik und Weiteres siehe Wiki
       
-Hier habe ich noch einen Spider in der Maker-Zeitschrift gefunden!
+Hier habe ich noch einen Spider in der Heise Maker-Zeitschrift gefunden!
 ![Alternativ Spider](https://stat.heiseshop.de/media/static/Make/Newsletter/6_18/07_mf_Neu1.JPG)
