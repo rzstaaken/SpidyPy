@@ -1,6 +1,9 @@
 """
-SpidyPy.py 
+V0.1 08.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
+
+Wenn das Programm mit dem Controller auf dem RPi laufen soll, die  beiden Zeilen mit den 3 ### wieder aktiv machen.
+
 """
 
 
@@ -58,8 +61,15 @@ class ShowScale1(tkinter.Frame):
         self.btnEnter["command"] = self.onEnter
         self.btnEnter.grid(column=i+1, columnspan=3, row=1, sticky='ne')
 
+        #Count Textfeld für die Anzahl der wiederholungen
+        entryTextCount = tkinter.StringVar()
+        self.entryCount = tkinter.Entry(self,textvariable=entryTextCount, width=5)
+        entryTextCount.set(5)
+        #self.entryCount.set["textvariable"]=5
+        self.entryCount.grid(column=i+1, columnspan=3, row=2, sticky='nw')
+
         self.btnRep = tkinter.Button(self)
-        self.btnRep["text"] = "Wiederholen"
+        self.btnRep["text"] = "Wiederholungen"
         self.btnRep["command"] = self.onRep
         self.btnRep.grid(column=i+1, columnspan=3, row=2, sticky='ne')
 
@@ -180,6 +190,9 @@ class ShowScale1(tkinter.Frame):
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
 
     def onRep(self):
+        counts=self.entryCount.get()
+        for i in range(0,counts):
+            pass
         x="oben0"
         print("Hallo")
         self.move(x)
