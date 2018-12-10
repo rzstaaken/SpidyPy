@@ -1,18 +1,22 @@
 """
-V0.1 08.12.2018 SpidyPy.py 
+V0.11 10.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 
 Wenn das Programm mit dem Controller auf dem RPi laufen soll, die  beiden Zeilen mit den 3 ### wieder aktiv machen.
 
 """
 
-
+import os
 import tkinter
 from JasonIO import *
 import SpiderDefaults
 from time import sleep
 import threading
-###import TrialPCA01
+withHW = False # Keine Hardware angeschlossen
+if os.name == 'posix':
+    if os.getlogin() == 'pi':
+        import TrialPCA01
+        withHW = True
 
 class ShowScale1(tkinter.Frame):
 
@@ -24,7 +28,8 @@ class ShowScale1(tkinter.Frame):
         master.title("Spidy Move Application ")
         self.lockMe=threading.Lock()
         self.tr=None
-        ###self.tr=TrialPCA01.Trial()
+        if withHW:
+            self.tr=TrialPCA01.Trial()
         self.createWidgets()
 
     def createWidgets(self):
