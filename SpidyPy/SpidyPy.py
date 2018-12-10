@@ -2,8 +2,9 @@
 V0.11 10.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 
+Die folgende Zeile ist durch die Änderung obsolet.
 Wenn das Programm mit dem Controller auf dem RPi laufen soll, die  beiden Zeilen mit den 3 ### wieder aktiv machen.
-
+onRep() muss  überarbeitet werden!
 """
 
 import os
@@ -16,7 +17,7 @@ withHW = False # Keine Hardware angeschlossen
 if os.name == 'posix':
     if os.getlogin() == 'pi':
         import TrialPCA01
-        withHW = True
+        withHW = True # Das Prg. läuft auf dem RPi
 
 class ShowScale1(tkinter.Frame):
 
@@ -56,7 +57,7 @@ class ShowScale1(tkinter.Frame):
         self.entryName.grid(column=i+1, row=0,sticky='w')
         self.entryNum = tkinter.Entry(self, width=5)
         self.entryNum.grid(column=i+2, row=0,sticky='w')
-        self.setNum(0)
+        self.setEntryNum(0)
 
         self.btnReset = tkinter.Button(self, text='Reset')
         self.btnReset["command"] = self.onReset
@@ -73,17 +74,20 @@ class ShowScale1(tkinter.Frame):
         #self.entryCount.set["textvariable"]=5
         self.entryCount.grid(column=i+1, columnspan=3, row=2, sticky='nw')
 
-        self.btnRep = tkinter.Button(self)
-        self.btnRep["text"] = "Wiederholungen"
-        self.btnRep["command"] = self.onRep
-        self.btnRep.grid(column=i+1, columnspan=3, row=2, sticky='ne')
+        self.labelCounts= tkinter.Label(self, text = "Counts")
+        self.labelCounts.grid(column=i+1, columnspan=3, row=2, sticky='ne')
+
+        self.btnStart = tkinter.Button(self)
+        self.btnStart["text"] = "Start"
+        self.btnStart["command"] = self.onStart
+        self.btnStart.grid(column=i+1, columnspan=3, row=3, sticky='nw')
 
         #Die Scrollbar funktioniert noch nicht
         self.scrollbar = tkinter.Scrollbar(self, orient='vertical')
         self.listboxMoves= tkinter.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
         #self.lbMoves['command']=onLbMovesTouch
 
-        self.listboxMoves.grid(column=i+1, columnspan=3, row=3, rowspan=4, sticky='nw')
+        self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=4, sticky='nw')
         self.fillListBox(self.listboxMoves)
         self.listboxMoves.bind('<<ListboxSelect>>', self.onSelectListbox)
 
@@ -91,15 +95,20 @@ class ShowScale1(tkinter.Frame):
         #lb.bind('<<ListboxSelect>>', onselect)
 
     def onSelectListbox(self, evt):
+        """
+        # TODO: Bei SelectListBos sollen auch mehrere Zeilen selectiert werden können!
+        #       Ein zusätzlichen Button zum Starten einfügen!
         #self.lockMe.acquire()
         w = evt.widget
         index = int(w.curselection()[0])
         value = w.get(index)
+
         selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + value + '.json')
         dicBewegungen=self.getMotionsDictionaryList(selLegs) 
         #print(dicBewegungen)
         #self.animiereSliderStart(dicBewegungen)
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
+        """
 
     def animiereSliderStart(self, dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
@@ -110,8 +119,7 @@ class ShowScale1(tkinter.Frame):
         #self.animiereSliderAsync(dicBewegungen)
 
     def animiereSliderAsync(self, dicBewegungen):
-        #self.lockMe.acquire()
-        moveList = []#Eine Liste der Bewegungen
+        moveList = [] #Eine Liste der Bewegungen
         legNrList = []
         for key in dicBewegungen:
             moveList.append(dicBewegungen[key])
@@ -121,7 +129,7 @@ class ShowScale1(tkinter.Frame):
             for indx in range(0,len(moveList)):
                 #print("i={0};{1} ,".format(i,indx))
                 self.legScale[legNrList[indx]].set(moveList[indx][i])
-                self.update_idletasks()#Wichtig!!!!!!
+                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur wird nur die letzte Position ausgegeben. 
             sleep(0.1)
         #self.lockMe.release()
 
@@ -161,7 +169,10 @@ class ShowScale1(tkinter.Frame):
                 lBox.insert(i,fileName)
                 i=i+1
 
-    def setNum(self, n):
+    def setEntryNum(self, n):
+        """
+        Die Laufnummer in das Entry schreiben
+        """
         self.num = tkinter.IntVar()
         self.num.set(n)
         self.entryNum["textvariable"] = self.num
@@ -184,7 +195,7 @@ class ShowScale1(tkinter.Frame):
             SpiderDefaults.os.mkdir(SpiderDefaults.posiPath)
         j=JasonIO()
         j.WriteP(dic, SpiderDefaults.posiPath + "/" + fname + nummer + ".json")
-        self.setNum(int(nummer) + 1)
+        self.setEntryNum(int(nummer) + 1)
         self.onReset()      
         self.fillListBox(self.listboxMoves) #Die Listbox aktualisieren
 
@@ -194,11 +205,38 @@ class ShowScale1(tkinter.Frame):
         #print(dicBewegungen)
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
 
-    def onRep(self):
+    def onStart(self):
+
+        # TODO: Bei SelectListBos sollen auch mehrere Zeilen selectiert werden können!
+        #       Ein zusätzlichen Button zum Starten einfügen!
+        #self.lockMe.acquire()
+        #evt = self.listboxMoves
+        #w = evt.widget
+        fileNamesIndxList = []
+        fileNamesIndxList = self.listboxMoves.curselection()
+        
+        for f in fileNamesIndxList:
+            fn = self.listboxMoves.get(f)
+            selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + fn + '.json')
+            dicBewegungen=self.getMotionsDictionaryList(selLegs) 
+            print(dicBewegungen)
+            self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
+        
+        #value = w.get(index)
+
+        #selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + value + '.json')
+        #dicBewegungen=self.getMotionsDictionaryList(selLegs) 
+        #print(dicBewegungen)
+        #self.animiereSliderStart(dicBewegungen)
+        #self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
+        # Hier stimmt noch was nicht!!!!
+        
+
+        """
         counts=self.entryCount.get()
         for i in range(0,counts):
             pass
-        x="oben0"
+        x="oben0" # gibt es nicht mehr
         print("Hallo")
         self.move(x)
         print(x)
@@ -207,6 +245,7 @@ class ShowScale1(tkinter.Frame):
         self.move(x)
         sleep(1.1)
         print(x)
+        """
 
     def onReset(self):
         for i in range(0, len(self.legScale)):
