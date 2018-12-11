@@ -1,7 +1,7 @@
 # SpidyPy
 Bewegungs-Steuerung eines Roboters mit der Programmiersprache Python auf dem Raspberry Pi.
 
-
+[Hier geht es zum Wiki](../../wiki)
 
 ## Aufmerksam wurde ich durch dieses Video vom YouTube:
 How to Make a Spider Robot 🕷  https://www.youtube.com/watch?v=LB8VLnVpoPY
