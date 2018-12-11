@@ -14,7 +14,7 @@ import SpiderDefaults
 from time import sleep
 import threading
 
-backgroundGray = 'gray85'
+backgroundGray = 'gray85' #Anders geht es beim RPi nicht
 withRPi = False # Keine Hardware angeschlossen
 if os.name == 'posix':
     if os.getlogin() == 'pi':
