@@ -207,7 +207,7 @@ class ShowScale1(tkinter.Frame):
 
     def onStart(self):
 
-        # TODO: Bei SelectListBos sollen auch mehrere Zeilen selectiert werden können!
+        # TODO: Bei SelectListBox sollen auch mehrere Zeilen selectiert werden können!
         #       Ein zusätzlichen Button zum Starten einfügen!
         #self.lockMe.acquire()
         #evt = self.listboxMoves
@@ -217,9 +217,10 @@ class ShowScale1(tkinter.Frame):
         
         for f in fileNamesIndxList:
             fn = self.listboxMoves.get(f)
+            print("Es wird " + fn)
             selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + fn + '.json')
             dicBewegungen=self.getMotionsDictionaryList(selLegs) 
-            print(dicBewegungen)
+            #print(dicBewegungen)
             self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
         
         #value = w.get(index)
