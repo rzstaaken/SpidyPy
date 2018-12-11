@@ -15,11 +15,11 @@ from time import sleep
 import threading
 
 backgroundGray = 'gray85'
-withHW = False # Keine Hardware angeschlossen
+withRPi = False # Keine Hardware angeschlossen
 if os.name == 'posix':
     if os.getlogin() == 'pi':
         import TrialPCA01
-        withHW = True # Das Prg. läuft auf dem RPi
+        withRPi = True # Das Prg. läuft auf dem RPi
 
 class ShowScale1(tkinter.Frame):
 
@@ -31,7 +31,7 @@ class ShowScale1(tkinter.Frame):
         master.title("Spidy Move Application ")
         self.lockMe=threading.Lock()
         self.tr=None
-        if withHW:
+        if withRPi:
             self.tr=TrialPCA01.Trial()
         self.createWidgets()
 
