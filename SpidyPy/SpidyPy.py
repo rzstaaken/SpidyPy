@@ -217,7 +217,7 @@ class ShowScale1(tkinter.Frame):
         
         for f in fileNamesIndxList:
             fn = self.listboxMoves.get(f)
-            print("Es wird " + fn)
+            print("Es wird " + fn + " ausgeführt.")
             selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + fn + '.json')
             dicBewegungen=self.getMotionsDictionaryList(selLegs) 
             #print(dicBewegungen)
