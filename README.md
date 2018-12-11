@@ -20,9 +20,6 @@ Die 3D-Dateien stammen von Thingiverse:  https://www.thingiverse.com/thing:10096
       
 ## Hardware, Elektrik, Mechanik und Weiteres siehe Wiki
       
-Hier habe ich noch einen Spider in der Heise Maker-Zeitschrift gefunden!
-![Alternativ Spider](https://stat.heiseshop.de/media/static/Make/Newsletter/6_18/07_mf_Neu1.JPG)
-
 ## IDE
 Ich habe jetzt Visual Studio Code im Einsatz -> Das funktioniert besser als VS. Python ist in VS nicht gut integriert worden!
 Die .gitignore-Datei ist für Visual Studio, Visual Studio Code, PyCharm und Andere angepasst!
@@ -30,3 +27,15 @@ Die .gitignore-Datei ist für Visual Studio, Visual Studio Code, PyCharm und And
 ## Programm
 
 ![grafik](https://user-images.githubusercontent.com/45656660/49798446-8ec8e700-fd42-11e8-96c8-475a58900192.png)
+
+## Mitarbeit
+
+  Wer bei unserem Projekt kreativ mitmachen möchte ist herzlich Willkommen!
+  
+  Das Programm dient als **Lernprojekt** für Git/GitHub und der Programmierspache Python. Aber warum sollte nicht auch etwas 'Was Hand und Fuß hat' dabei rauskommen. Na wenigstens Fuß oder besser gesagt Bein hat der Spidy ja schon!
+
+## Zu guter letzt
+Hier habe ich noch einen Spider in der Heise Maker-Zeitschrift gefunden!
+![Alternativ Spider](https://stat.heiseshop.de/media/static/Make/Newsletter/6_18/07_mf_Neu1.JPG)
+Dieser Roboter würde sich auch von unserem Programm animieren lassen!
+Aber leider habe ich noch keine nähere Info gefunden.
