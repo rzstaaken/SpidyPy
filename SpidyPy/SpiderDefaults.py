@@ -27,8 +27,11 @@ def ReadDefLegsIf(filename=fNameMinMax):
     Lesen, wenn das File mit den Default-Werten existiert.
     Sonst das File mit den Default-Werten anlegen
     """
+    if os.path.exists('SpidyPy'):
+        os.chdir('SpidyPi')   #Bei Visual Studio Code wird das gebraucht
+
     if os.path.exists('Spider'):
-            os.chdir('Spider')
+        os.chdir('Spider')
     #p=os.path.curdir
     #r=os.getcwd()
     #p=os.path.realpath('.')

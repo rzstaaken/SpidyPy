@@ -9,7 +9,7 @@ onRep() muss  überarbeitet werden!
 
 import os
 import tkinter
-from JasonIO import *
+from JasonIO import JasonIO
 import SpiderDefaults
 from time import sleep
 import threading
@@ -200,7 +200,7 @@ class ShowScale1(tkinter.Frame):
         self.fillListBox(self.listboxMoves) #Die Listbox aktualisieren
 
     def move(self,posName):
-        selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + x + '.json')
+        selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + posName + '.json')
         dicBewegungen=self.getMotionsDictionaryList(selLegs) 
         #print(dicBewegungen)
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
@@ -218,10 +218,11 @@ class ShowScale1(tkinter.Frame):
         for f in fileNamesIndxList:
             fn = self.listboxMoves.get(f)
             print("Es wird " + fn + " ausgeführt.")
-            selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + fn + '.json')
-            dicBewegungen=self.getMotionsDictionaryList(selLegs) 
+            self.move(fn)
+            #selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + fn + '.json')
+            #dicBewegungen=self.getMotionsDictionaryList(selLegs) 
             #print(dicBewegungen)
-            self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
+            #self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
         
         #value = w.get(index)
 
