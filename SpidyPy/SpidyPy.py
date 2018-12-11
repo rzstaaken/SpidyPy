@@ -67,15 +67,14 @@ class ShowScale1(tkinter.Frame):
         self.btnEnter["command"] = self.onEnter
         self.btnEnter.grid(column=i+1, columnspan=3, row=1, sticky='ne')
 
-        #Count Textfeld für die Anzahl der wiederholungen
-        entryTextCount = tkinter.StringVar()
-        self.entryCount = tkinter.Entry(self,textvariable=entryTextCount, width=5)
-        entryTextCount.set(5)
-        #self.entryCount.set["textvariable"]=5
-        self.entryCount.grid(column=i+1, columnspan=3, row=2, sticky='nw')
-
-        self.labelCounts= tkinter.Label(self, text = "Counts")
-        self.labelCounts.grid(column=i+1, columnspan=3, row=2, sticky='ne')
+        self.labelTimes= tkinter.Label(self, text = "Times")
+        self.labelTimes.grid(column=i+1, columnspan=3, row=2, sticky='nw')
+        #Times Textfeld für die Anzahl der wiederholungen
+        entryTextTimes = tkinter.StringVar()
+        self.entryTimes = tkinter.Entry(self,textvariable=entryTextTimes, width=5)
+        entryTextTimes.set(1)
+        #self.entryTimes.set["textvariable"]=5
+        self.entryTimes.grid(column=i+1, columnspan=3, row=2, sticky='ne')
 
         self.btnStart = tkinter.Button(self)
         self.btnStart["text"] = "Start"
@@ -96,18 +95,7 @@ class ShowScale1(tkinter.Frame):
 
     def onSelectListbox(self, evt):
         """
-        # TODO: Bei SelectListBos sollen auch mehrere Zeilen selectiert werden können!
-        #       Ein zusätzlichen Button zum Starten einfügen!
-        #self.lockMe.acquire()
-        w = evt.widget
-        index = int(w.curselection()[0])
-        value = w.get(index)
-
-        selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + value + '.json')
-        dicBewegungen=self.getMotionsDictionaryList(selLegs) 
-        #print(dicBewegungen)
-        #self.animiereSliderStart(dicBewegungen)
-        self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
+        TODO: Hier könnte eine neue ?box mit Elementen gefüllt werden. Sie soll die Reihenfolge der Schritte angeben. 
         """
 
     def animiereSliderStart(self, dicBewegungen):
@@ -206,48 +194,14 @@ class ShowScale1(tkinter.Frame):
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
 
     def onStart(self):
-
-        # TODO: Bei SelectListBox sollen auch mehrere Zeilen selectiert werden können!
-        #       Ein zusätzlichen Button zum Starten einfügen!
-        #self.lockMe.acquire()
-        #evt = self.listboxMoves
-        #w = evt.widget
         fileNamesIndxList = []
         fileNamesIndxList = self.listboxMoves.curselection()
-        
-        for f in fileNamesIndxList:
-            fn = self.listboxMoves.get(f)
-            print("Es wird " + fn + " ausgeführt.")
-            self.move(fn)
-            #selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + fn + '.json')
-            #dicBewegungen=self.getMotionsDictionaryList(selLegs) 
-            #print(dicBewegungen)
-            #self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
-        
-        #value = w.get(index)
-
-        #selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + value + '.json')
-        #dicBewegungen=self.getMotionsDictionaryList(selLegs) 
-        #print(dicBewegungen)
-        #self.animiereSliderStart(dicBewegungen)
-        #self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
-        # Hier stimmt noch was nicht!!!!
-        
-
-        """
-        counts=self.entryCount.get()
-        for i in range(0,counts):
-            pass
-        x="oben0" # gibt es nicht mehr
-        print("Hallo")
-        self.move(x)
-        print(x)
-        sleep(1.1)
-        x="unten0"
-        self.move(x)
-        sleep(1.1)
-        print(x)
-        """
+        times=int(self.entryTimes.get())
+        for i in range(times):
+            for f in fileNamesIndxList:
+                fn = self.listboxMoves.get(f)
+                print("(" + str(i)+") Es wird " + fn + " ausgeführt.")
+                self.move(fn)
 
     def onReset(self):
         for i in range(0, len(self.legScale)):
@@ -272,4 +226,3 @@ if __name__ == "__main__":
     app = ShowScale1(root, _LegsMinMax)
     #app = ShowScale(root)
     app.mainloop()
-
