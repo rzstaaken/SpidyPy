@@ -22,3 +22,7 @@ Die 3D-Dateien stammen von Thingiverse:  https://www.thingiverse.com/thing:10096
       
 Hier habe ich noch einen Spider in der Heise Maker-Zeitschrift gefunden!
 ![Alternativ Spider](https://stat.heiseshop.de/media/static/Make/Newsletter/6_18/07_mf_Neu1.JPG)
+
+## IDE
+Ich habe jetzt Visual Studio Code im Einsatz -> Das funktioniert besser als VS. Python ist in VS nicht gut integriert worden!
+Die .gitignore-Datei ist für Visual Studio, Visual Studio Code, PyCharm und Andere angepasst!
