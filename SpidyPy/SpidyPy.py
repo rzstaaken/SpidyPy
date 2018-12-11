@@ -13,6 +13,8 @@ from JasonIO import JasonIO
 import SpiderDefaults
 from time import sleep
 import threading
+
+backgroundGray = 'gray85'
 withHW = False # Keine Hardware angeschlossen
 if os.name == 'posix':
     if os.getlogin() == 'pi':
@@ -118,7 +120,7 @@ class ShowScale1(tkinter.Frame):
                 #print("i={0};{1} ,".format(i,indx))
                 self.legScale[legNrList[indx]].set(moveList[indx][i])
                 self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur wird nur die letzte Position ausgegeben. 
-            sleep(0.1)
+            sleep(0.5)
         #self.lockMe.release()
 
     def xSteps(self,start,ziel,steps=10):
@@ -176,7 +178,7 @@ class ShowScale1(tkinter.Frame):
         nummer=self.entryNum.get()
         dic = {}
         for i in range(len(self.legScale)):
-            if self.legScale[i]['bg'] != 'gray85':
+            if self.legScale[i]['bg'] != backgroundGray:
                 dic.update({i: self.legScale[i].get()})
         print(dic) 
         if not SpiderDefaults.os.path.exists(SpiderDefaults.posiPath):
@@ -202,10 +204,17 @@ class ShowScale1(tkinter.Frame):
                 fn = self.listboxMoves.get(f)
                 print("(" + str(i)+") Es wird " + fn + " ausgeführt.")
                 self.move(fn)
+        self.onReset()
+
+    def scaleGray(self,num):
+        if type(num) is int:
+            if num < len(self.legScale): 
+                self.legScale[num]['bg'] = backgroundGray
 
     def onReset(self):
         for i in range(0, len(self.legScale)):
-            self.legScale[i]['bg'] = 'gray85'
+            #self.legScale[i]['bg'] = backgroundGray
+            self.scaleGray(i)
 
     def onAction(self, scale):
         #scale['bg']='#fff00f00f'    #'#000fff000'
