@@ -2,7 +2,7 @@
 import os
 import json
 
-class JasonIO:
+class JsonIO:
     def __init__(self):
         pass
     def WriteP(self,ob,filename='dic.json'):
@@ -23,10 +23,24 @@ class JasonIO:
             #print(res)
             return res
 
+    @staticmethod
+    def Extension(dot=True): 
+        if dot:   
+            return ".json"
+        return "json"
+
+    @staticmethod
+    def Ext(dot=True):
+        return JsonIO.Extension(dot=dot)
+
+
 if __name__ == "__main__":
-    j=JasonIO()
+    j=JsonIO()
     dic = {4:3.6,7:5.3}
     j.WriteP(dic)
-    x=j.ReadP()
-    print(x)
+    print(j.ReadP())
+    print(f"Extension with dot:{JsonIO.Extension()}" )
+    print(f"Extension without dot:{JsonIO.Ext(False)}")
+
+
 

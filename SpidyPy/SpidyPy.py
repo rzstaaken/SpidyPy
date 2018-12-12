@@ -1,20 +1,16 @@
 """
-V0.11 10.12.2018 SpidyPy.py 
+V0.12 12.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
-
-Die folgende Zeile ist durch die Änderung obsolet.
-Wenn das Programm mit dem Controller auf dem RPi laufen soll, die  beiden Zeilen mit den 3 ### wieder aktiv machen.
-onRep() muss  überarbeitet werden!
 """
 
 import os
 import tkinter as tk
-from JasonIO import JasonIO
+from JsonIO import JsonIO
 import SpiderDefaults
 from time import sleep
 import threading
 
-backgroundGray = 'gray85' #Anders geht es beim RPi nicht
+backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
 withRPi = False # Keine Hardware angeschlossen
 if os.name == 'posix':
     if os.getlogin() == 'pi':
@@ -28,7 +24,7 @@ class ShowScale1(tk.Frame):
         self.name = tk.StringVar()
         self.legsMinMax=legsMinMax
         self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
-        master.title("Spidy Move Application ")
+        master.title("Spidy Moving Application ")
         self.lockMe=threading.Lock()
         self.tr=None
         if withRPi:
@@ -44,8 +40,6 @@ class ShowScale1(tk.Frame):
             self.legScale[i].grid(row=0, column=i, rowspan=SpiderDefaults.ROWSPAN)
             self.legScale[i].Nummer = i
             self.legScale[i]['command'] = self.onCallbackAction(self.legScale[i])
-            #self.legScale[i].config(from_ =3.0)    #So kann man nachträglich noch etwas ändern
-            #self.legScale[i]['from_']=3.0          #So geht es ja auch!
             if (i+1)%3==0: #Um Zwischenräume einzufügen
                 self.legScale[i].grid(ipadx=20)
 
@@ -80,7 +74,7 @@ class ShowScale1(tk.Frame):
 
         self.btnStart = tk.Button(self)
         self.btnStart["text"] = "Start"
-        self.btnStart["command"] = self.onStart
+        self.btnStart.bind('<ButtonPress-1>', self.onStart)
         self.btnStart.grid(column=i+1, columnspan=3, row=3, sticky='nw')
 
         #Die Scrollbar funktioniert noch nicht
@@ -90,7 +84,7 @@ class ShowScale1(tk.Frame):
 
         self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=4, sticky='nw')
         self.fillListBox(self.listboxMoves)
-        self.listboxMoves.bind('<<ListboxSelect>>', self.onSelectListbox)
+        self.listboxMoves.bind('<ButtonPress-3>', self.onSelectListbox)
 
         #lb = Listbox(frame, name='lb')
         #lb.bind('<<ListboxSelect>>', onselect)
@@ -99,6 +93,11 @@ class ShowScale1(tk.Frame):
         """
         TODO: Hier könnte eine neue ?box mit Elementen gefüllt werden. Sie soll die Reihenfolge der Schritte angeben. 
         """
+        auswahl=[]
+        auswahl = evt.widget.curselection()
+        #x= evt.widget.clicked()
+        #evt.widget.sel
+        pass
 
     def animiereSliderStart(self, dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
@@ -119,7 +118,7 @@ class ShowScale1(tk.Frame):
             for indx in range(0,len(moveList)):
                 #print("i={0};{1} ,".format(i,indx))
                 self.legScale[legNrList[indx]].set(moveList[indx][i])
-                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur wird nur die letzte Position ausgegeben. 
+            self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur wird nur die letzte Position ausgegeben. 
             sleep(0.5)
         #self.lockMe.release()
 
@@ -153,7 +152,7 @@ class ShowScale1(tk.Frame):
         files = SpiderDefaults.os.listdir(path)
         i=0
         for fileName in files:
-            pos = fileName.find('.json')
+            pos = fileName.find(JsonIO.Ext())
             if pos != -1:
                 fileName = fileName[:pos]
                 lBox.insert(i,fileName)
@@ -183,28 +182,31 @@ class ShowScale1(tk.Frame):
         print(dic) 
         if not SpiderDefaults.os.path.exists(SpiderDefaults.posiPath):
             SpiderDefaults.os.mkdir(SpiderDefaults.posiPath)
-        j=JasonIO()
-        j.WriteP(dic, SpiderDefaults.posiPath + "/" + fname + nummer + ".json")
+        j=JsonIO()
+        j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,f"{fname}{nummer}{JsonIO.Ext()}"))
         self.setEntryNum(int(nummer) + 1)
         self.onReset()      
         self.fillListBox(self.listboxMoves) #Die Listbox aktualisieren
 
     def move(self,posName):
-        selLegs=SpiderDefaults.ReadDefLegs(filename='posi/' + posName + '.json')
+        selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
         dicBewegungen=self.getMotionsDictionaryList(selLegs) 
         #print(dicBewegungen)
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
 
-    def onStart(self):
+    def onStart(self,event):
+        self.btnStart.configure(state = tk.DISABLED)
         fileNamesIndxList = []
         fileNamesIndxList = self.listboxMoves.curselection()
         times=int(self.entryTimes.get())
         for i in range(times):
             for f in fileNamesIndxList:
                 fn = self.listboxMoves.get(f)
-                print("(" + str(i)+") Es wird " + fn + " ausgeführt.")
+                print(f"({str(i)}) Es wird {fn} ausgeführt.")
                 self.move(fn)
         self.onReset()
+        self.btnStart.configure(state = tk.NORMAL)
+
 
     def scaleGray(self,num):
         if type(num) is int:
@@ -233,5 +235,4 @@ if __name__ == "__main__":
     _LegsMinMax = SpiderDefaults.ReadDefLegsIf()
     root = tk.Tk()
     app = ShowScale1(root, _LegsMinMax)
-    #app = ShowScale(root)
     app.mainloop()
