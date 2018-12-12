@@ -8,7 +8,7 @@ onRep() muss  überarbeitet werden!
 """
 
 import os
-import tkinter
+import tkinter as tk
 from JasonIO import JasonIO
 import SpiderDefaults
 from time import sleep
@@ -21,11 +21,11 @@ if os.name == 'posix':
         import TrialPCA01
         withRPi = True # Das Prg. läuft auf dem RPi
 
-class ShowScale1(tkinter.Frame):
+class ShowScale1(tk.Frame):
 
     def __init__(self, master=None,legsMinMax=None):
         super().__init__(master)
-        self.name = tkinter.StringVar()
+        self.name = tk.StringVar()
         self.legsMinMax=legsMinMax
         self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
         master.title("Spidy Move Application ")
@@ -39,7 +39,7 @@ class ShowScale1(tkinter.Frame):
         self.legScale=[]
         for i in range(0, len(self.legsMinMax)):
             #self.legScale.append(tkinter.Scale(self, relief='solid', from_=self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=600, label="S" + str(i), resolution=0.01))
-            self.legScale.append(tkinter.Scale(self, from_=self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=600, label="S" + str(i), resolution=0.01))
+            self.legScale.append(tk.Scale(self, from_=self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=600, label="S" + str(i), resolution=0.01))
             
             self.legScale[i].grid(row=0, column=i, rowspan=SpiderDefaults.ROWSPAN)
             self.legScale[i].Nummer = i
@@ -52,40 +52,40 @@ class ShowScale1(tkinter.Frame):
         #self.frameName = tkinter.Frame(self)
         #self.frameName.grid(column=i+1,row=0)
         self.name.set("Pos")
-        self.entryName = tkinter.Entry(self)
+        self.entryName = tk.Entry(self)
         #self.entryName.pack(side="left",padx=self.PadX,pady=self.PadY,fill="x")
         self.entryName["textvariable"] = self.name
         #self.entryName['width']=20
         self.entryName.grid(column=i+1, row=0,sticky='w')
-        self.entryNum = tkinter.Entry(self, width=5)
+        self.entryNum = tk.Entry(self, width=5)
         self.entryNum.grid(column=i+2, row=0,sticky='w')
         self.setEntryNum(0)
 
-        self.btnReset = tkinter.Button(self, text='Reset')
+        self.btnReset = tk.Button(self, text='Reset')
         self.btnReset["command"] = self.onReset
         self.btnReset.grid(column=i+1, columnspan=3, row=1, sticky='nw')
-        self.btnEnter = tkinter.Button(self)
+        self.btnEnter = tk.Button(self)
         self.btnEnter["text"] = "Übernehmen"
         self.btnEnter["command"] = self.onEnter
         self.btnEnter.grid(column=i+1, columnspan=3, row=1, sticky='ne')
 
-        self.labelTimes= tkinter.Label(self, text = "Times")
+        self.labelTimes= tk.Label(self, text = "Times")
         self.labelTimes.grid(column=i+1, columnspan=3, row=2, sticky='nw')
         #Times Textfeld für die Anzahl der wiederholungen
-        entryTextTimes = tkinter.StringVar()
-        self.entryTimes = tkinter.Entry(self,textvariable=entryTextTimes, width=5)
+        entryTextTimes = tk.StringVar()
+        self.entryTimes = tk.Entry(self,textvariable=entryTextTimes, width=5)
         entryTextTimes.set(1)
         #self.entryTimes.set["textvariable"]=5
         self.entryTimes.grid(column=i+1, columnspan=3, row=2, sticky='ne')
 
-        self.btnStart = tkinter.Button(self)
+        self.btnStart = tk.Button(self)
         self.btnStart["text"] = "Start"
         self.btnStart["command"] = self.onStart
         self.btnStart.grid(column=i+1, columnspan=3, row=3, sticky='nw')
 
         #Die Scrollbar funktioniert noch nicht
-        self.scrollbar = tkinter.Scrollbar(self, orient='vertical')
-        self.listboxMoves= tkinter.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
+        self.scrollbar = tk.Scrollbar(self, orient='vertical')
+        self.listboxMoves= tk.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
         #self.lbMoves['command']=onLbMovesTouch
 
         self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=4, sticky='nw')
@@ -149,7 +149,7 @@ class ShowScale1(tkinter.Frame):
            Aus dem Directory posi werden die json-Dateien gelesen und
            in der listbox dargestellt.
         """
-        lBox.delete(0, tkinter.END)
+        lBox.delete(0, tk.END)
         files = SpiderDefaults.os.listdir(path)
         i=0
         for fileName in files:
@@ -163,7 +163,7 @@ class ShowScale1(tkinter.Frame):
         """
         Die Laufnummer in das Entry schreiben
         """
-        self.num = tkinter.IntVar()
+        self.num = tk.IntVar()
         self.num.set(n)
         self.entryNum["textvariable"] = self.num
 
@@ -231,7 +231,7 @@ class ShowScale1(tkinter.Frame):
 
 if __name__ == "__main__":
     _LegsMinMax = SpiderDefaults.ReadDefLegsIf()
-    root = tkinter.Tk()
+    root = tk.Tk()
     app = ShowScale1(root, _LegsMinMax)
     #app = ShowScale(root)
     app.mainloop()
