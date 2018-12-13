@@ -9,6 +9,7 @@ from JsonIO import JsonIO
 import SpiderDefaults
 from time import sleep
 import threading
+import Drag_and_Drop_Listbox as DDListbox
 
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
 withRPi = False # Keine Hardware angeschlossen
@@ -79,25 +80,14 @@ class ShowScale1(tk.Frame):
 
         #Die Scrollbar funktioniert noch nicht
         self.scrollbar = tk.Scrollbar(self, orient='vertical')
-        self.listboxMoves= tk.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
-        #self.lbMoves['command']=onLbMovesTouch
+        #self.listboxMoves= tk.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self)
 
-        self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=4, sticky='nw')
+        self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=12, sticky='nw')
         self.fillListBox(self.listboxMoves)
-        self.listboxMoves.bind('<ButtonPress-3>', self.onSelectListbox)
 
         #lb = Listbox(frame, name='lb')
         #lb.bind('<<ListboxSelect>>', onselect)
-
-    def onSelectListbox(self, evt):
-        """
-        TODO: Hier könnte eine neue ?box mit Elementen gefüllt werden. Sie soll die Reihenfolge der Schritte angeben. 
-        """
-        auswahl=[]
-        auswahl = evt.widget.curselection()
-        #x= evt.widget.clicked()
-        #evt.widget.sel
-        pass
 
     def animiereSliderStart(self, dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
