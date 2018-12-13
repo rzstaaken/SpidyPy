@@ -60,7 +60,7 @@ class ShowScale1(tk.Frame):
         self.btnReset["command"] = self.onReset
         self.btnReset.grid(column=i+1, columnspan=3, row=1, sticky='nw')
         self.btnEnter = tk.Button(self)
-        self.btnEnter["text"] = "Übernehmen"
+        self.btnEnter["text"] = "Save"
         self.btnEnter["command"] = self.onEnter
         self.btnEnter.grid(column=i+1, columnspan=3, row=1, sticky='ne')
 
