@@ -14,9 +14,13 @@ import Drag_and_Drop_Listbox as DDListbox
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
 withRPi = False # Keine Hardware angeschlossen
 if os.name == 'posix':
-    if os.getlogin() == 'pi':
-        import TrialPCA01
-        withRPi = True # Das Prg. läuft auf dem RPi
+    try:
+        if os.getlogin() == 'pi':
+            import TrialPCA01
+            withRPi = True # Das Prg. läuft auf dem RPi
+    except:
+        pass
+           
 
 class ShowScale1(tk.Frame):
 
@@ -64,7 +68,7 @@ class ShowScale1(tk.Frame):
         self.btnEnter["command"] = self.onEnter
         self.btnEnter.grid(column=i+1, columnspan=3, row=1, sticky='ne')
 
-        self.labelTimes= tk.Label(self, text = "Times")
+        self.labelTimes= tk.Label(self, text = "Times:")
         self.labelTimes.grid(column=i+1, columnspan=3, row=2, sticky='nw')
         #Times Textfeld für die Anzahl der wiederholungen
         entryTextTimes = tk.StringVar()
