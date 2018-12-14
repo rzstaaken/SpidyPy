@@ -1,5 +1,5 @@
 """
-V0.12 12.12.2018 SpidyPy.py 
+V0.13 13.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
@@ -86,7 +86,8 @@ class ShowScale1(tk.Frame):
         self.scrollbar = tk.Scrollbar(self, orient='vertical')
         #self.listboxMoves= tk.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
         self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self)
-
+        self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))
+        #self.listboxMoves.bind('<Button-3>', lambda event: print(f"Ausgewählt wurde: {self.listboxMoves.get(self.listboxMoves.nearest(event.y))}"))        
         self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=12, sticky='nw')
         self.fillListBox(self.listboxMoves)
 
@@ -200,7 +201,6 @@ class ShowScale1(tk.Frame):
                 self.move(fn)
         self.onReset()
         self.btnStart.configure(state = tk.NORMAL)
-
 
     def scaleGray(self,num):
         if type(num) is int:
