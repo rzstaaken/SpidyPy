@@ -1,5 +1,5 @@
 """
-V0.13 13.12.2018 SpidyPy.py 
+V0.14 20.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
@@ -21,7 +21,6 @@ if os.name == 'posix':
     except:
         pass
            
-
 class ShowScale1(tk.Frame):
 
     def __init__(self, master=None,legsMinMax=None):
@@ -39,22 +38,17 @@ class ShowScale1(tk.Frame):
     def createWidgets(self):
         self.legScale=[]
         for i in range(0, len(self.legsMinMax)):
-            #self.legScale.append(tkinter.Scale(self, relief='solid', from_=self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=600, label="S" + str(i), resolution=0.01))
-            self.legScale.append(tk.Scale(self, from_=self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=600, label="S" + str(i), resolution=0.01))
-            
+            self.legScale.append(tk.Scale(self, from_=self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=600, label="S" + str(i), resolution=0.01))  
             self.legScale[i].grid(row=0, column=i, rowspan=SpiderDefaults.ROWSPAN)
             self.legScale[i].Nummer = i
             self.legScale[i]['command'] = self.onCallbackAction(self.legScale[i])
+            self.legScale[i]['bg'] = backgroundGray #Neu
             if (i+1)%3==0: #Um Zwischenräume einzufügen
                 self.legScale[i].grid(ipadx=20)
 
-        #self.frameName = tkinter.Frame(self)
-        #self.frameName.grid(column=i+1,row=0)
         self.name.set("Pos")
         self.entryName = tk.Entry(self)
-        #self.entryName.pack(side="left",padx=self.PadX,pady=self.PadY,fill="x")
         self.entryName["textvariable"] = self.name
-        #self.entryName['width']=20
         self.entryName.grid(column=i+1, row=0,sticky='w')
         self.entryNum = tk.Entry(self, width=5)
         self.entryNum.grid(column=i+2, row=0,sticky='w')
@@ -74,7 +68,6 @@ class ShowScale1(tk.Frame):
         entryTextTimes = tk.StringVar()
         self.entryTimes = tk.Entry(self,textvariable=entryTextTimes, width=5)
         entryTextTimes.set(1)
-        #self.entryTimes.set["textvariable"]=5
         self.entryTimes.grid(column=i+1, columnspan=3, row=2, sticky='ne')
 
         self.btnStart = tk.Button(self)
@@ -82,43 +75,34 @@ class ShowScale1(tk.Frame):
         self.btnStart.bind('<ButtonPress-1>', self.onStart)
         self.btnStart.grid(column=i+1, columnspan=3, row=3, sticky='nw')
 
-        #Die Scrollbar funktioniert noch nicht
+        #TODO:Die Scrollbar funktioniert noch nicht
         self.scrollbar = tk.Scrollbar(self, orient='vertical')
-        #self.listboxMoves= tk.Listbox(self, yscrollcommand=self.scrollbar.set, selectmode='extended')
         self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self)
-        self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))
-        #self.listboxMoves.bind('<Button-3>', lambda event: print(f"Ausgewählt wurde: {self.listboxMoves.get(self.listboxMoves.nearest(event.y))}"))        
+        self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=12, sticky='nw')
         self.fillListBox(self.listboxMoves)
 
-        #lb = Listbox(frame, name='lb')
-        #lb.bind('<<ListboxSelect>>', onselect)
-
     def animiereSliderStart(self, dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
-        #self.Fred.target=self.animiereSliderAsync
-        #self.Fred.args=dicBewegungen
         self.Fred.daemon=True
         self.Fred.start()
-        #self.animiereSliderAsync(dicBewegungen)
 
     def animiereSliderAsync(self, dicBewegungen):
         moveList = [] #Eine Liste der Bewegungen
         legNrList = []
         for key in dicBewegungen:
             moveList.append(dicBewegungen[key])
-            legNrList.append(int(key))
-        
+            legNrList.append(int(key))      
         for i in range(0,len(moveList[0])):
             for indx in range(0,len(moveList)):
                 #print("i={0};{1} ,".format(i,indx))
                 self.legScale[legNrList[indx]].set(moveList[indx][i])
-            self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur wird nur die letzte Position ausgegeben. 
+            self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
             sleep(0.5)
         #self.lockMe.release()
 
     def xSteps(self,start,ziel,steps=10):
-        """Liefert eine List von beliebigen Steps zwischen Start und Ziel
+        """Liefert eine List von einer beliebigen Anzahl Steps zwischen Start und Ziel
         """
         erg=[]
         wert=(ziel-start)/(steps)
@@ -166,7 +150,7 @@ class ShowScale1(tk.Frame):
 
     def onEnter(self):
         """
-        Die Scale-Position in eine Datei schreiben
+        Die Scale-Positionen in eine Datei schreiben
         """
         fname=self.entryName.get()
         nummer=self.entryNum.get()
@@ -178,13 +162,15 @@ class ShowScale1(tk.Frame):
         if not SpiderDefaults.os.path.exists(SpiderDefaults.posiPath):
             SpiderDefaults.os.mkdir(SpiderDefaults.posiPath)
         j=JsonIO()
-        j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,f"{fname}{nummer}{JsonIO.Ext()}"))
+        #j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,f"{fname}{nummer}{JsonIO.Ext()}"))
+        j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,"{0}{1}{2}".format(fname,nummer,JsonIO.Ext())))
         self.setEntryNum(int(nummer) + 1)
         self.onReset()      
         self.fillListBox(self.listboxMoves) #Die Listbox aktualisieren
 
     def move(self,posName):
-        selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
+        #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
+        selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext())))
         dicBewegungen=self.getMotionsDictionaryList(selLegs) 
         #print(dicBewegungen)
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
@@ -197,7 +183,8 @@ class ShowScale1(tk.Frame):
         for i in range(times):
             for f in fileNamesIndxList:
                 fn = self.listboxMoves.get(f)
-                print(f"({str(i)}) Es wird {fn} ausgeführt.")
+                #print(f"({str(i)}) Es wird {fn} ausgeführt.")
+                print("({0}) Es wird {1} ausgeführt.".format(str(i),fn))
                 self.move(fn)
         self.onReset()
         self.btnStart.configure(state = tk.NORMAL)
@@ -209,16 +196,12 @@ class ShowScale1(tk.Frame):
 
     def onReset(self):
         for i in range(0, len(self.legScale)):
-            #self.legScale[i]['bg'] = backgroundGray
             self.scaleGray(i)
 
     def onAction(self, scale):
-        #scale['bg']='#fff00f00f'    #'#000fff000'
         scale['bg'] = 'lemon chiffon'#'plum1'
-
-        #print(scale.Nummer,scale.get())
         x=scale.get()
-        #Nur mit RPi schritt ausführen
+        #Nur mit RPi Schritt ausführen
         if self.tr != None:
             self.tr.schritt(pos=x,channel=scale.Nummer)
 
