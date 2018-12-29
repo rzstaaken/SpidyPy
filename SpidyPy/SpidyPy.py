@@ -1,8 +1,9 @@
 """
-V0.14 20.12.2018 SpidyPy.py 
+V0.16 29.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
+import getpass
 import os
 import tkinter as tk
 from JsonIO import JsonIO
@@ -13,13 +14,15 @@ import Drag_and_Drop_Listbox as DDListbox
 
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
 withRPi = False # Keine Hardware angeschlossen
-if os.name == 'posix':
-    try:
-        if os.getlogin() == 'pi':
-            import TrialPCA01
-            withRPi = True # Das Prg. läuft auf dem RPi
-    except:
-        pass
+if getpass.getuser() == 'pi':
+    import TrialPCA01
+    withRPi = True # Das Prg. läuft auf dem RPi
+    print('Das Prg. läuft auf dem RPi!')
+else:
+    print('Das Prg. läuft NICHT auf dem RPi!')
+
+#except:
+#    print('Das Prg. läuft NICHT auf dem RPi!')
            
 class ShowScale1(tk.Frame):
 
