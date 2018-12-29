@@ -63,5 +63,5 @@ if __name__ == "__main__":
             listbox.selection_set(i)
     listbox.pack(fill=tk.BOTH, expand=True)
     #listbox.bind('<Button-3>', printRightClickItem)
-    listbox.bind('<Button-3>', lambda event: print(f"Ausgewählt wurde: {listbox.get(listbox.nearest(event.y))}"))
+    listbox.bind('<Button-3>', lambda event: print("Ausgewählt wurde: {0}".format(listbox.get(listbox.nearest(event.y)))))
     root.mainloop()
