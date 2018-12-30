@@ -39,8 +39,8 @@ if __name__ == "__main__":
     dic = {4:3.6,7:5.3}
     j.WriteP(dic)
     print(j.ReadP())
-    print("Extension with dot:{0}".format(JsonIO.Extension()) )
-    print("Extension without dot:{0}".format(JsonIO.Extension()))
+    #print("Extension with dot:{0}".format(JsonIO.Extension()) )
+    #print("Extension without dot:{0}".format(JsonIO.Extension()))
 
 
 

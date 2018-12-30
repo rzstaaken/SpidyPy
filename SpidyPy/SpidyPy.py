@@ -1,5 +1,5 @@
 """
-V0.16 29.12.2018 SpidyPy.py 
+V0.16 30.12.2018 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
@@ -20,9 +20,6 @@ if getpass.getuser() == 'pi':
     print('Das Prg. läuft auf dem RPi!')
 else:
     print('Das Prg. läuft NICHT auf dem RPi!')
-
-#except:
-#    print('Das Prg. läuft NICHT auf dem RPi!')
            
 class ShowScale1(tk.Frame):
 
