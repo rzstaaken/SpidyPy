@@ -7,6 +7,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 
+
 class App(object):
     def __init__(self, master, path):
         self.nodes = dict()
