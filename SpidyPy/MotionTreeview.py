@@ -49,5 +49,5 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.geometry('400x600') 
     #root.maxsize(820, 430) #neu
-    app = App(root, path='./SpidyPy')
+    app = App(root, path='.')
     root.mainloop()
