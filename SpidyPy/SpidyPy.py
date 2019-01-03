@@ -38,7 +38,7 @@ class ShowScale1(tk.Frame):
     def createWidgets(self):
         self.legScale=[]
         for i in range(0, len(self.legsMinMax)):
-            self.legScale.append(tk.Scale(self ,  from_= self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=600, label="S" + str(i), resolution=0.01))  
+            self.legScale.append(tk.Scale(self ,  from_= self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=400, label="S" + str(i), resolution=0.01))  
             if "Start" in self.legsMinMax[i]:
                 self.legScale[i].set(self.legsMinMax[i]["Start"])
             self.legScale[i].grid(row=0, column=i, rowspan=SpiderDefaults.ROWSPAN)
