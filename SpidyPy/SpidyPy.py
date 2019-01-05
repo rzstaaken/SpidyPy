@@ -1,5 +1,5 @@
 """
-V0.16 05.01.2019 SpidyPy.py 
+V0.16 05.01.2019 17:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
