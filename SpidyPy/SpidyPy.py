@@ -1,5 +1,5 @@
 """
-V0.16 30.12.2018 SpidyPy.py 
+V0.16 05.01.2019 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
@@ -78,11 +78,46 @@ class ShowScale1(tk.Frame):
         self.btnStart.grid(column=i+1, columnspan=3, row=3, sticky='nw')
 
         #TODO:Die Scrollbar funktioniert noch nicht
-        self.scrollbar = tk.Scrollbar(self, orient='vertical')
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self)
+        #self.scrollbar = tk.Scrollbar(self, orient='vertical')
+        #self.scrollbar.grid(column=i+3,columnspan=3, row=4, rowspan=11)
+        self.labelBew = tk.Label(self,text="Bewegungen:")
+        self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
+
+        self.labelSeq = tk.Label(self,text="Sequenzen:")
+        self.labelSeq.grid(column=i+4, columnspan=3, row=4, sticky='nw')
+
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self,height=20)
         self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
-        self.listboxMoves.grid(column=i+1, columnspan=3, row=4, rowspan=12, sticky='nw')
+        self.listboxMoves.grid(column=i+1, columnspan=3, row=5, rowspan=11, sticky='nw')
         self.fillListBox(self.listboxMoves)
+
+        #Sequenz-Box
+        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(self,height=20)
+        #self.listboxSequenz.bind('<Button-3>', lambda event: self.move( self.listboxSequenz.get(self.listboxSequenz.nearest(event.y))))     
+        self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
+
+        self.btnToSeq = tk.Button(self)
+        self.btnToSeq["text"] = "-->"
+        #self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
+        self.btnToSeq.grid(column=i+2, columnspan=1, row=5, sticky='nw')
+
+        #+1
+        self.btnInc = tk.Button(self)
+        self.btnInc["text"] = " +1"
+        #self.btnInc.bind('<ButtonPress-1>', self.onInc)
+        self.btnInc.grid(column=i+2, columnspan=1, row=7, sticky='nw')
+
+        #Repeats
+        self.btnRep = tk.Button(self)
+        self.btnRep["text"] = "R0"
+        #self.btnRep.bind('<ButtonPress-1>', self.onRep)
+        self.btnRep.grid(column=i+2, columnspan=1, row=8, sticky='nw')
+
+        #-1
+        self.btnDec = tk.Button(self)
+        self.btnDec["text"] = " -1"
+        #self.btnDec.bind('<ButtonPress-1>', self.onDec)
+        self.btnDec.grid(column=i+2, columnspan=1, row=9, sticky='nw')
 
     def animiereSliderStart(self, dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
