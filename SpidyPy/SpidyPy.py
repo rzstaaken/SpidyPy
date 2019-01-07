@@ -5,6 +5,7 @@ https://github.com/rzstaaken/SpidyPy
 
 import getpass
 import os
+import csv
 import tkinter as tk
 from JsonIO import JsonIO
 import SpiderDefaults
@@ -86,19 +87,21 @@ class ShowScale1(tk.Frame):
         self.labelSeq = tk.Label(self,text="Sequenzen:")
         self.labelSeq.grid(column=i+4, columnspan=3, row=4, sticky='nw')
 
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self,height=20)
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self,name='listboxMoves',height=20)
         self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         self.listboxMoves.grid(column=i+1, columnspan=3, row=5, rowspan=11, sticky='nw')
         self.fillListBox(self.listboxMoves)
 
         #Sequenz-Box
-        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(self,height=20)
-        #self.listboxSequenz.bind('<Button-3>', lambda event: self.move( self.listboxSequenz.get(self.listboxSequenz.nearest(event.y))))     
+        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(self,name='listboxSequenz',height=20)
+        self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.delete(self.listboxSequenz.nearest(event.y)))     
+        self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
+        self.fillListBox(self.listboxSequenz)
 
         self.btnToSeq = tk.Button(self)
         self.btnToSeq["text"] = "-->"
-        #self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
+        self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
         self.btnToSeq.grid(column=i+2, columnspan=1, row=5, sticky='nw')
 
         #+1
@@ -118,6 +121,13 @@ class ShowScale1(tk.Frame):
         self.btnDec["text"] = " -1"
         #self.btnDec.bind('<ButtonPress-1>', self.onDec)
         self.btnDec.grid(column=i+2, columnspan=1, row=9, sticky='nw')
+
+    def onToSeq(self, event):
+        sz= self.listboxMoves.curselection()#liefert die Indexe der selektierten Zeilen
+        for i in sz:
+            item=self.listboxMoves.get(i)
+            print(item)
+            self.listboxSequenz.insert( tk.END,item)
 
     def animiereSliderStart(self, dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
@@ -164,15 +174,36 @@ class ShowScale1(tk.Frame):
            Aus dem Directory posi werden die json-Dateien gelesen und
            in der listbox dargestellt.
         """
-        lBox.delete(0, tk.END)
-        files = SpiderDefaults.os.listdir(path)
-        i=0
-        for fileName in files:
-            pos = fileName.find(JsonIO.Ext())
-            if pos != -1:
-                fileName = fileName[:pos]
-                lBox.insert(i,fileName)
-                i=i+1
+        try:
+            # Wenn die Datei existiert werden die gesicherten Daten geladen
+
+            with open(lBox.name+'.csv',"r")as f:
+                reader=csv.DictReader(f)
+                for row in reader:
+                    index = row['Index']
+                    Name = row['Name']
+                    Selected = row['Selected'] == 'True'
+                    lBox.insert(index,Name)
+                    if Selected:
+                        lBox.select_set(index)
+
+                # for i,name,sel in enumerate(reader):
+                #     lBox.insert(tk.END,name)
+                #     if sel:
+                #         lBox.select_set(i)
+
+            return
+
+        except:
+            lBox.delete(0, tk.END)
+            files = SpiderDefaults.os.listdir(path)
+            i=0
+            for fileName in files:
+                pos = fileName.find(JsonIO.Ext())
+                if pos != -1:
+                    fileName = fileName[:pos]
+                    lBox.insert(i,fileName)
+                    i=i+1
 
     def setEntryNum(self, n):
         """
