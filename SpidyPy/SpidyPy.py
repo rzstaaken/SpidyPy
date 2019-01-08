@@ -1,5 +1,5 @@
 """
-V0.16 08.01.2019 17:00 SpidyPy.py 
+V0.17 08.01.2019 15:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
@@ -22,14 +22,16 @@ if getpass.getuser() == 'pi':
 else:
     print('Das Prg. läuft NICHT auf dem RPi!')
            
-class ShowScale1(tk.Frame):
+class SpidyPy(tk.Frame):
 
-    def __init__(self, master=None,legsMinMax=None):
-        super().__init__(master)
+    def __init__(self, root=None,legsMinMax=None):
+        super().__init__(root)
         self.name = tk.StringVar()
         self.legsMinMax=legsMinMax
-        self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
-        master.title("Spidy Moving Application ")
+        self.master=root
+        #self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
+        root.geometry("1500x500") 
+        root.title("Spidy Moving Application ")
         self.lockMe=threading.Lock()
         self.tr=None
         if withRPi:
@@ -39,7 +41,7 @@ class ShowScale1(tk.Frame):
     def createWidgets(self):
         self.legScale=[]
         for i in range(0, len(self.legsMinMax)):
-            self.legScale.append(tk.Scale(self ,  from_= self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=400, label="S" + str(i), resolution=0.01))  
+            self.legScale.append(tk.Scale(root ,  from_= self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=400, label="S" + str(i), resolution=0.01))  
             if "Start" in self.legsMinMax[i]:
                 self.legScale[i].set(self.legsMinMax[i]["Start"])
             self.legScale[i].grid(row=0, column=i, rowspan=SpiderDefaults.ROWSPAN)
@@ -50,30 +52,30 @@ class ShowScale1(tk.Frame):
                 self.legScale[i].grid(ipadx=20)
 
         self.name.set("Pos")
-        self.entryName = tk.Entry(self)
+        self.entryName = tk.Entry(root)
         self.entryName["textvariable"] = self.name
         self.entryName.grid(column=i+1, row=0,sticky='w')
-        self.entryNum = tk.Entry(self, width=5)
+        self.entryNum = tk.Entry(root, width=5)
         self.entryNum.grid(column=i+2, row=0,sticky='w')
         self.setEntryNum(0)
 
-        self.btnReset = tk.Button(self, text='Reset')
+        self.btnReset = tk.Button(root, text='Reset')
         self.btnReset["command"] = self.onReset
         self.btnReset.grid(column=i+1, columnspan=3, row=1, sticky='nw')
-        self.btnEnter = tk.Button(self)
+        self.btnEnter = tk.Button(root)
         self.btnEnter["text"] = "Save"
         self.btnEnter["command"] = self.onEnter
         self.btnEnter.grid(column=i+1, columnspan=3, row=1, sticky='ne')
 
-        self.labelTimes= tk.Label(self, text = "Times:")
+        self.labelTimes= tk.Label(root, text = "Times:")
         self.labelTimes.grid(column=i+1, columnspan=3, row=2, sticky='nw')
         #Times Textfeld für die Anzahl der wiederholungen
         entryTextTimes = tk.StringVar()
-        self.entryTimes = tk.Entry(self,textvariable=entryTextTimes, width=5)
+        self.entryTimes = tk.Entry(root,textvariable=entryTextTimes, width=5)
         entryTextTimes.set(1)
         self.entryTimes.grid(column=i+1, columnspan=3, row=2, sticky='ne')
 
-        self.btnStart = tk.Button(self)
+        self.btnStart = tk.Button(root)
         self.btnStart["text"] = "Start"
         self.btnStart.bind('<ButtonPress-1>', self.onStart)
         self.btnStart.grid(column=i+1, columnspan=3, row=3, sticky='nw')
@@ -81,55 +83,81 @@ class ShowScale1(tk.Frame):
         #TODO:Die Scrollbar funktioniert noch nicht
         #self.scrollbar = tk.Scrollbar(self, orient='vertical')
         #self.scrollbar.grid(column=i+3,columnspan=3, row=4, rowspan=11)
-        self.labelBew = tk.Label(self,text="Bewegungen:")
+        self.labelBew = tk.Label(root,text="Bewegungen:")
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
-        self.labelSeq = tk.Label(self,text="Sequenzen:")
+        self.labelSeq = tk.Label(root,text="Sequenzen:")
         self.labelSeq.grid(column=i+4, columnspan=3, row=4, sticky='nw')
 
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(self,name='listboxMoves',height=20)
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,name='listboxMoves',height=20)
         self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         self.listboxMoves.grid(column=i+1, columnspan=3, row=5, rowspan=11, sticky='nw')
         self.fillListBox(self.listboxMoves)
 
         #Sequenz-Box
-        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(self,name='listboxSequenz',height=20)
+        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,name='listboxSequenz',height=20)
         self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.delete(self.listboxSequenz.nearest(event.y)))     
         self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
-        self.fillListBox(self.listboxSequenz)
+        self.fillListBox(self.listboxSequenz,insertEND=True)
 
-        self.btnToSeq = tk.Button(self)
-        self.btnToSeq["text"] = "-->"
+        self.btnToSeq = tk.Button(root)
+        self.btnToSeq["text"] = "---->"
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
         self.btnToSeq.grid(column=i+2, columnspan=1, row=5, sticky='nw')
 
         #+1
-        self.btnInc = tk.Button(self)
-        self.btnInc["text"] = " +1"
-        #self.btnInc.bind('<ButtonPress-1>', self.onInc)
+        self.btnInc = tk.Button(root)
+        self.btnInc["text"] = "  +1   "
+        self.btnInc.bind('<ButtonPress-1>', self.onInc)
         self.btnInc.grid(column=i+2, columnspan=1, row=7, sticky='nw')
 
         #Repeats
-        self.btnRep = tk.Button(self)
-        self.btnRep["text"] = "R0"
-        #self.btnRep.bind('<ButtonPress-1>', self.onRep)
+        self.btnRep = tk.Button(root)
+        self.btnRep["text"] = "Repeat 1"
+        self.btnRep.bind('<ButtonPress-1>', self.onRep)
         self.btnRep.grid(column=i+2, columnspan=1, row=8, sticky='nw')
 
         #-1
-        self.btnDec = tk.Button(self)
-        self.btnDec["text"] = " -1"
-        #self.btnDec.bind('<ButtonPress-1>', self.onDec)
+        self.btnDec = tk.Button(root)
+        self.btnDec["text"] = "  -1   "
+        self.btnDec.bind('<ButtonPress-1>', self.onDec)
         self.btnDec.grid(column=i+2, columnspan=1, row=9, sticky='nw')
 
-    def onToSeq(self, event):
+        #LOOP
+        self.btnLOOP = tk.Button(root)
+        self.btnLOOP["text"] = "  LOOP 1  "
+        self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
+        self.btnLOOP.grid(column=i+2, columnspan=1, row=10, sticky='nw')
+
+    def onInc(self,event):
+        #+1
+        sp=self.btnRep["text"].split(' ',2)
+        s=sp[0]+' '+str(int(sp[1])+1)
+        a= self.listboxSequenz.get(self.listboxSequenz.curIndex)
+        self.btnRep["text"] = s
+    def onDec(self,event):
+        #-1
+        sp=self.btnRep["text"].split(' ',2)
+        num=int(sp[1])
+        if num > 1:
+            self.btnRep["text"] = sp[0]+' '+str(num-1)
+    def onRep(self,event):
+        self.listboxSequenz.insert(self.listboxSequenz.curIndex,self.btnRep["text"])
+    def onLOOP(self,event):
+        #LOOP X
+        self.listboxSequenz.insert(self.listboxSequenz.curIndex,'LOOP xx')
+
+    def onToSeq(self,event):
+        #---->
         sz= self.listboxMoves.curselection()#liefert die Indexe der selektierten Zeilen
         for i in sz:
             item=self.listboxMoves.get(i)
             print(item)
-            self.listboxSequenz.insert( tk.END,item)
+            c=self.listboxSequenz.curIndex
+            self.listboxSequenz.insert(c+i,item)
 
-    def animiereSliderStart(self, dicBewegungen):
+    def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
         self.Fred.daemon=True
         self.Fred.start()
@@ -169,7 +197,7 @@ class ShowScale1(tk.Frame):
             digBewegungen[i] = self.xSteps(start,ziel,steps=steps)
         return digBewegungen
 
-    def fillListBox(self, lBox, path='posi'):
+    def fillListBox(self, lBox,insertEND=False, path='posi'):
         """
            Aus dem Directory posi werden die json-Dateien gelesen und
            in der listbox dargestellt.
@@ -186,6 +214,10 @@ class ShowScale1(tk.Frame):
                     lBox.insert(index,Name)
                     if Selected:
                         lBox.select_set(index)
+                if insertEND:
+                    if lBox.get(tk.END) != 'END':
+                        lBox.insert(tk.END,'END')
+
 
                 # for i,name,sel in enumerate(reader):
                 #     lBox.insert(tk.END,name)
@@ -279,5 +311,5 @@ class ShowScale1(tk.Frame):
 if __name__ == "__main__":
     _LegsMinMax = SpiderDefaults.ReadDefLegsIf()
     root = tk.Tk()
-    app = ShowScale1(root, _LegsMinMax)
+    app = SpidyPy(root=root, legsMinMax= _LegsMinMax)
     app.mainloop()

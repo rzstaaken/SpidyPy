@@ -1,4 +1,4 @@
-# Version 0.1
+# Version 0.2
 # Aus 'stackoverflow.com' 'tkinter listbox drag and drop with python'
 # https://stackoverflow.com/questions/14459993/tkinter-listbox-drag-and-drop-with-python/39300853#39300853
 # Danke 'Moshe'
@@ -12,18 +12,34 @@ import csv
 
 class Drag_and_Drop_Listbox(tk.Listbox):
   """ A tk listbox with drag'n'drop reordering of entries. """
-  def __init__(self, master,name=None, **kw):
+  def __init__(self, master, lbname=None, **kw):
     kw['selectmode'] = tk.MULTIPLE
     kw['activestyle'] = 'none'
-    tk.Listbox.__init__(self, master, kw)
+    tk.Listbox.__init__(self,master, kw)
     self.bind('<Button-1>', self.getState, add='+')
     self.bind('<Button-1>', self.setCurrent, add='+')
     self.bind('<B1-Motion>', self.shiftSelection)
-    self.bind('<<ListboxSelect>>', self.save)
+    #self.bind('<<ListboxSelect>>', self.save)
     self.curIndex = None
     self.curIndex3 = None
     self.curState = None
-    self.name = name
+    self.lbname = lbname
+    root.protocol(name="WM_DELETE_WINDOW", func=self.handler) 
+    self.is_mw = True 
+
+  def handler(self): 
+    self.is_mw = False 
+    if self.lbname:
+      self.save(None)
+    self.master.quit() 
+    self.master.destroy()
+  # def __del__(self):
+  #   if self.lbname:
+  #     self.save(None)
+
+  # def on_closing(self):
+  #   root.destroy() 
+
   def setCurrent(self, event):
     ''' gets the current index of the clicked item in the listbox '''
     self.curIndex = self.nearest(event.y)
@@ -56,13 +72,14 @@ class Drag_and_Drop_Listbox(tk.Listbox):
       if selected:
         self.selection_set(i-1)
       self.curIndex = i
-    self.save(event)
+    #self.save(event)
+
   def save(self,event):
-    print("Save Reihenfolge {}".format(self.name))
-    print(self.get(0,tk.END))
-    if(self.name):
+    print("Save Reihenfolge {}".format(self.lbname))
+    #print(self.get(0,tk.END))
+    if(self.lbname):
       fieldnames = ['Index','Name','Selected']
-      with open(self.name+'.csv',"w") as f:
+      with open(self.lbname+'.csv',"w") as f:
         writer=csv.DictWriter(f,fieldnames=fieldnames)
         writer.writeheader()
         li=self.get(0,tk.END)

@@ -9,7 +9,7 @@ class GetSpidy(tk.Frame):
         super().__init__(master)
         master.title("Kopiert Dateien von GitHub ins eigene Verzeichnis ")
         #self.scrollbar = tk.Scrollbar(self, orient='vertical')
-        self.listboxFiles=DDListbox.Drag_and_Drop_Listbox(self)
+        self.listboxFiles=DDListbox.Drag_and_Drop_Listbox(self,self.master)#TODO
         self.listboxFiles.bind('<Button-3>', lambda event: self.doRightMouseClick( self.listboxFiles.get(self.listboxFiles.nearest(event.y))))     
         self.listboxFiles.grid(column=0, columnspan=1, row=0, rowspan=1, sticky='nw')
         self.fillListBox(self.listboxFiles)
