@@ -73,6 +73,41 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                     writer.writerow(
                         {'Index': i, 'Name': name, 'Selected': self.selection_includes(i)})
 
+    def form(self):
+        '''
+        Formatiert die Liste der Listbox und macht Einrückungen vor den Bewegungstexten
+            sucht das 1. LOOP
+                rückt rückwärts alle Zeilen bis zum 'Repeat' ein
+            sucht das 2. LOPP usw.    
+        '''
+        listeTup = self.get(0, tk.END)
+        liste=[]
+        for li in listeTup:
+            liste.append(li)
+        #Alle Spaces rauswerfen, Positionen von 'LOOP' und 'Repeat' merken
+        repeats=[]
+        loops=[]
+        x=len(liste)
+        for i in range(0, len(liste) ):
+            liste[i] = str(liste[i]).strip()
+            if str(liste[i]).startswith('LOOP'):
+                loops.append(i)
+            if str(liste[i]).startswith('Repeat'):
+                repeats.append(i)
+        if len(repeats)>len(loops):
+            return False
+        for i in range(0,len(loops)):
+            self.einruecken(liste,repeats[len(repeats)-i-1]+1,loops[i])
+        self.delete(0,tk.END)
+        for i in range(0,len(liste)):
+            self.insert(i,liste[i])
+        return True
+        
+    def einruecken(self,liste,von,bis):
+        for i in range(von,bis):
+            liste[i]='  '+liste[i]
+
+
     def myDelete(self, first, last=None):
         if first > self.size():
             first = self.size()

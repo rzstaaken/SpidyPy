@@ -1,5 +1,5 @@
 """
-V0.17 08.01.2019 15:00 SpidyPy.py 
+V0.18 09.01.2019 15:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 
@@ -126,12 +126,26 @@ class SpidyPy(tk.Frame):
 
         #LOOP
         self.btnLOOP = tk.Button(root)
-        self.btnLOOP["text"] = "  LOOP 1  "
+        self.btnLOOP["text"] = " LOOP "
         self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
         self.btnLOOP.grid(column=i+2, columnspan=1, row=10, sticky='nw')
 
+        #check
+        self.btnCheck = tk.Button(root)
+        self.btnCheck["text"] = " Check "
+        self.btnCheck.bind('<ButtonPress-1>', self.onCheck)
+        self.btnCheck.grid(column=i+2, columnspan=1, row=11, sticky='nw')
+
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
 
+    def onCheck(self,event):
+        self.check()
+
+    def check(self):
+        if self.listboxSequenz.form():
+            self.listboxSequenz["bg"]=backgroundGray
+        else:
+            self.listboxSequenz["bg"]='red2'
     def windowDelHandler(self): 
         self.is_mw = False 
         self.saveListboxes()
@@ -159,7 +173,7 @@ class SpidyPy(tk.Frame):
         self.listboxSequenz.insert(self.listboxSequenz.curIndex,self.btnRep["text"])
     def onLOOP(self,event):
         #LOOP X
-        self.listboxSequenz.insert(self.listboxSequenz.curIndex,'LOOP xx')
+        self.listboxSequenz.insert(self.listboxSequenz.curIndex,'LOOP')
 
     def onToSeq(self,event):
         #---->
