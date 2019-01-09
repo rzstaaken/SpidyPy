@@ -8,6 +8,8 @@
 #   Filename ist dann name.csv
 import tkinter as tk
 import csv
+from JsonIO import JsonIO
+import SpiderDefaults
 
 
 class Drag_and_Drop_Listbox(tk.Listbox):
@@ -24,21 +26,51 @@ class Drag_and_Drop_Listbox(tk.Listbox):
     self.curIndex3 = None
     self.curState = None
     self.lbname = lbname
-    root.protocol(name="WM_DELETE_WINDOW", func=self.handler) 
     self.is_mw = True 
 
-  def handler(self): 
-    self.is_mw = False 
-    if self.lbname:
-      self.save(None)
-    self.master.quit() 
-    self.master.destroy()
-  # def __del__(self):
-  #   if self.lbname:
-  #     self.save(None)
+  def fillListBox(self,insertEND=False,path=None):
+      """
+          Aus dem Directory path werden die json-Dateien gelesen und
+          in der listbox dargestellt.
+      """
+      try:
+          # Wenn die Datei existiert werden die gesicherten Daten geladen
+          with open(self.lbname+'.csv',"r")as f:
+              reader=csv.DictReader(f)
+              for row in reader:
+                  index = row['Index']
+                  Name = row['Name']
+                  Selected = row['Selected'] == 'True'
+                  self.insert(index,Name)
+                  if Selected:
+                      self.select_set(index)
+      except:
+          self.delete(0, tk.END)
+          if path:
+            files = SpiderDefaults.os.listdir(path)
+            i=0
+            for fileName in files:
+                pos = fileName.find(JsonIO.Ext())
+                if pos != -1:
+                    fileName = fileName[:pos]
+                    self.insert(i,fileName)
+                    i=i+1
+      finally:
+          if insertEND:
+              if self.get(tk.END) != 'END':
+                  self.insert(tk.END,'END')
 
-  # def on_closing(self):
-  #   root.destroy() 
+
+  def save(self):
+      if(self.lbname):
+          print("Save Reihenfolge {}".format(self.lbname))
+          fieldnames = ['Index','Name','Selected']
+          with open(self.lbname+'.csv',"w") as f:
+              writer=csv.DictWriter(f,fieldnames=fieldnames)
+              writer.writeheader()
+              li=self.get(0,tk.END)
+              for i,name in enumerate(li):    
+                  writer.writerow({'Index':i,'Name':name,'Selected':self.selection_includes(i)})
 
   def setCurrent(self, event):
     ''' gets the current index of the clicked item in the listbox '''
@@ -72,19 +104,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
       if selected:
         self.selection_set(i-1)
       self.curIndex = i
-    #self.save(event)
-
-  def save(self,event):
-    print("Save Reihenfolge {}".format(self.lbname))
-    #print(self.get(0,tk.END))
-    if(self.lbname):
-      fieldnames = ['Index','Name','Selected']
-      with open(self.lbname+'.csv',"w") as f:
-        writer=csv.DictWriter(f,fieldnames=fieldnames)
-        writer.writeheader()
-        li=self.get(0,tk.END)
-        for i,name in enumerate(li):    
-          writer.writerow({'Index':i,'Name':name,'Selected':self.selection_includes(i)})
 
 if __name__ == "__main__":
     # def printRightClickItem( event):
@@ -93,7 +112,7 @@ if __name__ == "__main__":
     #   print(f"Ausgewählt wurde: {myListbox.get(curIndex)}") 
     root = tk.Tk()
     #myListbox = Drag_and_Drop_Listbox(root,name="myListbox")
-    myListbox = Drag_and_Drop_Listbox(root)
+    myListbox = Drag_and_Drop_Listbox(master=root)
     for i,name in enumerate(['name'+str(i) for i in range(10)]):
         myListbox.insert(tk.END, name)
         if i % 2 == 0:

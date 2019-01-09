@@ -6,8 +6,8 @@ https://github.com/rzstaaken/SpidyPy
 import getpass
 import os
 import csv
-import tkinter as tk
 from JsonIO import JsonIO
+import tkinter as tk
 import SpiderDefaults
 from time import sleep
 import threading
@@ -89,17 +89,17 @@ class SpidyPy(tk.Frame):
         self.labelSeq = tk.Label(root,text="Sequenzen:")
         self.labelSeq.grid(column=i+4, columnspan=3, row=4, sticky='nw')
 
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,name='listboxMoves',height=20)
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',height=20)
         self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         self.listboxMoves.grid(column=i+1, columnspan=3, row=5, rowspan=11, sticky='nw')
-        self.fillListBox(self.listboxMoves)
+        self.listboxMoves.fillListBox(path='posi')
 
         #Sequenz-Box
-        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,name='listboxSequenz',height=20)
+        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20)
         self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.delete(self.listboxSequenz.nearest(event.y)))     
         self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
-        self.fillListBox(self.listboxSequenz,insertEND=True)
+        self.listboxSequenz.fillListBox(insertEND=True)
 
         self.btnToSeq = tk.Button(root)
         self.btnToSeq["text"] = "---->"
@@ -115,7 +115,7 @@ class SpidyPy(tk.Frame):
         #Repeats
         self.btnRep = tk.Button(root)
         self.btnRep["text"] = "Repeat 1"
-        self.btnRep.bind('<ButtonPress-1>', self.onRep)
+        self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)
         self.btnRep.grid(column=i+2, columnspan=1, row=8, sticky='nw')
 
         #-1
@@ -130,19 +130,32 @@ class SpidyPy(tk.Frame):
         self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
         self.btnLOOP.grid(column=i+2, columnspan=1, row=10, sticky='nw')
 
+        self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
+
+    def windowDelHandler(self): 
+        self.is_mw = False 
+        self.saveListboxes()
+        self.master.quit() 
+        self.master.destroy()
+
+    def saveListboxes(self):
+        self.listboxMoves.save()
+        self.listboxSequenz.save()
+
     def onInc(self,event):
         #+1
         sp=self.btnRep["text"].split(' ',2)
         s=sp[0]+' '+str(int(sp[1])+1)
-        a= self.listboxSequenz.get(self.listboxSequenz.curIndex)
         self.btnRep["text"] = s
+
     def onDec(self,event):
         #-1
         sp=self.btnRep["text"].split(' ',2)
         num=int(sp[1])
         if num > 1:
             self.btnRep["text"] = sp[0]+' '+str(num-1)
-    def onRep(self,event):
+    def onInsertRepeat(self,event):
+        #
         self.listboxSequenz.insert(self.listboxSequenz.curIndex,self.btnRep["text"])
     def onLOOP(self,event):
         #LOOP X
@@ -151,10 +164,14 @@ class SpidyPy(tk.Frame):
     def onToSeq(self,event):
         #---->
         sz= self.listboxMoves.curselection()#liefert die Indexe der selektierten Zeilen
+        c=self.listboxSequenz.curIndex
+        if not c:
+            self.listboxSequenz.curIndex = 0
+            c=0
+        #c=c-1
         for i in sz:
             item=self.listboxMoves.get(i)
             print(item)
-            c=self.listboxSequenz.curIndex
             self.listboxSequenz.insert(c+i,item)
 
     def animiereSliderStart(self,dicBewegungen):
@@ -197,46 +214,6 @@ class SpidyPy(tk.Frame):
             digBewegungen[i] = self.xSteps(start,ziel,steps=steps)
         return digBewegungen
 
-    def fillListBox(self, lBox,insertEND=False, path='posi'):
-        """
-           Aus dem Directory posi werden die json-Dateien gelesen und
-           in der listbox dargestellt.
-        """
-        try:
-            # Wenn die Datei existiert werden die gesicherten Daten geladen
-
-            with open(lBox.name+'.csv',"r")as f:
-                reader=csv.DictReader(f)
-                for row in reader:
-                    index = row['Index']
-                    Name = row['Name']
-                    Selected = row['Selected'] == 'True'
-                    lBox.insert(index,Name)
-                    if Selected:
-                        lBox.select_set(index)
-                if insertEND:
-                    if lBox.get(tk.END) != 'END':
-                        lBox.insert(tk.END,'END')
-
-
-                # for i,name,sel in enumerate(reader):
-                #     lBox.insert(tk.END,name)
-                #     if sel:
-                #         lBox.select_set(i)
-
-            return
-
-        except:
-            lBox.delete(0, tk.END)
-            files = SpiderDefaults.os.listdir(path)
-            i=0
-            for fileName in files:
-                pos = fileName.find(JsonIO.Ext())
-                if pos != -1:
-                    fileName = fileName[:pos]
-                    lBox.insert(i,fileName)
-                    i=i+1
-
     def setEntryNum(self, n):
         """
         Die Laufnummer in das Entry schreiben
@@ -266,7 +243,7 @@ class SpidyPy(tk.Frame):
         j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,"{0}{1}{2}".format(fname,nummer,JsonIO.Ext())))
         self.setEntryNum(int(nummer) + 1)
         self.onReset()      
-        self.fillListBox(self.listboxMoves) #Die Listbox aktualisieren
+        self.listboxMoves.fillListBox() #Die Listbox aktualisieren
 
     def move(self,posName):
         #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
