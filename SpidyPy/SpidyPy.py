@@ -96,7 +96,7 @@ class SpidyPy(tk.Frame):
 
         #Sequenz-Box
         self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20)
-        self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.delete(self.listboxSequenz.nearest(event.y)))     
+        self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.myDelete(self.listboxSequenz.nearest(event.y)))     
         self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
         self.listboxSequenz.fillListBox(insertEND=True)
@@ -164,16 +164,29 @@ class SpidyPy(tk.Frame):
     def onToSeq(self,event):
         #---->
         sz= self.listboxMoves.curselection()#liefert die Indexe der selektierten Zeilen
-        c=self.listboxSequenz.curIndex
-        if not c:
-            self.listboxSequenz.curIndex = 0
-            c=0
-        #c=c-1
+        items=[]
         for i in sz:
-            item=self.listboxMoves.get(i)
-            print(item)
-            self.listboxSequenz.insert(c+i,item)
+            items.append(self.listboxMoves.get(i))
+        self.einfuegen(listbox=self.listboxSequenz,items=items)
 
+    def einfuegen(self,listbox,items,pos=None):
+        c=listbox.curIndex
+        if not c:
+            listbox.curIndex = 0
+            c=0
+        if not pos:
+            pos = c
+        if pos > listbox.size():
+            pos=listbox.size()
+        old=listbox.get(pos,tk.END)
+        oldList = []
+        for a in old:
+            oldList.append(a)
+        neu = items+oldList
+        listbox.delete(pos,tk.END)
+        for n in neu:
+            listbox.insert(tk.END,n)
+        
     def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
         self.Fred.daemon=True
