@@ -78,29 +78,34 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         Formatiert die Liste der Listbox und macht Einrückungen vor den Bewegungstexten
             sucht das 1. LOOP
                 rückt rückwärts alle Zeilen bis zum 'Repeat' ein
-            sucht das 2. LOPP usw.    
+            sucht das 2. LOOP usw.    
         '''
+        cur=self.curselection()
+        if len(cur)!=1:
+            return False
+        p=cur[0]
+
         listeTup = self.get(0, tk.END)
         liste=[]
         for li in listeTup:
             liste.append(li)
         #Alle Spaces rauswerfen, Positionen von 'LOOP' und 'Repeat' merken
-        repeats=[]
-        loops=[]
-        x=len(liste)
+        repeatsPos=[]
+        loopsPos=[]
         for i in range(0, len(liste) ):
             liste[i] = str(liste[i]).strip()
-            if str(liste[i]).startswith('LOOP'):
-                loops.append(i)
-            if str(liste[i]).startswith('Repeat'):
-                repeats.append(i)
-        if len(repeats)>len(loops):
+            if 'LOOP' in liste[i]:
+                loopsPos.append(i)
+            if 'Repeat' in liste[i]:
+                repeatsPos.append(i)
+        if len(repeatsPos)!=len(loopsPos):
             return False
-        for i in range(0,len(loops)):
-            self.einruecken(liste,repeats[len(repeats)-i-1]+1,loops[i])
+        for i in range(0,len(loopsPos)):
+            self.einruecken(liste,repeatsPos[len(repeatsPos)-i-1]+1,loopsPos[i])
         self.delete(0,tk.END)
         for i in range(0,len(liste)):
             self.insert(i,liste[i])
+        self.select_set(p)
         return True
         
     def einruecken(self,liste,von,bis):
@@ -116,6 +121,15 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         for i in range(first, last+1):
             if self.get(i) != 'END':
                 self.delete(i)
+                self.check()
+
+    def check(self):
+        if self.form():
+            #Alles OK
+            self["bg"]='SystemWindow'
+        else:
+            #Es stimmt mit den Sequenzen etwas nicht
+            self["bg"]='red2'
 
     def setCurrent(self, event):
         ''' gets the current index of the clicked item in the listbox '''
@@ -142,6 +156,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             if selected:
                 self.selection_set(i+1)
             self.curIndex = i
+            self.check()
         elif i > self.curIndex:
             # Moves down
             x = self.get(i)
@@ -151,7 +166,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             if selected:
                 self.selection_set(i-1)
             self.curIndex = i
-
+            self.check()
 
 if __name__ == "__main__":
         # def printRightClickItem( event):

@@ -6,6 +6,7 @@ https://github.com/rzstaaken/SpidyPy
 import getpass
 import os
 import csv
+import re
 from JsonIO import JsonIO
 import tkinter as tk
 import SpiderDefaults
@@ -13,6 +14,7 @@ from time import sleep
 import threading
 import Drag_and_Drop_Listbox as DDListbox
 
+lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
 withRPi = False # Keine Hardware angeschlossen
 if getpass.getuser() == 'pi':
@@ -95,7 +97,7 @@ class SpidyPy(tk.Frame):
         self.listboxMoves.fillListBox(path='posi')
 
         #Sequenz-Box
-        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20)
+        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20,exportselection=False)
         self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.myDelete(self.listboxSequenz.nearest(event.y)))     
         self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
@@ -139,13 +141,8 @@ class SpidyPy(tk.Frame):
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
 
     def onCheck(self,event):
-        self.check()
+        self.listboxSequenz.check()
 
-    def check(self):
-        if self.listboxSequenz.form():
-            self.listboxSequenz["bg"]=backgroundGray
-        else:
-            self.listboxSequenz["bg"]='red2'
     def windowDelHandler(self): 
         self.is_mw = False 
         self.saveListboxes()
@@ -156,24 +153,73 @@ class SpidyPy(tk.Frame):
         self.listboxMoves.save()
         self.listboxSequenz.save()
 
+    def increment(self,s):
+        """ look for the last sequence of number(s) in a string and increment """
+        m = lastNum.search(s)
+        if m:
+            next = str(int(m.group(1))+1)
+            start, end = m.span(1)
+            s = s[:max(end-len(next), start)] + next + s[end:]
+        return s
+
+    def decrement(self,s,min=1):
+        """ look for the last sequence of number(s) in a string and decrement """
+        m = lastNum.search(s)
+        if m:
+            if int(m.group(1)) < min+1:
+                return s
+            next = str(int(m.group(1))-1)
+            start, end = m.span(1)
+            s = s[:max(end-len(next), start)] + next + s[end:]
+        return s
+
     def onInc(self,event):
         #+1
-        sp=self.btnRep["text"].split(' ',2)
-        s=sp[0]+' '+str(int(sp[1])+1)
-        self.btnRep["text"] = s
+        #Testen ob die Sequenzen selektiert sind und ein Repeat ausgewählt ist
+        cur=self.listboxSequenz.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            st=self.listboxSequenz.get(p)
+            if p >= 0 and 'Repeat' in st:
+                s=self.increment(st)
+                self.listboxSequenz.delete(p)
+                self.listboxSequenz.insert(p,s)
+                self.listboxSequenz.select_set(p)
+                return
+        self.btnRep["text"] = self.increment(self.btnRep["text"])
 
     def onDec(self,event):
         #-1
-        sp=self.btnRep["text"].split(' ',2)
-        num=int(sp[1])
-        if num > 1:
-            self.btnRep["text"] = sp[0]+' '+str(num-1)
+        cur=self.listboxSequenz.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            st=self.listboxSequenz.get(p)
+            if p >= 0 and 'Repeat' in st:
+                s=self.decrement(st)
+                self.listboxSequenz.delete(p)
+                self.listboxSequenz.insert(p,s)
+                self.listboxSequenz.select_set(p)
+                return
+        self.btnRep["text"] = self.decrement(self.btnRep["text"])
+
     def onInsertRepeat(self,event):
         #
-        self.listboxSequenz.insert(self.listboxSequenz.curIndex,self.btnRep["text"])
+        cur=self.listboxSequenz.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            self.listboxSequenz.selection_clear(p)
+            self.listboxSequenz.insert(p,self.btnRep["text"])
+            self.onCheck(None)
+
     def onLOOP(self,event):
         #LOOP X
-        self.listboxSequenz.insert(self.listboxSequenz.curIndex,'LOOP')
+        cur=self.listboxSequenz.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            self.listboxSequenz.selection_clear(p)
+            self.listboxSequenz.insert(p,'LOOP')
+            self.onCheck(None)
+
 
     def onToSeq(self,event):
         #---->
@@ -183,23 +229,16 @@ class SpidyPy(tk.Frame):
             items.append(self.listboxMoves.get(i))
         self.einfuegen(listbox=self.listboxSequenz,items=items)
 
-    def einfuegen(self,listbox,items,pos=None):
-        c=listbox.curIndex
-        if not c:
-            listbox.curIndex = 0
-            c=0
-        if not pos:
-            pos = c
-        if pos > listbox.size():
-            pos=listbox.size()
-        old=listbox.get(pos,tk.END)
-        oldList = []
-        for a in old:
-            oldList.append(a)
-        neu = items+oldList
-        listbox.delete(pos,tk.END)
-        for n in neu:
-            listbox.insert(tk.END,n)
+    def einfuegen(self,listbox,items):
+        cur=self.listboxSequenz.curselection()
+        if len(cur)!=1:
+            return
+        p=cur[0]
+        p2 = p
+        for a in items:
+            listbox.insert(p2,a)
+        self.onCheck(None)
+        
         
     def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
