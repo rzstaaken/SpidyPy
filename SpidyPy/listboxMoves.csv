@@ -2,8 +2,8 @@ Index,Name,Selected
 0,neu0,False
 1,eins1,False
 2,zwei2,False
-3,drei3,True
+3,drei3,False
 4,vier4,False
 5,fünf5,False
 6,SpidyHoch0,False
-7,SpidyRunter0,False
+7,SpidyRunter0,True

@@ -10,7 +10,7 @@ import tkinter as tk
 import csv
 from JsonIO import JsonIO
 import SpiderDefaults
-
+from ECom import ECom
 
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
@@ -45,6 +45,8 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                     self.insert(index, Name)
                     if Selected:
                         self.select_set(index)
+            if len(self.curselection())==0: #Wenn nichts selektiert ist
+                self.select_set(0)          #Die erste Zeile selektieren
         except:
             self.delete(0, tk.END)
             if path:
@@ -58,8 +60,8 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                         i = i+1
         finally:
             if insertEND:
-                if self.get(tk.END) != 'END':
-                    self.insert(tk.END, 'END')
+                if self.get(tk.END) != ECom.END.__str__():
+                    self.insert(tk.END, ECom.END.__str__())
 
     def save(self):
         if(self.lbname):
@@ -94,9 +96,9 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         loopsPos=[]
         for i in range(0, len(liste) ):
             liste[i] = str(liste[i]).strip()
-            if 'LOOP' in liste[i]:
+            if ECom.LOOP.__str__() in liste[i]:#:LOOP
                 loopsPos.append(i)
-            if 'Repeat' in liste[i]:
+            if ECom.Repeat.__str__() in liste[i]:#:Repeat
                 repeatsPos.append(i)
         if len(repeatsPos)!=len(loopsPos):
             return False
@@ -112,14 +114,13 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         for i in range(von,bis):
             liste[i]='  '+liste[i]
 
-
     def myDelete(self, first, last=None):
         if first > self.size():
             first = self.size()
         if not last:
             last = first
         for i in range(first, last+1):
-            if self.get(i) != 'END':
+            if self.get(i) !=  ECom.END.__str__():  #':END'
                 self.delete(i)
                 self.check()
 

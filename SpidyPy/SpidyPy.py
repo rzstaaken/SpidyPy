@@ -13,6 +13,8 @@ import SpiderDefaults
 from time import sleep
 import threading
 import Drag_and_Drop_Listbox as DDListbox
+from enum import Enum
+from ECom import ECom
 
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
@@ -23,7 +25,8 @@ if getpass.getuser() == 'pi':
     print('Das Prg. läuft auf dem RPi!')
 else:
     print('Das Prg. läuft NICHT auf dem RPi!')
-           
+
+
 class SpidyPy(tk.Frame):
 
     def __init__(self, root=None,legsMinMax=None):
@@ -103,6 +106,16 @@ class SpidyPy(tk.Frame):
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
         self.listboxSequenz.fillListBox(insertEND=True)
 
+        self.btnStartSeq = tk.Button(root)
+        self.btnStartSeq["text"] = "Start Seq."
+        self.btnStartSeq.bind('<ButtonPress-1>', self.onStartSeq)
+        self.btnStartSeq.grid(column=i+4, row=17, sticky='nw')
+
+        self.btnStopSeq = tk.Button(root)
+        self.btnStopSeq["text"] = "Stop Seq."
+        self.btnStopSeq.bind('<ButtonPress-1>', self.onStopSeq)
+        self.btnStopSeq.grid(column=i+5, row=17, sticky='nw')
+
         self.btnToSeq = tk.Button(root)
         self.btnToSeq["text"] = "---->"
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
@@ -116,7 +129,7 @@ class SpidyPy(tk.Frame):
 
         #Repeats
         self.btnRep = tk.Button(root)
-        self.btnRep["text"] = "Repeat 1"
+        self.btnRep["text"] = ECom.Repeat.__str__() +" 1"
         self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)
         self.btnRep.grid(column=i+2, columnspan=1, row=8, sticky='nw')
 
@@ -128,7 +141,7 @@ class SpidyPy(tk.Frame):
 
         #LOOP
         self.btnLOOP = tk.Button(root)
-        self.btnLOOP["text"] = " LOOP "
+        self.btnLOOP["text"] = ECom.LOOP.__str__()
         self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
         self.btnLOOP.grid(column=i+2, columnspan=1, row=10, sticky='nw')
 
@@ -139,6 +152,31 @@ class SpidyPy(tk.Frame):
         self.btnCheck.grid(column=i+2, columnspan=1, row=11, sticky='nw')
 
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
+
+    def onStartSeq(self,event):
+        event.widget.configure(state = tk.DISABLED)
+        fileNamesIndxList = []
+        fileNamesIndxList = self.listboxSequenz.get(0,tk.END)
+        for i in range(0,len( fileNamesIndxList)):
+            sequenz = fileNamesIndxList[i]
+            #self.listboxSequenz.cur
+            self.listboxSequenz.selection_clear(0,tk.END)
+            self.listboxSequenz.select_set(i)
+            self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
+            #sleep(0.5)
+            print("{}:Es wird \'{}\' ausgeführt.".format(i,sequenz))
+            if ECom.LOOP.__str__() in sequenz:
+                continue
+            if ECom.Repeat.__str__() in sequenz:
+                continue
+            if ECom.END.__str__() in sequenz:
+                continue
+            self.move(str(sequenz).strip())
+        self.onReset()
+        event.widget.configure(state = tk.NORMAL)
+
+    def onStopSeq(self,event):
+        pass
 
     def onCheck(self,event):
         self.listboxSequenz.check()
@@ -194,7 +232,7 @@ class SpidyPy(tk.Frame):
         if len(cur)==1:
             p=cur[0]
             st=self.listboxSequenz.get(p)
-            if p >= 0 and 'Repeat' in st:
+            if p >= 0 and ECom.Repeat.__str__() in st:
                 s=self.decrement(st)
                 self.listboxSequenz.delete(p)
                 self.listboxSequenz.insert(p,s)
@@ -217,9 +255,8 @@ class SpidyPy(tk.Frame):
         if len(cur)==1:
             p=cur[0]
             self.listboxSequenz.selection_clear(p)
-            self.listboxSequenz.insert(p,'LOOP')
+            self.listboxSequenz.insert(p,self.btnLOOP["text"])
             self.onCheck(None)
-
 
     def onToSeq(self,event):
         #---->
@@ -237,8 +274,7 @@ class SpidyPy(tk.Frame):
         p2 = p
         for a in items:
             listbox.insert(p2,a)
-        self.onCheck(None)
-        
+        self.onCheck(None)     
         
     def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
@@ -246,6 +282,8 @@ class SpidyPy(tk.Frame):
         self.Fred.start()
 
     def animiereSliderAsync(self, dicBewegungen):
+        if len(dicBewegungen)==0:
+            return
         moveList = [] #Eine Liste der Bewegungen
         legNrList = []
         for key in dicBewegungen:
