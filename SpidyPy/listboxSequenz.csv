@@ -1,13 +1,13 @@
 Index,Name,Selected
 0,:Repeat 1,False
-1,  :Repeat 1,False
-2,    eins1,False
-3,    SpidyHoch0,False
-4,    SpidyRunter0,False
+1,  eins1,False
+2,  SpidyHoch0,False
+3,  SpidyRunter0,False
+4,  :Repeat 2,True
 5,    drei3,False
-6,    zwei2,False
-7,    drei3,False
+6,    drei3,False
+7,    zwei2,False
 8,  :LOOP,False
-9,:LOOP,False
-10,vier4,False
-11,:END,True
+9,  vier4,False
+10,:LOOP,False
+11,:END,False

@@ -14,7 +14,7 @@ from time import sleep
 import threading
 import Drag_and_Drop_Listbox as DDListbox
 from enum import Enum
-from ECom import ECom
+from ECom import ECom,ERunMode
 
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
@@ -154,26 +154,41 @@ class SpidyPy(tk.Frame):
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
 
     def onStartSeq(self,event):
-        event.widget.configure(state = tk.DISABLED)
+        self.startSeq(ERunMode.AUTOMATIC)
+
+    def startSeq(self,mode=ERunMode.SINGLE_STEP):
+        widget = self.listboxSequenz
+        widget.configure(state = tk.DISABLED)
         fileNamesIndxList = []
-        fileNamesIndxList = self.listboxSequenz.get(0,tk.END)
+        fileNamesIndxList = widget.get(0,tk.END)
         for i in range(0,len( fileNamesIndxList)):
             sequenz = fileNamesIndxList[i]
             #self.listboxSequenz.cur
-            self.listboxSequenz.selection_clear(0,tk.END)
-            self.listboxSequenz.select_set(i)
-            self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
+            #widget.selection_clear(0,tk.END)
+
             #sleep(0.5)
             print("{}:Es wird \'{}\' ausgeführt.".format(i,sequenz))
             if ECom.LOOP.__str__() in sequenz:
+                widget.selection_clear(i)
+                widget.select_set(i+1)
+                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
                 continue
             if ECom.Repeat.__str__() in sequenz:
+                widget.selection_clear(i)
+                widget.select_set(i+1)
+                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
                 continue
             if ECom.END.__str__() in sequenz:
+                widget.selection_clear(i)
+                widget.select_set(0)
+                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
                 continue
             self.move(str(sequenz).strip())
+            widget.selection_clear(i)
+            widget.select_set(i+1)
+            self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
         self.onReset()
-        event.widget.configure(state = tk.NORMAL)
+        widget.configure(state = tk.NORMAL)
 
     def onStopSeq(self,event):
         pass

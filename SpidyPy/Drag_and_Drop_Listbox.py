@@ -82,10 +82,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 rückt rückwärts alle Zeilen bis zum 'Repeat' ein
             sucht das 2. LOOP usw.    
         '''
-        cur=self.curselection()
-        if len(cur)!=1:
-            return False
-        p=cur[0]
 
         listeTup = self.get(0, tk.END)
         liste=[]
@@ -107,7 +103,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.delete(0,tk.END)
         for i in range(0,len(liste)):
             self.insert(i,liste[i])
-        self.select_set(p)
         return True
         
     def einruecken(self,liste,von,bis):
