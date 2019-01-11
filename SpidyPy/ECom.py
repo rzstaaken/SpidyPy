@@ -2,10 +2,10 @@ from enum import Enum
 
 class ECom(Enum):
     '''Enum Commandos  '''
-    END = 0
+    End = 0
     Repeat = 1
-    LOOP = 2
-    T = 3
+    LoopToLine = 2
+    Wait = 3
 
     def __str__(self):
         return ':'+self.name

@@ -74,7 +74,7 @@ class SpidyPy(tk.Frame):
 
         self.labelTimes= tk.Label(root, text = "Times:")
         self.labelTimes.grid(column=i+1, columnspan=3, row=2, sticky='nw')
-        #Times Textfeld für die Anzahl der wiederholungen
+        #Times Textfeld für die Anzahl der Wiederholungen
         entryTextTimes = tk.StringVar()
         self.entryTimes = tk.Entry(root,textvariable=entryTextTimes, width=5)
         entryTextTimes.set(1)
@@ -100,53 +100,58 @@ class SpidyPy(tk.Frame):
         self.listboxMoves.fillListBox(path='posi')
 
         #Sequenz-Box
-        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20,exportselection=False)
+        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20,width=40,exportselection=False)
         self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.myDelete(self.listboxSequenz.nearest(event.y)))     
         self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
-        self.listboxSequenz.fillListBox(insertEND=True)
+        self.listboxSequenz.fillListBox(sequence=True)
 
-        self.btnStartSeq = tk.Button(root)
+        self.btnStartSeq = tk.Button(root,width=10)
         self.btnStartSeq["text"] = "Start Seq."
         self.btnStartSeq.bind('<ButtonPress-1>', self.onStartSeq)
         self.btnStartSeq.grid(column=i+4, row=17, sticky='nw')
 
-        self.btnStopSeq = tk.Button(root)
+        self.btnStopSeq = tk.Button(root,width=10)
         self.btnStopSeq["text"] = "Stop Seq."
         self.btnStopSeq.bind('<ButtonPress-1>', self.onStopSeq)
-        self.btnStopSeq.grid(column=i+5, row=17, sticky='nw')
+        self.btnStopSeq.grid(column=i+4, row=18, sticky='nw')
 
-        self.btnToSeq = tk.Button(root)
+        self.btnStep = tk.Button(root,width=10)
+        self.btnStep["text"] = "Step"
+        self.btnStep.bind('<ButtonPress-1>', self.onStep)
+        self.btnStep.grid(column=i+5, row=17, sticky='nw')
+
+        self.btnToSeq = tk.Button(root,width=10)
         self.btnToSeq["text"] = "---->"
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
         self.btnToSeq.grid(column=i+2, columnspan=1, row=5, sticky='nw')
 
         #+1
-        self.btnInc = tk.Button(root)
+        self.btnInc = tk.Button(root,width=10)
         self.btnInc["text"] = "  +1   "
         self.btnInc.bind('<ButtonPress-1>', self.onInc)
         self.btnInc.grid(column=i+2, columnspan=1, row=7, sticky='nw')
 
         #Repeats
-        self.btnRep = tk.Button(root)
+        self.btnRep = tk.Button(root,width=10)
         self.btnRep["text"] = ECom.Repeat.__str__() +" 1"
         self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)
         self.btnRep.grid(column=i+2, columnspan=1, row=8, sticky='nw')
 
         #-1
-        self.btnDec = tk.Button(root)
+        self.btnDec = tk.Button(root,width=10)
         self.btnDec["text"] = "  -1   "
         self.btnDec.bind('<ButtonPress-1>', self.onDec)
         self.btnDec.grid(column=i+2, columnspan=1, row=9, sticky='nw')
 
         #LOOP
-        self.btnLOOP = tk.Button(root)
-        self.btnLOOP["text"] = ECom.LOOP.__str__()
+        self.btnLOOP = tk.Button(root,width=10)
+        self.btnLOOP["text"] = ECom.LoopToLine.__str__()
         self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
         self.btnLOOP.grid(column=i+2, columnspan=1, row=10, sticky='nw')
 
         #check
-        self.btnCheck = tk.Button(root)
+        self.btnCheck = tk.Button(root,width=10)
         self.btnCheck["text"] = " Check "
         self.btnCheck.bind('<ButtonPress-1>', self.onCheck)
         self.btnCheck.grid(column=i+2, columnspan=1, row=11, sticky='nw')
@@ -163,10 +168,6 @@ class SpidyPy(tk.Frame):
         fileNamesIndxList = widget.get(0,tk.END)
         for i in range(0,len( fileNamesIndxList)):
             sequenz = fileNamesIndxList[i]
-            #self.listboxSequenz.cur
-            #widget.selection_clear(0,tk.END)
-
-            #sleep(0.5)
             print("{}:Es wird \'{}\' ausgeführt.".format(i,sequenz))
             if ECom.LOOP.__str__() in sequenz:
                 widget.selection_clear(i)
@@ -178,7 +179,7 @@ class SpidyPy(tk.Frame):
                 widget.select_set(i+1)
                 self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
                 continue
-            if ECom.END.__str__() in sequenz:
+            if ECom.End.__str__() in sequenz:
                 widget.selection_clear(i)
                 widget.select_set(0)
                 self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
@@ -192,6 +193,32 @@ class SpidyPy(tk.Frame):
 
     def onStopSeq(self,event):
         pass
+
+    def onStep(self,event):
+        n=self.nextStep()
+        print("nextStep={}".format(n))
+        self.listboxSequenz.select_set(n)
+
+    def nextStep(self):
+        cur=self.listboxSequenz.curselection()
+        if len(cur)<1:
+            self.listboxSequenz.select_set(0)
+            cur=self.listboxSequenz.curselection()
+        if len(cur)>1:
+            self.listboxSequenz.selection_clear(0,tk.END)
+            self.listboxSequenz.select_set(cur[0])
+            cur=self.listboxSequenz.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            self.listboxSequenz.selection_clear(p)
+            if ECom.End.__str__() in self.listboxSequenz.get(p):  # ':End'
+                n=0
+            else:
+                n=p+1
+            return n
+        return 0
+
+        
 
     def onCheck(self,event):
         self.listboxSequenz.check()

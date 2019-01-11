@@ -29,7 +29,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.lbname = lbname
         self.is_mw = True
 
-    def fillListBox(self, insertEND=False, path=None):
+    def fillListBox(self, sequence=False, path=None):
         """
             Aus dem Directory path werden die json-Dateien gelesen und
             in der listbox dargestellt.
@@ -59,9 +59,10 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                         self.insert(i, fileName)
                         i = i+1
         finally:
-            if insertEND:
-                if self.get(tk.END) != ECom.END.__str__():
-                    self.insert(tk.END, ECom.END.__str__())
+            if sequence:
+                if self.get(tk.END) != ECom.End.__str__():
+                    self.insert(tk.END, ECom.End.__str__())
+                self.form()
 
     def save(self):
         if(self.lbname):
@@ -82,27 +83,35 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 rückt rückwärts alle Zeilen bis zum 'Repeat' ein
             sucht das 2. LOOP usw.    
         '''
-
         listeTup = self.get(0, tk.END)
-        liste=[]
+        lines=[]
         for li in listeTup:
-            liste.append(li)
+            lines.append(li)
         #Alle Spaces rauswerfen, Positionen von 'LOOP' und 'Repeat' merken
-        repeatsPos=[]
-        loopsPos=[]
-        for i in range(0, len(liste) ):
-            liste[i] = str(liste[i]).strip()
-            if ECom.LOOP.__str__() in liste[i]:#:LOOP
-                loopsPos.append(i)
-            if ECom.Repeat.__str__() in liste[i]:#:Repeat
-                repeatsPos.append(i)
-        if len(repeatsPos)!=len(loopsPos):
+        repeatLines=[]
+        loopToLineLines=[]
+        loopToLineZiel=[]
+        for i in range(0, len(lines) ):
+            lines[i] = str(lines[i]).strip()
+            if ECom.LoopToLine.__str__() in lines[i]:#:LoopToLine
+                loopToLineLines.append(i)
+                #sp=str(lines[i]).split()
+                #if len(sp)==1:
+                #    lines[i]=sp[0]+   Den zugehörigen 'Repeat'  ????
+            if ECom.Repeat.__str__() in lines[i]:#:Repeat
+                repeatLines.append(i)
+        if len(repeatLines)!=len(loopToLineLines):
             return False
-        for i in range(0,len(loopsPos)):
-            self.einruecken(liste,repeatsPos[len(repeatsPos)-i-1]+1,loopsPos[i])
+        lastRepeatPos = len(lines)
+        for i in range(0,len(loopToLineLines)):#Check ob die LoopToLines zu den Repeat passen 
+            
+            if repeatLines[i] > lastRepeatPos:#<---?
+                return False # LoopToLine weist auf falschen Repeat
+        for i in range(0,len(loopToLineLines)):
+            self.einruecken(lines,repeatLines[len(repeatLines)-i-1]+1,loopToLineLines[i])
         self.delete(0,tk.END)
-        for i in range(0,len(liste)):
-            self.insert(i,liste[i])
+        for i in range(0,len(lines)):
+            self.insert(i,lines[i])
         return True
         
     def einruecken(self,liste,von,bis):
@@ -115,7 +124,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         if not last:
             last = first
         for i in range(first, last+1):
-            if self.get(i) !=  ECom.END.__str__():  #':END'
+            if not  (ECom.End.__str__() in self.get(i)):  # not ':END'
                 self.delete(i)
                 self.check()
 
