@@ -196,16 +196,21 @@ class SpidyPy(tk.Frame):
         pass
 
     def onStep(self,event):
+        cur=self.listboxSequenz.curselection()
+        posName = self.listboxSequenz.get(cur)
+        sequenz= posName.strip()
+        if sequenz[0:1]!=':':
+            self.move(str(sequenz).strip())
         n=self.nextStep()
         print("nextStep={}".format(n))
         self.listboxSequenz.select_set(n)
 
     def nextStep(self):
         cur=self.listboxSequenz.curselection()
-        if len(cur)<1:
+        if len(cur)<1:#Keiner selektiert
             self.listboxSequenz.select_set(0)
             cur=self.listboxSequenz.curselection()
-        if len(cur)>1:
+        if len(cur)>1:#Mehr als einer selektiert
             self.listboxSequenz.selection_clear(0,tk.END)
             self.listboxSequenz.select_set(cur[0])
             cur=self.listboxSequenz.curselection()
@@ -214,6 +219,29 @@ class SpidyPy(tk.Frame):
             self.listboxSequenz.selection_clear(p)
             if ECom.End.__str__() in self.listboxSequenz.get(p):  # ':End'
                 n=0
+            elif ECom.LoopToLine.__str__()in self.listboxSequenz.get(p): 
+                line = str(self.listboxSequenz.get(p)).strip() #Leerstellen rausnehmen
+                a=line.split(' ')
+                nr=int(a[1])
+                ziel = self.listboxSequenz.get(nr)
+                links=str(ziel).find("(")
+                rep=ECom.Repeat.__str__()
+                initpos=str(ziel).find(rep)
+                intposEnde=str(ziel).find(" ",initpos+1)
+                if(links>=0):
+                    ist=int(ziel[links+1:-1])
+                    start=int(ziel[initpos+len(rep)+1:intposEnde+2])
+                    if ist<=1:#Sollwert erreicht -> ist = start
+                        x=ziel[0:intposEnde+2]+' ('+str(start)+')'
+                        self.listboxSequenz.delete(nr)
+                        self.listboxSequenz.insert(nr,x)
+                        n=p+1
+                        return n
+                    #Den Wert in Klammern um 1 vermindern
+                    x=ziel[0:intposEnde+2]+' ('+str(ist-1)+')'
+                    self.listboxSequenz.delete(nr)
+                    self.listboxSequenz.insert(nr,x)
+                n=nr
             else:
                 n=p+1
             return n
@@ -259,10 +287,14 @@ class SpidyPy(tk.Frame):
         if len(cur)==1:
             p=cur[0]
             st=self.listboxSequenz.get(p)
+            st=st.strip()
+            a = st.split(' ')
+            st = a[0]+' '+a[1]
             if p >= 0 and 'Repeat' in st:
                 s=self.increment(st)
                 self.listboxSequenz.delete(p)
                 self.listboxSequenz.insert(p,s)
+                self.listboxSequenz.check()
                 self.listboxSequenz.select_set(p)
                 return
         self.btnRep["text"] = self.increment(self.btnRep["text"])
@@ -273,10 +305,14 @@ class SpidyPy(tk.Frame):
         if len(cur)==1:
             p=cur[0]
             st=self.listboxSequenz.get(p)
+            st=st.strip()
+            a = st.split(' ')
+            st = a[0]+' '+a[1]
             if p >= 0 and ECom.Repeat.__str__() in st:
                 s=self.decrement(st)
                 self.listboxSequenz.delete(p)
                 self.listboxSequenz.insert(p,s)
+                self.listboxSequenz.check()
                 self.listboxSequenz.select_set(p)
                 return
         self.btnRep["text"] = self.decrement(self.btnRep["text"])
