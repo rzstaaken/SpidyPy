@@ -15,6 +15,7 @@ import threading
 import Drag_and_Drop_Listbox as DDListbox
 from enum import Enum
 from ECom import ECom,ERunMode
+from LoopRepeat import LoopRepeat
 
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
@@ -217,8 +218,6 @@ class SpidyPy(tk.Frame):
                 n=p+1
             return n
         return 0
-
-        
 
     def onCheck(self,event):
         self.listboxSequenz.check()

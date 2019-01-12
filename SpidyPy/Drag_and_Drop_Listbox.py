@@ -11,6 +11,7 @@ import csv
 from JsonIO import JsonIO
 import SpiderDefaults
 from ECom import ECom
+from LoopRepeat import LoopRepeat
 
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
@@ -87,36 +88,18 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         lines=[]
         for li in listeTup:
             lines.append(li)
-        #Alle Spaces rauswerfen, Positionen von 'LOOP' und 'Repeat' merken
-        repeatLines=[]
-        loopToLineDict={} #Die Zeile in der LoopToLine steht
 
-        for i in range(0, len(lines) ):
-            lines[i] = str(lines[i]).strip() #Leerstellen rausnehmen
-            #if ECom.LoopToLine.__str__() in lines[i]:#:LoopToLine
-                #loopToLineDict.update({i,-1})
-                #sp=str(lines[i]).split()
-                #if len(sp)==1:
-                #    lines[i]=sp[0]+   Den zugehörigen 'Repeat'  ????
-            if ECom.Repeat.__str__() in lines[i]:#:Repeat
-                repeatLines.append(i)
-        if len(repeatLines)!=len(loopToLineDict):
+        lp=LoopRepeat()
+        lines=lp.checkLines(lines)
+        if lines==None:
             return False
-        lastRepeatPos = len(lines)
-        for i in range(0,len(loopToLineDict)):#Check ob die LoopToLines zu den Repeat passen 
-            
-            if repeatLines[i] > lastRepeatPos:#<---?
-                return False # LoopToLine weist auf falschen Repeat
-        for i in range(0,len(loopToLineDict)):
-            self.einruecken(lines,repeatLines[len(repeatLines)-i-1]+1,loopToLineDict[i])
+        lp.einruecken(lines)
+        #einrücken
+
         self.delete(0,tk.END)
         for i in range(0,len(lines)):
             self.insert(i,lines[i])
         return True
-        
-    def einruecken(self,liste,von,bis):
-        for i in range(von,bis):
-            liste[i]='  '+liste[i]
 
     def myDelete(self, first, last=None):
         if first > self.size():
