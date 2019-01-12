@@ -89,26 +89,26 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             lines.append(li)
         #Alle Spaces rauswerfen, Positionen von 'LOOP' und 'Repeat' merken
         repeatLines=[]
-        loopToLineLines=[]
-        loopToLineZiel=[]
+        loopToLineDict={} #Die Zeile in der LoopToLine steht
+
         for i in range(0, len(lines) ):
-            lines[i] = str(lines[i]).strip()
-            if ECom.LoopToLine.__str__() in lines[i]:#:LoopToLine
-                loopToLineLines.append(i)
+            lines[i] = str(lines[i]).strip() #Leerstellen rausnehmen
+            #if ECom.LoopToLine.__str__() in lines[i]:#:LoopToLine
+                #loopToLineDict.update({i,-1})
                 #sp=str(lines[i]).split()
                 #if len(sp)==1:
                 #    lines[i]=sp[0]+   Den zugehörigen 'Repeat'  ????
             if ECom.Repeat.__str__() in lines[i]:#:Repeat
                 repeatLines.append(i)
-        if len(repeatLines)!=len(loopToLineLines):
+        if len(repeatLines)!=len(loopToLineDict):
             return False
         lastRepeatPos = len(lines)
-        for i in range(0,len(loopToLineLines)):#Check ob die LoopToLines zu den Repeat passen 
+        for i in range(0,len(loopToLineDict)):#Check ob die LoopToLines zu den Repeat passen 
             
             if repeatLines[i] > lastRepeatPos:#<---?
                 return False # LoopToLine weist auf falschen Repeat
-        for i in range(0,len(loopToLineLines)):
-            self.einruecken(lines,repeatLines[len(repeatLines)-i-1]+1,loopToLineLines[i])
+        for i in range(0,len(loopToLineDict)):
+            self.einruecken(lines,repeatLines[len(repeatLines)-i-1]+1,loopToLineDict[i])
         self.delete(0,tk.END)
         for i in range(0,len(lines)):
             self.insert(i,lines[i])
