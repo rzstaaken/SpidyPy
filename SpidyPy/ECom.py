@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class ECom(Enum):
+class ECom(IntEnum):
     '''Enum Commandos  '''
     End = 0
     Repeat = 1
@@ -9,10 +9,6 @@ class ECom(Enum):
 
     def __str__(self):
         return ':'+self.name
+        
 
-class ERunMode(Enum):
-    '''Enum Commandos  '''
-    IDLE = 0
-    SINGLE_STEP = 1
-    AUTOMATIC = 2
 

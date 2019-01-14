@@ -3,9 +3,9 @@ Index,Name,Selected
 1,  eins1,False
 2,  SpidyHoch0,False
 3,  SpidyRunter0,False
-4,  :Repeat 2 (1),False
+4,  :Repeat 2 (2),False
 5,    drei3,False
-6,    :Repeat 2 (1),True
+6,    :Repeat 2 (2),True
 7,      SpidyRunter0,False
 8,      SpidyHoch0,False
 9,    :LoopToLine 6,False

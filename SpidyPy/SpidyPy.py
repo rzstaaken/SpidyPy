@@ -13,7 +13,8 @@ from time import sleep
 import threading
 import Drag_and_Drop_Listbox as DDListbox
 from enum import Enum
-from ECom import ECom,ERunMode
+from ECom import ECom
+from ERunMode import ERunMode
 from LoopRepeat import LoopRepeat
 
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
@@ -40,7 +41,29 @@ class SpidyPy(tk.Frame):
         self.tr=None
         if withRPi:
             self.tr=TrialPCA01.Trial()
+        self.createMenue()
         self.createWidgets()
+
+    def createMenue(self):
+        #self.runModelst=[for in ERunMode. ]
+        self.runModelst=["Idle","Single Step","Automatic"]
+        self.varRunMode=tk.StringVar()
+        self.varRunMode.set(self.runModelst[0])
+        self.opRunMode = tk.OptionMenu(root,self.varRunMode,*self.runModelst,command=self.opRunModeHandler)
+        self.opRunMode['width']=20
+        self.opRunMode.grid(ipadx=20,columnspan=3)
+
+    def opRunModeHandler(self, text):
+        print(text, self.varRunMode.get())
+        # self.mb = tk.Menubutton(root,text="File:")
+        # self.menu = tk.Menu(self.mb,tearoff=False)
+        # self.menu.add_command(label="Save Bewegungen")
+        # self.menu.add_command(label="Save Sequenzen")
+        # self.menu.add_command(label="Save Slider&position")
+
+        # self.menu.add_checkbutton(label="Donald Duck")
+        # self.mb["menu"] = self.menu
+        # self.mb.grid(ipadx=20)
 
     def createWidgets(self):
         self.legScale=[]
@@ -163,40 +186,30 @@ class SpidyPy(tk.Frame):
     def onStartSeq(self,event):
         self.startSeq(ERunMode.AUTOMATIC)
 
-    def startSeq(self,mode=ERunMode.SINGLE_STEP):
-        widget = self.listboxSequenz
-        widget.configure(state = tk.DISABLED)
-        fileNamesIndxList = []
-        fileNamesIndxList = widget.get(0,tk.END)
-        for i in range(0,len( fileNamesIndxList)):
-            sequenz = fileNamesIndxList[i]
-            print("{}:Es wird \'{}\' ausgeführt.".format(i,sequenz))
-            if ECom.LOOP.__str__() in sequenz:
-                widget.selection_clear(i)
-                widget.select_set(i+1)
-                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
-                continue
-            if ECom.Repeat.__str__() in sequenz:
-                widget.selection_clear(i)
-                widget.select_set(i+1)
-                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
-                continue
-            if ECom.End.__str__() in sequenz:
-                widget.selection_clear(i)
-                widget.select_set(0)
-                self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
-                continue
-            self.move(str(sequenz).strip())
-            widget.selection_clear(i)
-            widget.select_set(i+1)
+    def startSeq(self,mode=ERunMode.SINGLE_STEP): 
+        self.varRunMode.set(self.runModelst[mode])
+        while True:
+            self.step()
+            if self.varRunMode.get() == ERunMode.IDLE:
+                break
+            self.update()
             self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
-        self.onReset()
-        widget.configure(state = tk.NORMAL)
+            
+        #widget = self.listboxSequenz
+        #widget.configure(state = tk.DISABLED)
 
     def onStopSeq(self,event):
-        pass
+        #mode=ERunMode.AUTOMATIC
+        #print ( "Typ von mode: ", type( mode ) ) 
+        #print ( "ERunMode.AUTOMATIC: ", ERunMode.AUTOMATIC )
+        self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
 
     def onStep(self,event):
+        self.varRunMode.set(self.runModelst[ERunMode.SINGLE_STEP.value])
+        self.step()
+        self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
+    
+    def step(self):
         cur=self.listboxSequenz.curselection()
         posName = self.listboxSequenz.get(cur)
         sequenz= posName.strip()
@@ -427,13 +440,6 @@ class SpidyPy(tk.Frame):
         self.onReset()      
         self.listboxMoves.fillListBox() #Die Listbox aktualisieren
 
-    def move(self,posName):
-        #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
-        selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext())))
-        dicBewegungen=self.getMotionsDictionaryList(selLegs) 
-        #print(dicBewegungen)
-        self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
-
     def onStart(self,event):
         self.btnStart.configure(state = tk.DISABLED)
         fileNamesIndxList = []
@@ -447,6 +453,13 @@ class SpidyPy(tk.Frame):
                 self.move(fn)
         self.onReset()
         self.btnStart.configure(state = tk.NORMAL)
+
+    def move(self,posName):
+        #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
+        selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext())))
+        dicBewegungen=self.getMotionsDictionaryList(selLegs) 
+        #print(dicBewegungen)
+        self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
 
     def scaleGray(self,num):
         if type(num) is int:
