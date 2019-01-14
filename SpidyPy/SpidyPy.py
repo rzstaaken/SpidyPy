@@ -2,7 +2,6 @@
 V0.18 09.01.2019 15:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
-
 import getpass
 import os
 import csv
@@ -26,7 +25,6 @@ if getpass.getuser() == 'pi':
     print('Das Prg. läuft auf dem RPi!')
 else:
     print('Das Prg. läuft NICHT auf dem RPi!')
-
 
 class SpidyPy(tk.Frame):
 
@@ -75,6 +73,7 @@ class SpidyPy(tk.Frame):
 
         self.labelTimes= tk.Label(root, text = "Times:")
         self.labelTimes.grid(column=i+1, columnspan=3, row=2, sticky='nw')
+
         #Times Textfeld für die Anzahl der Wiederholungen
         entryTextTimes = tk.StringVar()
         self.entryTimes = tk.Entry(root,textvariable=entryTextTimes, width=5)
@@ -98,6 +97,7 @@ class SpidyPy(tk.Frame):
         self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',height=20)
         self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         self.listboxMoves.grid(column=i+1, columnspan=3, row=5, rowspan=11, sticky='nw')
+        
         self.listboxMoves.fillListBox(path='posi')
 
         #Sequenz-Box
@@ -105,6 +105,7 @@ class SpidyPy(tk.Frame):
         self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.myDelete(self.listboxSequenz.nearest(event.y)))     
         self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
+        
         self.listboxSequenz.fillListBox(sequence=True)
 
         self.btnStartSeq = tk.Button(root,width=10)
@@ -133,7 +134,7 @@ class SpidyPy(tk.Frame):
         self.btnInc.bind('<ButtonPress-1>', self.onInc)
         self.btnInc.grid(column=i+2, columnspan=1, row=7, sticky='nw')
 
-        #Repeats
+        #Repeat
         self.btnRep = tk.Button(root,width=10)
         self.btnRep["text"] = ECom.Repeat.__str__() +" 1"
         self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)

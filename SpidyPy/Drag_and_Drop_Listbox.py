@@ -6,6 +6,7 @@
 
 # Wenn 'name' angegeben wird, wird die Reihenfolge und der Inhalt als CSV gespeichert.
 #   Filename ist dann name.csv
+import sys
 import tkinter as tk
 import csv
 from JsonIO import JsonIO
@@ -36,6 +37,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             in der listbox dargestellt.
         """
         try:
+            index=0
             # Wenn die Datei existiert werden die gesicherten Daten geladen
             with open(self.lbname+'.csv', "r")as f:
                 reader = csv.DictReader(f)
@@ -46,8 +48,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                     self.insert(index, Name)
                     if Selected:
                         self.select_set(index)
-            if len(self.curselection())==0: #Wenn nichts selektiert ist
-                self.select_set(0)          #Die erste Zeile selektieren
         except:
             self.delete(0, tk.END)
             if path:
@@ -64,6 +64,8 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 if self.get(tk.END) != ECom.End.__str__():
                     self.insert(tk.END, ECom.End.__str__())
                 self.form()
+                if len(self.curselection())==0: #Wenn nichts selektiert ist
+                    self.select_set(0)          #Die erste Zeile selektieren
 
     def save(self):
         if(self.lbname):
@@ -84,21 +86,27 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 rückt rückwärts alle Zeilen bis zum 'Repeat' ein
             sucht das 2. LOOP usw.    
         '''
-        listeTup = self.get(0, tk.END)
-        lines=[]
-        for li in listeTup:
-            lines.append(li)
+        try:
+            cursel=self.curselection()
+            listeTup = self.get(0, tk.END)
+            lines=[]
+            for li in listeTup:
+                lines.append(li)
 
-        lp=LoopRepeat()
-        lines=lp.checkLines(lines)
-        if lines==None:
-            return False
-        lp.einruecken(lines)
-        #einrücken
+            lp=LoopRepeat()
+            lines=lp.checkLines(lines)
+            if lines==None:
+                return False
+            lp.einruecken(lines)
 
-        self.delete(0,tk.END)
-        for i in range(0,len(lines)):
-            self.insert(i,lines[i])
+            self.delete(0,tk.END)
+            for i in range(0,len(lines)):
+                self.insert(i,lines[i])
+            if len(cursel)==1:
+                self.select_set(cursel[0])
+        except:
+            print("exeption in form():",sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
+        
         return True
 
     def myDelete(self, first, last=None):
