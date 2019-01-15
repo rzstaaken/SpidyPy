@@ -53,6 +53,12 @@ if __name__ == "__main__":
     # names=list(map(lambda x:x[0],ERunMode.__members__.items()))
     # print(names)
 
+    s="ABRAKADABRA"
+    m=[]
+    for i in range(0,len(s)):
+        w=s[i:]+s[ :i]
+        print(w)
+
 
 
     
