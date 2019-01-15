@@ -46,7 +46,7 @@ class SpidyPy(tk.Frame):
 
     def createMenue(self):
         #self.runModelst=[for in ERunMode. ]
-        self.runModelst=["Idle","Single Step","Automatic"]
+        self.runModelst=[name for name,member in ERunMode.__members__.items()]#Schreibt die Name des Enums in eine Liste
         self.varRunMode=tk.StringVar()
         self.varRunMode.set(self.runModelst[0])
         self.opRunMode = tk.OptionMenu(root,self.varRunMode,*self.runModelst,command=self.opRunModeHandler)
@@ -54,7 +54,18 @@ class SpidyPy(tk.Frame):
         self.opRunMode.grid(ipadx=20,columnspan=3)
 
     def opRunModeHandler(self, text):
-        print(text, self.varRunMode.get())
+        #print(text, self.varRunMode.get())
+        print(text)
+        v=self.runModelst.index(text)
+        if v==ERunMode.IDLE.value:
+            print("idle wurde gedrückt!")
+        elif v==ERunMode.STEP.value:
+            print("step wurde gedrückt!")
+        elif v==ERunMode.AUTOMATIC.val:
+            print("automatic wurde gedrückt!")
+
+
+
         # self.mb = tk.Menubutton(root,text="File:")
         # self.menu = tk.Menu(self.mb,tearoff=False)
         # self.menu.add_command(label="Save Bewegungen")
@@ -186,12 +197,17 @@ class SpidyPy(tk.Frame):
     def onStartSeq(self,event):
         self.startSeq(ERunMode.AUTOMATIC)
 
-    def startSeq(self,mode=ERunMode.SINGLE_STEP): 
-        self.varRunMode.set(self.runModelst[mode])
+    def startSeq(self,mode=ERunMode.STEP): 
+        self.varRunMode.set(self.runModelst[mode.value])
         while True:
             self.step()
-            if self.varRunMode.get() == ERunMode.IDLE:
+            if self.varRunMode.get() != ERunMode.AUTOMATIC.value:
                 break
+
+            # if self.varRunMode.get() == ERunMode.IDLE.value:
+            #     break
+            # if self.varRunMode.get() == ERunMode.STEP.value:
+            #     break
             self.update()
             self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
             
@@ -205,7 +221,7 @@ class SpidyPy(tk.Frame):
         self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
 
     def onStep(self,event):
-        self.varRunMode.set(self.runModelst[ERunMode.SINGLE_STEP.value])
+        self.varRunMode.set(self.runModelst[ERunMode.STEP.value])
         self.step()
         self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
     
