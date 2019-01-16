@@ -41,17 +41,15 @@ class SpidyPy(tk.Frame):
         self.tr=None
         if withRPi:
             self.tr=TrialPCA01.Trial()
-        self.createMenue()
         self.createWidgets()
 
-    def createMenue(self):
-        #self.runModelst=[for in ERunMode. ]
+    def createOptionMenueOpRun(self,column=0,row=0):
         self.runModelst=[name for name,member in ERunMode.__members__.items()]#Schreibt die Name des Enums in eine Liste
         self.varRunMode=tk.StringVar()
         self.varRunMode.set(self.runModelst[0])
         self.opRunMode = tk.OptionMenu(root,self.varRunMode,*self.runModelst,command=self.opRunModeHandler)
         self.opRunMode['width']=20
-        self.opRunMode.grid(ipadx=20,columnspan=3)
+        self.opRunMode.grid(column=column,row=row, ipadx=20)
 
     def opRunModeHandler(self, text):
         #print(text, self.varRunMode.get())
@@ -61,20 +59,8 @@ class SpidyPy(tk.Frame):
             print("idle wurde gedrückt!")
         elif v==ERunMode.STEP.value:
             print("step wurde gedrückt!")
-        elif v==ERunMode.AUTOMATIC.val:
+        elif v==ERunMode.AUTOMATIC.value:
             print("automatic wurde gedrückt!")
-
-
-
-        # self.mb = tk.Menubutton(root,text="File:")
-        # self.menu = tk.Menu(self.mb,tearoff=False)
-        # self.menu.add_command(label="Save Bewegungen")
-        # self.menu.add_command(label="Save Sequenzen")
-        # self.menu.add_command(label="Save Slider&position")
-
-        # self.menu.add_checkbutton(label="Donald Duck")
-        # self.mb["menu"] = self.menu
-        # self.mb.grid(ipadx=20)
 
     def createWidgets(self):
         self.legScale=[]
@@ -92,32 +78,19 @@ class SpidyPy(tk.Frame):
         self.name.set("Pos")
         self.entryName = tk.Entry(root)
         self.entryName["textvariable"] = self.name
-        self.entryName.grid(column=i+1, row=0,sticky='w')
+        self.entryName.grid(column=i+1, row=2,sticky='w')
         self.entryNum = tk.Entry(root, width=5)
-        self.entryNum.grid(column=i+2, row=0,sticky='w')
+        self.entryNum.grid(column=i+2, row=2,sticky='w')
         self.setEntryNum(0)
 
         self.btnReset = tk.Button(root, text='Reset')
         self.btnReset["command"] = self.onReset
-        self.btnReset.grid(column=i+1, columnspan=3, row=1, sticky='nw')
-        self.btnEnter = tk.Button(root)
-        self.btnEnter["text"] = "Save"
-        self.btnEnter["command"] = self.onEnter
-        self.btnEnter.grid(column=i+1, columnspan=3, row=1, sticky='ne')
+        self.btnReset.grid(column=i+1, columnspan=1, row=3, sticky='nw')
 
-        self.labelTimes= tk.Label(root, text = "Times:")
-        self.labelTimes.grid(column=i+1, columnspan=3, row=2, sticky='nw')
-
-        #Times Textfeld für die Anzahl der Wiederholungen
-        entryTextTimes = tk.StringVar()
-        self.entryTimes = tk.Entry(root,textvariable=entryTextTimes, width=5)
-        entryTextTimes.set(1)
-        self.entryTimes.grid(column=i+1, columnspan=3, row=2, sticky='ne')
-
-        self.btnStart = tk.Button(root)
-        self.btnStart["text"] = "Start"
-        self.btnStart.bind('<ButtonPress-1>', self.onStart)
-        self.btnStart.grid(column=i+1, columnspan=3, row=3, sticky='nw')
+        self.btnSave = tk.Button(root)
+        self.btnSave["text"] = "Save"
+        self.btnSave["command"] = self.onSave
+        self.btnSave.grid(column=i+1, columnspan=1, row=3, sticky='ne')
 
         #TODO:Die Scrollbar funktioniert noch nicht
         #self.scrollbar = tk.Scrollbar(self, orient='vertical')
@@ -125,21 +98,38 @@ class SpidyPy(tk.Frame):
         self.labelBew = tk.Label(root,text="Bewegungen:")
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
+#Sequenz-Abschnitt
+        self.createOptionMenueOpRun(column=i+4,row=3)
+
         self.labelSeq = tk.Label(root,text="Sequenzen:")
-        self.labelSeq.grid(column=i+4, columnspan=3, row=4, sticky='nw')
+        self.labelSeq.grid(column=i+4, row=4)
 
         self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',height=20)
         self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
-        self.listboxMoves.grid(column=i+1, columnspan=3, row=5, rowspan=11, sticky='nw')
+        self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
         
         self.listboxMoves.fillListBox(path='posi')
 
+        #
+        self.labelTimes= tk.Label(root, text = "Times:")
+        self.labelTimes.grid(column=i+1, columnspan=1, row=17, sticky='nw')
+
+        #Times Textfeld für die Anzahl der Wiederholungen
+        entryTextTimes = tk.StringVar()
+        self.entryTimes = tk.Entry(root,textvariable=entryTextTimes, width=5)
+        entryTextTimes.set(1)
+        self.entryTimes.grid(column=i+1, columnspan=1, row=17, sticky='ne')
+
+        self.btnStart = tk.Button(root)
+        self.btnStart["text"] = "Start"
+        self.btnStart.bind('<ButtonPress-1>', self.onStart)
+        self.btnStart.grid(column=i+1, columnspan=3, row=18, sticky='nw')
+
         #Sequenz-Box
-        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20,width=40,exportselection=False)
+        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20,width=33,exportselection=False)
         self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.myDelete(self.listboxSequenz.nearest(event.y)))     
         self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
-        self.listboxSequenz.grid(column=i+4, columnspan=3, row=5, rowspan=11, sticky='nw')
-        
+        self.listboxSequenz.grid(column=i+4, row=5,rowspan=10)       
         self.listboxSequenz.fillListBox(sequence=True)
 
         self.btnStartSeq = tk.Button(root,width=10)
@@ -155,12 +145,12 @@ class SpidyPy(tk.Frame):
         self.btnStep = tk.Button(root,width=10)
         self.btnStep["text"] = "Step"
         self.btnStep.bind('<ButtonPress-1>', self.onStep)
-        self.btnStep.grid(column=i+5, row=17, sticky='nw')
+        self.btnStep.grid(column=i+4, row=17, sticky='ne')
 
         self.btnToSeq = tk.Button(root,width=10)
         self.btnToSeq["text"] = "---->"
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
-        self.btnToSeq.grid(column=i+2, columnspan=1, row=5, sticky='nw')
+        self.btnToSeq.grid(column=i+2, row=5)
 
         #+1
         self.btnInc = tk.Button(root,width=10)
@@ -436,7 +426,7 @@ class SpidyPy(tk.Frame):
     def onExit(self):
         self.destroy()
 
-    def onEnter(self):
+    def onSave(self):
         """
         Die Scale-Positionen in eine Datei schreiben
         """
