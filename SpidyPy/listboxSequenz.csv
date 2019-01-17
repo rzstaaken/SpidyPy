@@ -5,9 +5,9 @@ Index,Name,Selected
 3,  SpidyRunter0,False
 4,  :Repeat 2 (2),False
 5,    drei3,False
-6,    :Repeat 2 (2),True
+6,    :Repeat 2 (2),False
 7,      SpidyRunter0,False
-8,      SpidyHoch0,False
+8,      SpidyHoch0,True
 9,    :LoopToLine 6,False
 10,    zwei2,False
 11,  :LoopToLine 4,False

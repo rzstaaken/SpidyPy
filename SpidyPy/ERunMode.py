@@ -3,9 +3,10 @@ from enum import Enum
 
 class ERunMode(Enum):
     '''Betriebsarten  '''
-    IDLE = 0        #Während  Ablauf steht
-    STEP = 1        #Während  SingleStep ausgeführt wird
-    AUTOMATIC = 2   #Während  Automatik ausgeführt wird
+    IDLE = 0        #Wenn das System steht
+    STEP = 1        #Während  SingleStep (Einzelschritt) ausgeführt wird
+    SEQUENCE = 2    #Fährt die Sequenz bis END und geht dann in IDLE
+    AUTOMATIC = 3   #Automatiklauf startet bei END wieder in der ersten Zeile
 
     @staticmethod
     def getNames():
@@ -14,16 +15,6 @@ class ERunMode(Enum):
     def getValues():
         return list(map(lambda x:ERunMode.getNames().index(x),[name for name,member in ERunMode.__members__.items()]))
 
-# class Waehrung ( Enum ):
-#     EUR = "EUR"
-#     USD = "USD"
-#     JPY = "JPY"
-#     HUF = "HUF"
-#     NOK = "NOK"
-
-#     @staticmethod
-#     def getNames ( ):
-#         return [ name for name, member in Waehrung.__members__.items ( ) ]
 
 
 
@@ -33,31 +24,11 @@ if __name__ == "__main__":
     # er = ERunMode()
     print(ERunMode.getNames())
     print(ERunMode.getValues())
-    #print(ERunMode.__members__.items())
-    # print ( Waehrung.HUF )
-    # print ( Waehrung.getNames ( ) )
-    # dic={}
-    # for erun in ERunMode:
-    #     dic.update( {erun.name:erun.value})
-    # print( dic )
 
-    # eruList=[] 
-    # for erun in ERunMode:eruList.append(erun.name)
-    # print( eruList )
+    run = ERunMode.SEQUENCE.__str__()
+    print(run)
 
-    # li=[dic[x] for x in dic ]
-    # print(li)
 
-    # print(list(map(lambda x: x ,dic)))
-
-    # names=list(map(lambda x:x[0],ERunMode.__members__.items()))
-    # print(names)
-
-    s="ABRAKADABRA"
-    m=[]
-    for i in range(0,len(s)):
-        w=s[i:]+s[ :i]
-        print(w)
 
 
 

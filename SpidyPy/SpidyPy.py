@@ -6,6 +6,8 @@ import getpass
 import os
 import csv
 import re
+import time
+from threading import *
 from JsonIO import JsonIO
 import tkinter as tk
 import SpiderDefaults
@@ -54,12 +56,14 @@ class SpidyPy(tk.Frame):
     def opRunModeHandler(self, text):
         #print(text, self.varRunMode.get())
         print(text)
-        v=self.runModelst.index(text)
-        if v==ERunMode.IDLE.value:
+        self.runMode=self.runModelst.index(text)
+        if self.runMode==ERunMode.IDLE.value:
             print("idle wurde gedrückt!")
-        elif v==ERunMode.STEP.value:
+        elif self.runMode==ERunMode.STEP.value:
             print("step wurde gedrückt!")
-        elif v==ERunMode.AUTOMATIC.value:
+        elif self.runMode==ERunMode.SEQUENCE.value:
+            print("sequenz wurde gedrückt!")
+        elif self.runMode==ERunMode.AUTOMATIC.value:
             print("automatic wurde gedrückt!")
 
     def createWidgets(self):
@@ -132,21 +136,6 @@ class SpidyPy(tk.Frame):
         self.listboxSequenz.grid(column=i+4, row=5,rowspan=10)       
         self.listboxSequenz.fillListBox(sequence=True)
 
-        self.btnStartSeq = tk.Button(root,width=10)
-        self.btnStartSeq["text"] = "Start Seq."
-        self.btnStartSeq.bind('<ButtonPress-1>', self.onStartSeq)
-        self.btnStartSeq.grid(column=i+4, row=17, sticky='nw')
-
-        self.btnStopSeq = tk.Button(root,width=10)
-        self.btnStopSeq["text"] = "Stop Seq."
-        self.btnStopSeq.bind('<ButtonPress-1>', self.onStopSeq)
-        self.btnStopSeq.grid(column=i+4, row=18, sticky='nw')
-
-        self.btnStep = tk.Button(root,width=10)
-        self.btnStep["text"] = "Step"
-        self.btnStep.bind('<ButtonPress-1>', self.onStep)
-        self.btnStep.grid(column=i+4, row=17, sticky='ne')
-
         self.btnToSeq = tk.Button(root,width=10)
         self.btnToSeq["text"] = "---->"
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
@@ -176,16 +165,43 @@ class SpidyPy(tk.Frame):
         self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
         self.btnLOOP.grid(column=i+2, columnspan=1, row=10, sticky='nw')
 
-        #check
-        self.btnCheck = tk.Button(root,width=10)
-        self.btnCheck["text"] = " Check "
-        self.btnCheck.bind('<ButtonPress-1>', self.onCheck)
-        self.btnCheck.grid(column=i+2, columnspan=1, row=11, sticky='nw')
+        #Wait
+        self.btnWait = tk.Button(root,width=10)
+        self.btnWait["text"] = " Wait "
+        self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
+        self.btnWait.grid(column=i+2, columnspan=1, row=11, sticky='nw')
 
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
+        self.runMode=ERunMode.IDLE
+        self.th_runner = Thread(target=self.runner,args=(0,))
+        self.th_runner.setDaemon(True) #Damit lässt sich die Anwendung ohne Fehler beenden
+        self.th_runner.start()
 
-    def onStartSeq(self,event):
-        self.startSeq(ERunMode.AUTOMATIC)
+    def runner(self,a):
+        global thread_started
+        #lock.acquire()
+        thread_started=True
+        while True:
+            time.sleep(1)
+            self.runMode=self.runModelst.index(self.varRunMode.get())
+            #print("runner")
+            if self.runMode==ERunMode.IDLE.value:
+                #print("idle")
+                pass
+            elif self.runMode==ERunMode.STEP.value:
+                #print("step")
+                self.doStep()
+            elif self.runMode==ERunMode.SEQUENCE.value:
+                #print("sequenz")
+                self.step()                     #Ohne die Betriebsart zu wechseln
+                if self.getCurCommand()==ECom.End.__str__():  #':End'
+                    self.doStep()           #Mach einen Schritt zur ersten Zeile und gehe in Idle
+            elif self.runMode==ERunMode.AUTOMATIC.value:
+                #print("automatic")
+                self.step()                     #Ohne die Betriebsart zu wechseln
+        thread_started=False
+        #lock.release()
+        
 
     def startSeq(self,mode=ERunMode.STEP): 
         self.varRunMode.set(self.runModelst[mode.value])
@@ -204,25 +220,22 @@ class SpidyPy(tk.Frame):
         #widget = self.listboxSequenz
         #widget.configure(state = tk.DISABLED)
 
-    def onStopSeq(self,event):
-        #mode=ERunMode.AUTOMATIC
-        #print ( "Typ von mode: ", type( mode ) ) 
-        #print ( "ERunMode.AUTOMATIC: ", ERunMode.AUTOMATIC )
-        self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
-
-    def onStep(self,event):
+    def doStep(self):
         self.varRunMode.set(self.runModelst[ERunMode.STEP.value])
         self.step()
         self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
     
-    def step(self):
+    def getCurCommand(self):
         cur=self.listboxSequenz.curselection()
         posName = self.listboxSequenz.get(cur)
-        sequenz= posName.strip()
-        if sequenz[0:1]!=':':
-            self.move(str(sequenz).strip())
+        return posName.strip()
+
+    def step(self):
+        command= self.getCurCommand()
+        if command[0:1]!=':':
+            self.move(str(command).strip())
         n=self.nextStep()
-        print("nextStep={}".format(n))
+        #print("nextStep={}".format(n))
         self.listboxSequenz.select_set(n)
 
     def nextStep(self):
@@ -267,10 +280,8 @@ class SpidyPy(tk.Frame):
             return n
         return 0
 
-    def onCheck(self,event):
-        self.listboxSequenz.check()
 
-    def windowDelHandler(self): 
+    def windowDelHandler(self):
         self.is_mw = False 
         self.saveListboxes()
         self.master.quit() 
@@ -344,7 +355,17 @@ class SpidyPy(tk.Frame):
             p=cur[0]
             self.listboxSequenz.selection_clear(p)
             self.listboxSequenz.insert(p,self.btnRep["text"])
-            self.onCheck(None)
+            self.listboxSequenz.check()
+
+    def onInsertWait(self,event):
+        cur=self.listboxSequenz.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            self.listboxSequenz.selection_clear(p)
+            self.listboxSequenz.insert(p,ECom.Wait.__str__()+' 1.5 (1.5)')# TODO
+            self.listboxSequenz.check()
+
+
 
     def onLOOP(self,event):
         #LOOP X
@@ -353,7 +374,7 @@ class SpidyPy(tk.Frame):
             p=cur[0]
             self.listboxSequenz.selection_clear(p)
             self.listboxSequenz.insert(p,self.btnLOOP["text"])
-            self.onCheck(None)
+            self.onInsertWait(None)
 
     def onToSeq(self,event):
         #---->
@@ -371,7 +392,7 @@ class SpidyPy(tk.Frame):
         p2 = p
         for a in items:
             listbox.insert(p2,a)
-        self.onCheck(None)     
+        self.onInsertWait(None)     
         
     def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
