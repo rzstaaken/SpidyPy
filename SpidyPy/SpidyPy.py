@@ -10,6 +10,7 @@ import time
 from threading import Thread
 from JsonIO import JsonIO
 import tkinter as tk
+import tkinter.messagebox as tkmb
 import SpiderDefaults
 from time import sleep
 import threading
@@ -99,17 +100,18 @@ class SpidyPy(tk.Frame):
         #TODO:Die Scrollbar funktioniert noch nicht
         #self.scrollbar = tk.Scrollbar(self, orient='vertical')
         #self.scrollbar.grid(column=i+3,columnspan=3, row=4, rowspan=11)
-        self.labelBew = tk.Label(root,text="Bewegungen:")
+        self.labelBew = tk.Label(root,text="Movings:")  #Bewegungen
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
 #Sequenz-Abschnitt
         self.createOptionMenueOpRun(column=i+4,row=3)
 
-        self.labelSeq = tk.Label(root,text="Sequenzen:")
-        self.labelSeq.grid(column=i+4, row=4)
+        self.labelProcedure = tk.Label(root,text="Procedure:")# Sequenz jetzt Procedure (Ablauf)
+        self.labelProcedure.grid(column=i+4, row=4)
 
         self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',height=20)
         self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
+        self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
         self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
         
         self.listboxMoves.fillListBox(path='posi')
@@ -556,6 +558,12 @@ class SpidyPy(tk.Frame):
                 self.move(fn)
         self.onReset()
         self.btnStart.configure(state = tk.NORMAL)
+
+    def delMove(self,posName):
+        filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext()))
+        print(posName)
+        if tkmb.askyesno(title="Delete", message="Should the file \""+posName +"\" really be deleted?"):
+            pass
 
     def move(self,posName):
         #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
