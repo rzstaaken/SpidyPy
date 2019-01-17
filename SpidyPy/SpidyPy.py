@@ -181,6 +181,12 @@ class SpidyPy(tk.Frame):
         self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
         #self.result.bind('<<UpdateNeeded>>', self.do_update)
 
+        #Wait
+        self.btnDelSequLine = tk.Button(root,width=10)
+        self.btnDelSequLine["text"] = "Delete Line"
+        self.btnDelSequLine.bind('<ButtonPress-1>', self.onDelSequLine)
+        self.btnDelSequLine.grid(column=i+2, columnspan=1, row=14, sticky='nw')
+
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
         self.runMode=ERunMode.IDLE
         self.th_runner = Thread(target=self.runner,args=(0,))
@@ -429,6 +435,14 @@ class SpidyPy(tk.Frame):
             self.listboxSequenz.check()
             self.listboxSequenz.select_set(p)
 
+    def onDelSequLine(self,event):
+        cur=self.listboxSequenz.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            self.listboxSequenz.delete(p)
+            self.listboxSequenz.check()
+            self.listboxSequenz.select_set(p)
+            
     def onLOOP(self,event):
         #LOOP X
         cur=self.listboxSequenz.curselection()
