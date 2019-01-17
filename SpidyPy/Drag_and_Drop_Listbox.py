@@ -69,7 +69,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
 
     def save(self):
         if(self.lbname):
-            print("Save Reihenfolge {}".format(self.lbname))
+            #print("Save Reihenfolge {}".format(self.lbname))
             fieldnames = ['Index', 'Name', 'Selected']
             with open(self.lbname+'.csv', "w") as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)

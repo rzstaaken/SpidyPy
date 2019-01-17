@@ -7,7 +7,7 @@ import os
 import csv
 import re
 import time
-from threading import *
+from threading import Thread
 from JsonIO import JsonIO
 import tkinter as tk
 import SpiderDefaults
@@ -171,18 +171,44 @@ class SpidyPy(tk.Frame):
         self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
         self.btnWait.grid(column=i+2, columnspan=1, row=11, sticky='nw')
 
+        #Wait Textfeld (float) für die Sekunden
+        self.vcmd = root.register(self.is_number)
+        self.entryTextWaitSec = tk.StringVar()
+        self.entryWaitSec = tk.Entry(root,justify='right',textvariable=self.entryTextWaitSec, width=12)
+        self.entryTextWaitSec.set(2.5)
+        self.entryWaitSec.grid(column=i+2, columnspan=1, row=13, sticky='nw')
+        self.entryWaitSec['validate']='key'
+        self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
+        #self.result.bind('<<UpdateNeeded>>', self.do_update)
+
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
         self.runMode=ERunMode.IDLE
         self.th_runner = Thread(target=self.runner,args=(0,))
         self.th_runner.setDaemon(True) #Damit lässt sich die Anwendung ohne Fehler beenden
         self.th_runner.start()
 
+# Callback functions
+    def is_number(self,data):
+        if data == '':
+            return True
+        try:
+            float(data)
+            #print('value:', data)
+        except ValueError:
+            return False
+        return True
+
+    def do_update(self,event):
+        w = event.widget
+        number = float(self.entryWaitSec.get())
+        w['text'] = '{}'.format(number)
+
     def runner(self,a):
         global thread_started
         #lock.acquire()
         thread_started=True
         while True:
-            time.sleep(1)
+            #time.sleep(1)
             self.runMode=self.runModelst.index(self.varRunMode.get())
             #print("runner")
             if self.runMode==ERunMode.IDLE.value:
@@ -228,12 +254,47 @@ class SpidyPy(tk.Frame):
     def getCurCommand(self):
         cur=self.listboxSequenz.curselection()
         posName = self.listboxSequenz.get(cur)
-        return posName.strip()
+        striped=posName.strip()
+        return striped
+
+    def getCurSpaces(self):
+        cur=self.listboxSequenz.curselection()
+        posName = self.listboxSequenz.get(cur)
+        striped=posName.strip()
+        spacesNr=len(posName) - len(striped)
+
+        return ' ' * spacesNr #Liefert  x spaces
 
     def step(self):
         command= self.getCurCommand()
         if command[0:1]!=':':
             self.move(str(command).strip())
+        if ECom.Wait.__str__() in command:
+            cur=self.listboxSequenz.curselection()
+            if len(cur)==1:
+                n=cur[0]
+                a=command.split(' ')
+                start=float(a[1])
+                klammerpos=str(a[2]).find("(")
+                if(klammerpos>=0):
+                    time.sleep(0.1)
+                    ist=float(a[2][klammerpos+1:-1])
+                    #start=int(p[initpos+len(ECom.Wait.__str__())+1:intposEnde+2])
+                    spaces=self.getCurSpaces()
+                    if ist<=0.1:#Sollwert erreicht -> ist = start
+                        x=spaces + ECom.Wait.__str__() +' '+str(start)+' ('+"%.1f"%(start) +')'
+                        self.listboxSequenz.delete(n)
+                        self.listboxSequenz.insert(n,x)
+                        n=n+1
+                        self.listboxSequenz.select_set(n)
+                        return 
+                    ist=ist-0.1
+                    x=spaces + ECom.Wait.__str__() +' '+str(start)+' ('+ "%.1f"%(ist) +')'
+                    self.listboxSequenz.delete(n)
+                    self.listboxSequenz.insert(n,x)
+                    self.listboxSequenz.select_set(n)
+                    return
+
         n=self.nextStep()
         #print("nextStep={}".format(n))
         self.listboxSequenz.select_set(n)
@@ -349,23 +410,24 @@ class SpidyPy(tk.Frame):
         self.btnRep["text"] = self.decrement(self.btnRep["text"])
 
     def onInsertRepeat(self,event):
-        #
         cur=self.listboxSequenz.curselection()
         if len(cur)==1:
             p=cur[0]
             self.listboxSequenz.selection_clear(p)
             self.listboxSequenz.insert(p,self.btnRep["text"])
             self.listboxSequenz.check()
+            self.listboxSequenz.select_set(p)
+
 
     def onInsertWait(self,event):
+        wert=self.entryWaitSec.get()
         cur=self.listboxSequenz.curselection()
         if len(cur)==1:
             p=cur[0]
             self.listboxSequenz.selection_clear(p)
-            self.listboxSequenz.insert(p,ECom.Wait.__str__()+' 1.5 (1.5)')# TODO
+            self.listboxSequenz.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
             self.listboxSequenz.check()
-
-
+            self.listboxSequenz.select_set(p)
 
     def onLOOP(self,event):
         #LOOP X

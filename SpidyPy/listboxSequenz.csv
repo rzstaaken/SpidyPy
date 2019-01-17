@@ -5,12 +5,13 @@ Index,Name,Selected
 3,  SpidyRunter0,False
 4,  :Repeat 2 (2),False
 5,    drei3,False
-6,    :Repeat 2 (2),False
+6,    :Repeat 2 (2),True
 7,      SpidyRunter0,False
-8,      SpidyHoch0,True
-9,    :LoopToLine 6,False
-10,    zwei2,False
-11,  :LoopToLine 4,False
-12,  vier4,False
-13,:LoopToLine 0,False
-14,:End,False
+8,      :Wait 10.2 (10.2),False
+9,      SpidyHoch0,False
+10,    :LoopToLine 6,False
+11,    zwei2,False
+12,  :LoopToLine 4,False
+13,  vier4,False
+14,:LoopToLine 0,False
+15,:End,False
