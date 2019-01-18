@@ -103,7 +103,7 @@ class SpidyPy(tk.Frame):
         self.labelBew = tk.Label(root,text="Movings:")  #Bewegungen
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
-#Sequenz-Abschnitt
+        #Moving-Abschnitt
         self.createOptionMenueOpRun(column=i+4,row=3)
 
         self.labelProcedure = tk.Label(root,text="Procedure:")# Sequenz jetzt Procedure (Ablauf)
@@ -131,12 +131,12 @@ class SpidyPy(tk.Frame):
         self.btnStart.bind('<ButtonPress-1>', self.onStart)
         self.btnStart.grid(column=i+1, columnspan=3, row=18, sticky='nw')
 
-        #Sequenz-Box
-        self.listboxSequenz=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxSequenz',height=20,width=33,exportselection=False)
-        self.listboxSequenz.bind('<Button-3>', lambda event: self.listboxSequenz.myDelete(self.listboxSequenz.nearest(event.y)))     
-        self.listboxSequenz['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
-        self.listboxSequenz.grid(column=i+4, row=5,rowspan=10)       
-        self.listboxSequenz.fillListBox(sequence=True)
+        #Procedure-Box
+        self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxProcedure',height=20,width=33,exportselection=False)
+        self.listboxProcedure.bind('<Button-3>', lambda event: self.listboxProcedure.myDelete(self.listboxProcedure.nearest(event.y)))     
+        self.listboxProcedure['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
+        self.listboxProcedure.grid(column=i+4, row=5,rowspan=10)       
+        self.listboxProcedure.fillListBox(procedure=True)
 
         self.btnToSeq = tk.Button(root,width=10)
         self.btnToSeq["text"] = "---->"
@@ -169,7 +169,7 @@ class SpidyPy(tk.Frame):
 
         #Wait
         self.btnWait = tk.Button(root,width=10)
-        self.btnWait["text"] = " Wait "
+        self.btnWait["text"] = ECom.Wait.__str__()+' 3.0'
         self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
         self.btnWait.grid(column=i+2, columnspan=1, row=11, sticky='nw')
 
@@ -204,6 +204,7 @@ class SpidyPy(tk.Frame):
             #print('value:', data)
         except ValueError:
             return False
+        self.btnWait['text']=ECom.Wait.__str__()+' '+data
         return True
 
     def do_update(self,event):
@@ -260,14 +261,14 @@ class SpidyPy(tk.Frame):
         self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
     
     def getCurCommand(self):
-        cur=self.listboxSequenz.curselection()
-        posName = self.listboxSequenz.get(cur)
+        cur=self.listboxProcedure.curselection()
+        posName = self.listboxProcedure.get(cur)
         striped=posName.strip()
         return striped
 
     def getCurSpaces(self):
-        cur=self.listboxSequenz.curselection()
-        posName = self.listboxSequenz.get(cur)
+        cur=self.listboxProcedure.curselection()
+        posName = self.listboxProcedure.get(cur)
         striped=posName.strip()
         spacesNr=len(posName) - len(striped)
 
@@ -278,7 +279,7 @@ class SpidyPy(tk.Frame):
         if command[0:1]!=':':
             self.move(str(command).strip())
         if ECom.Wait.__str__() in command:
-            cur=self.listboxSequenz.curselection()
+            cur=self.listboxProcedure.curselection()
             if len(cur)==1:
                 n=cur[0]
                 a=command.split(' ')
@@ -291,41 +292,41 @@ class SpidyPy(tk.Frame):
                     spaces=self.getCurSpaces()
                     if ist<=0.1:#Sollwert erreicht -> ist = start
                         x=spaces + ECom.Wait.__str__() +' '+str(start)+' ('+"%.1f"%(start) +')'
-                        self.listboxSequenz.delete(n)
-                        self.listboxSequenz.insert(n,x)
+                        self.listboxProcedure.delete(n)
+                        self.listboxProcedure.insert(n,x)
                         n=n+1
-                        self.listboxSequenz.select_set(n)
+                        self.listboxProcedure.select_set(n)
                         return 
                     ist=ist-0.1
                     x=spaces + ECom.Wait.__str__() +' '+str(start)+' ('+ "%.1f"%(ist) +')'
-                    self.listboxSequenz.delete(n)
-                    self.listboxSequenz.insert(n,x)
-                    self.listboxSequenz.select_set(n)
+                    self.listboxProcedure.delete(n)
+                    self.listboxProcedure.insert(n,x)
+                    self.listboxProcedure.select_set(n)
                     return
 
         n=self.nextStep()
         #print("nextStep={}".format(n))
-        self.listboxSequenz.select_set(n)
+        self.listboxProcedure.select_set(n)
 
     def nextStep(self):
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)<1:#Keiner selektiert
-            self.listboxSequenz.select_set(0)
-            cur=self.listboxSequenz.curselection()
+            self.listboxProcedure.select_set(0)
+            cur=self.listboxProcedure.curselection()
         if len(cur)>1:#Mehr als einer selektiert
-            self.listboxSequenz.selection_clear(0,tk.END)
-            self.listboxSequenz.select_set(cur[0])
-            cur=self.listboxSequenz.curselection()
+            self.listboxProcedure.selection_clear(0,tk.END)
+            self.listboxProcedure.select_set(cur[0])
+            cur=self.listboxProcedure.curselection()
         if len(cur)==1:
             p=cur[0]
-            self.listboxSequenz.selection_clear(p)
-            if ECom.End.__str__() in self.listboxSequenz.get(p):  # ':End'
+            self.listboxProcedure.selection_clear(p)
+            if ECom.End.__str__() in self.listboxProcedure.get(p):  # ':End'
                 n=0
-            elif ECom.LoopToLine.__str__()in self.listboxSequenz.get(p): 
-                line = str(self.listboxSequenz.get(p)).strip() #Leerstellen rausnehmen
+            elif ECom.LoopToLine.__str__()in self.listboxProcedure.get(p): 
+                line = str(self.listboxProcedure.get(p)).strip() #Leerstellen rausnehmen
                 a=line.split(' ')
                 nr=int(a[1])
-                ziel = self.listboxSequenz.get(nr)
+                ziel = self.listboxProcedure.get(nr)
                 links=str(ziel).find("(")
                 rep=ECom.Repeat.__str__()
                 initpos=str(ziel).find(rep)
@@ -335,14 +336,14 @@ class SpidyPy(tk.Frame):
                     start=int(ziel[initpos+len(rep)+1:intposEnde+2])
                     if ist<=1:#Sollwert erreicht -> ist = start
                         x=ziel[0:intposEnde+2]+' ('+str(start)+')'
-                        self.listboxSequenz.delete(nr)
-                        self.listboxSequenz.insert(nr,x)
+                        self.listboxProcedure.delete(nr)
+                        self.listboxProcedure.insert(nr,x)
                         n=p+1
                         return n
                     #Den Wert in Klammern um 1 vermindern
                     x=ziel[0:intposEnde+2]+' ('+str(ist-1)+')'
-                    self.listboxSequenz.delete(nr)
-                    self.listboxSequenz.insert(nr,x)
+                    self.listboxProcedure.delete(nr)
+                    self.listboxProcedure.insert(nr,x)
                 n=nr
             else:
                 n=p+1
@@ -358,7 +359,7 @@ class SpidyPy(tk.Frame):
 
     def saveListboxes(self):
         self.listboxMoves.save()
-        self.listboxSequenz.save()
+        self.listboxProcedure.save()
 
     def increment(self,s):
         """ look for the last sequence of number(s) in a string and increment """
@@ -383,75 +384,75 @@ class SpidyPy(tk.Frame):
     def onInc(self,event):
         #+1
         #Testen ob die Sequenzen selektiert sind und ein Repeat ausgewählt ist
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)==1:
             p=cur[0]
-            st=self.listboxSequenz.get(p)
+            st=self.listboxProcedure.get(p)
             st=st.strip()
             a = st.split(' ')
             st = a[0]+' '+a[1]
             if p >= 0 and 'Repeat' in st:
                 s=self.increment(st)
-                self.listboxSequenz.delete(p)
-                self.listboxSequenz.insert(p,s)
-                self.listboxSequenz.check()
-                self.listboxSequenz.select_set(p)
+                self.listboxProcedure.delete(p)
+                self.listboxProcedure.insert(p,s)
+                self.listboxProcedure.check()
+                self.listboxProcedure.select_set(p)
                 return
         self.btnRep["text"] = self.increment(self.btnRep["text"])
 
     def onDec(self,event):
         #-1
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)==1:
             p=cur[0]
-            st=self.listboxSequenz.get(p)
+            st=self.listboxProcedure.get(p)
             st=st.strip()
             a = st.split(' ')
             st = a[0]+' '+a[1]
             if p >= 0 and ECom.Repeat.__str__() in st:
                 s=self.decrement(st)
-                self.listboxSequenz.delete(p)
-                self.listboxSequenz.insert(p,s)
-                self.listboxSequenz.check()
-                self.listboxSequenz.select_set(p)
+                self.listboxProcedure.delete(p)
+                self.listboxProcedure.insert(p,s)
+                self.listboxProcedure.check()
+                self.listboxProcedure.select_set(p)
                 return
         self.btnRep["text"] = self.decrement(self.btnRep["text"])
 
     def onInsertRepeat(self,event):
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)==1:
             p=cur[0]
-            self.listboxSequenz.selection_clear(p)
-            self.listboxSequenz.insert(p,self.btnRep["text"])
-            self.listboxSequenz.check()
-            self.listboxSequenz.select_set(p)
+            self.listboxProcedure.selection_clear(p)
+            self.listboxProcedure.insert(p,self.btnRep["text"])
+            self.listboxProcedure.check()
+            self.listboxProcedure.select_set(p)
 
 
     def onInsertWait(self,event):
         wert=self.entryWaitSec.get()
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)==1:
             p=cur[0]
-            self.listboxSequenz.selection_clear(p)
-            self.listboxSequenz.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
-            self.listboxSequenz.check()
-            self.listboxSequenz.select_set(p)
+            self.listboxProcedure.selection_clear(p)
+            self.listboxProcedure.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
+            self.listboxProcedure.check()
+            self.listboxProcedure.select_set(p)
 
     def onDelSequLine(self,event):
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)==1:
             p=cur[0]
-            self.listboxSequenz.delete(p)
-            self.listboxSequenz.check()
-            self.listboxSequenz.select_set(p)
+            self.listboxProcedure.delete(p)
+            self.listboxProcedure.check()
+            self.listboxProcedure.select_set(p)
             
     def onLOOP(self,event):
         #LOOP X
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)==1:
             p=cur[0]
-            self.listboxSequenz.selection_clear(p)
-            self.listboxSequenz.insert(p,self.btnLOOP["text"])
+            self.listboxProcedure.selection_clear(p)
+            self.listboxProcedure.insert(p,self.btnLOOP["text"])
             self.onInsertWait(None)
 
     def onToSeq(self,event):
@@ -460,10 +461,10 @@ class SpidyPy(tk.Frame):
         items=[]
         for i in sz:
             items.append(self.listboxMoves.get(i))
-        self.einfuegen(listbox=self.listboxSequenz,items=items)
+        self.einfuegen(listbox=self.listboxProcedure,items=items)
 
     def einfuegen(self,listbox,items):
-        cur=self.listboxSequenz.curselection()
+        cur=self.listboxProcedure.curselection()
         if len(cur)!=1:
             return
         p=cur[0]

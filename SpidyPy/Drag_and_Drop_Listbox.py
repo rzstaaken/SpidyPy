@@ -31,7 +31,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.lbname = lbname
         self.is_mw = True
 
-    def fillListBox(self, sequence=False, path=None):
+    def fillListBox(self, procedure=False, path=None):
         """
             Aus dem Directory path werden die json-Dateien gelesen und
             in der listbox dargestellt.
@@ -60,7 +60,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                         self.insert(i, fileName)
                         i = i+1
         finally:
-            if sequence:
+            if procedure:
                 if self.get(tk.END) != ECom.End.__str__():
                     self.insert(tk.END, ECom.End.__str__())
                 self.form()
@@ -110,6 +110,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         return True
 
     def myDelete(self, first, last=None):
+
         if first > self.size():
             first = self.size()
         if not last:
