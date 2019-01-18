@@ -10,7 +10,6 @@ import time
 from threading import Thread
 from JsonIO import JsonIO
 import tkinter as tk
-import tkinter.messagebox as tkmb
 import SpiderDefaults
 from time import sleep
 import threading
@@ -18,6 +17,7 @@ import Drag_and_Drop_Listbox as DDListbox
 from enum import Enum
 from ECom import ECom
 from ERunMode import ERunMode
+from EListbox import EListbox
 from LoopRepeat import LoopRepeat
 
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
@@ -104,9 +104,9 @@ class SpidyPy(tk.Frame):
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
         #Moving-Abschnitt
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',height=20)
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',elistbox=EListbox.MOVES,height=20)
         self.listboxMoves.bind('<Button-2>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
-        self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
+        #self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
         self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
         
         self.listboxMoves.fillListBox(path='posi')
@@ -138,8 +138,8 @@ class SpidyPy(tk.Frame):
         self.btnDelMovesLine.grid(column=i+1, columnspan=1, row=18, sticky='ne')
 
         #Procedure-Box
-        self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxProcedure',height=20,width=33,exportselection=False)
-        self.listboxProcedure.bind('<Button-3>', lambda event: self.listboxProcedure.myDelete(self.listboxProcedure.nearest(event.y)))     
+        self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxProcedure',elistbox=EListbox.PROCEDURE,height=20,width=33,exportselection=False)
+        #self.listboxProcedure.bind('<Button-3>', lambda event: self.listboxProcedure.myDelete(self.listboxProcedure.nearest(event.y)))     
         self.listboxProcedure['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxProcedure.grid(column=i+4, row=5,rowspan=10)       
         self.listboxProcedure.fillListBox(procedure=True)
@@ -175,7 +175,7 @@ class SpidyPy(tk.Frame):
 
         #Wait
         self.btnWait = tk.Button(root,width=10)
-        self.btnWait["text"] = ECom.Wait.__str__()+' 3.0'
+        self.btnWait["text"] = ECom.Wait.__str__()
         self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
         self.btnWait.grid(column=i+2, columnspan=1, row=11, sticky='nw')
 
@@ -183,10 +183,10 @@ class SpidyPy(tk.Frame):
         self.vcmd = root.register(self.is_number)
         self.entryTextWaitSec = tk.StringVar()
         self.entryWaitSec = tk.Entry(root,justify='right',textvariable=self.entryTextWaitSec, width=12)
-        self.entryTextWaitSec.set(2.5)
         self.entryWaitSec.grid(column=i+2, columnspan=1, row=13, sticky='nw')
         self.entryWaitSec['validate']='key'
         self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
+        self.entryTextWaitSec.set(2.5)
         #self.result.bind('<<UpdateNeeded>>', self.do_update)
 
         self.btnDelSequLine = tk.Button(root,width=10)
@@ -573,12 +573,6 @@ class SpidyPy(tk.Frame):
                 self.move(fn)
         self.onReset()
         self.btnStart.configure(state = tk.NORMAL)
-
-    def delMove(self,posName):
-        filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext()))
-        print(posName)
-        if tkmb.askyesno(title="Delete", message="Should the file \""+posName +"\" really be deleted?"):
-            pass
 
     def move(self,posName):
         #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))

@@ -7,47 +7,75 @@
 # Wenn 'name' angegeben wird, wird die Reihenfolge und der Inhalt als CSV gespeichert.
 #   Filename ist dann name.csv
 import sys
+import os
 import tkinter as tk
+import tkinter.messagebox as tkmb
 import csv
 from JsonIO import JsonIO
 import SpiderDefaults
 from ECom import ECom
 from LoopRepeat import LoopRepeat
+from EListbox import EListbox
+
 
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
 
-    def __init__(self, master, lbname=None, **kw):
+    def __init__(self, master, lbname=None,elistbox=None, **kw):
         kw['selectmode'] = tk.MULTIPLE
         kw['activestyle'] = 'none'
         tk.Listbox.__init__(self, master, kw)
+        self.curIndex = None
+        self.curIndex3 = None
+        self.curState = None
+        self.lbname = lbname
+        self.elistbox = elistbox
+        self.is_mw = True
         self.bind('<Button-1>', self.getState, add='+')
         self.bind('<Button-1>', self.setCurrent, add='+')
         self.bind('<B1-Motion>', self.shiftSelection)
         #self.bind('<<ListboxSelect>>', self.save)
         self.popup_menu = tk.Menu(self, tearoff=0)
-        self.popup_menu.add_command(label="Delete", command=self.delete_selected)
-        self.popup_menu.add_command(label="Select All", command=self.select_all)
-        self.bind("<Button-3>", self.popup,add='+' ) 
-        self.curIndex = None
-        self.curIndex3 = None
-        self.curState = None
-        self.lbname = lbname
-        self.is_mw = True
+        if self.elistbox!=None:
+            self.popup_menu.add_command(label="Delete", command= self.delete_line)
+            #self.popup_menu.add_command(label="Select All", command=self.select_all)
+            self.bind("<Button-3>", self.popup,add='+' ) 
 
 # Popup
     def popup(self, event):
         try:
+            self.myevent=event  # nicht schön aber selten
             self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
         finally:
             self.popup_menu.grab_release()
 
-    def delete_selected(self):
-        for i in self.curselection()[::-1]:
-            self.delete(i)
+    def delete_line(self):
+        line=self.nearest(self.myevent.y)
+        if self.elistbox == EListbox.MOVES:
+            file=self.get(line)
+            if not self.delMove(file):  # Zeigt Messagebox, bei ja wird gelöscht
+                return
+        elif self.elistbox == EListbox.PROCEDURE:
+            if ECom.End.__str__() in self.get(line):  # bei ':END' 
+                return  # nichts nachen
+        cur = self.curselection()
+        if len(cur)==1 and cur[0]==line:
+            sel_set=True
+        self.delete(line)
+        if sel_set:
+            self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
     def select_all(self):
         self.selection_set(0, 'end')
+
+    def delMove(self,posName):
+        filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext()))
+        print(posName)
+        if tkmb.askyesno(title="Delete", message="Should the file \""+filename +"\" really be deleted?"):
+            os.rename(src=filename,dst=filename+".bak")
+            return True
+        return False
+
 #ende popup
 
     def fillListBox(self, procedure=False, path=None):
@@ -127,17 +155,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             print("exeption in form():",sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
         
         return True
-
-    def myDelete(self, first, last=None):
-
-        if first > self.size():
-            first = self.size()
-        if not last:
-            last = first
-        for i in range(first, last+1):
-            if not  (ECom.End.__str__() in self.get(i)):  # not ':END'
-                self.delete(i)
-                self.check()
 
     def check(self):
         if self.form():
