@@ -15,9 +15,6 @@ class ERunMode(Enum):
     def getValues():
         return list(map(lambda x:ERunMode.getNames().index(x),[name for name,member in ERunMode.__members__.items()]))
 
-
-
-
 if __name__ == "__main__":
     # print("ERunMode.IDLE.value type={} ERunMode.IDLE.name type={}  ERunMode.IDLE.value={}  ERunMode.IDLE.name={}  "
     #     .format(  type(ERunMode.IDLE.value),type(ERunMode.IDLE.name),ERunMode.IDLE.value,ERunMode.IDLE.name))

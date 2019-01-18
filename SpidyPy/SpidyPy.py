@@ -104,17 +104,18 @@ class SpidyPy(tk.Frame):
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
         #Moving-Abschnitt
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',height=20)
+        self.listboxMoves.bind('<Button-2>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
+        self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
+        self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
+        
+        self.listboxMoves.fillListBox(path='posi')
+        
         self.createOptionMenueOpRun(column=i+4,row=3)
 
         self.labelProcedure = tk.Label(root,text="Procedure:")# Sequenz jetzt Procedure (Ablauf)
         self.labelProcedure.grid(column=i+4, row=4)
 
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',height=20)
-        self.listboxMoves.bind('<Button-3>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
-        self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
-        self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
-        
-        self.listboxMoves.fillListBox(path='posi')
 
         #
         self.labelTimes= tk.Label(root, text = "Times:")
@@ -129,7 +130,12 @@ class SpidyPy(tk.Frame):
         self.btnStart = tk.Button(root)
         self.btnStart["text"] = "Start"
         self.btnStart.bind('<ButtonPress-1>', self.onStart)
-        self.btnStart.grid(column=i+1, columnspan=3, row=18, sticky='nw')
+        self.btnStart.grid(column=i+1, columnspan=1, row=18, sticky='nw')
+
+        self.btnDelMovesLine = tk.Button(root,width=10)
+        self.btnDelMovesLine["text"] = "Delete Line"
+        self.btnDelMovesLine.bind('<ButtonPress-1>', self.onDelMovesLine)
+        self.btnDelMovesLine.grid(column=i+1, columnspan=1, row=18, sticky='ne')
 
         #Procedure-Box
         self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxProcedure',height=20,width=33,exportselection=False)
@@ -183,7 +189,6 @@ class SpidyPy(tk.Frame):
         self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
         #self.result.bind('<<UpdateNeeded>>', self.do_update)
 
-        #Wait
         self.btnDelSequLine = tk.Button(root,width=10)
         self.btnDelSequLine["text"] = "Delete Line"
         self.btnDelSequLine.bind('<ButtonPress-1>', self.onDelSequLine)
@@ -437,6 +442,15 @@ class SpidyPy(tk.Frame):
             self.listboxProcedure.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
             self.listboxProcedure.check()
             self.listboxProcedure.select_set(p)
+
+    #TODO doppelter code
+    def onDelMovesLine(self,event):
+        cur=self.listboxMoves.curselection()
+        if len(cur)==1:
+            p=cur[0]
+            self.listboxMoves.delete(p)
+            self.listboxMoves.check()
+            self.listboxMoves.select_set(p)
 
     def onDelSequLine(self,event):
         cur=self.listboxProcedure.curselection()

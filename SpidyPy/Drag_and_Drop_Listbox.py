@@ -25,11 +25,30 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.bind('<Button-1>', self.setCurrent, add='+')
         self.bind('<B1-Motion>', self.shiftSelection)
         #self.bind('<<ListboxSelect>>', self.save)
+        self.popup_menu = tk.Menu(self, tearoff=0)
+        self.popup_menu.add_command(label="Delete", command=self.delete_selected)
+        self.popup_menu.add_command(label="Select All", command=self.select_all)
+        self.bind("<Button-3>", self.popup,add='+' ) 
         self.curIndex = None
         self.curIndex3 = None
         self.curState = None
         self.lbname = lbname
         self.is_mw = True
+
+# Popup
+    def popup(self, event):
+        try:
+            self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+        finally:
+            self.popup_menu.grab_release()
+
+    def delete_selected(self):
+        for i in self.curselection()[::-1]:
+            self.delete(i)
+
+    def select_all(self):
+        self.selection_set(0, 'end')
+#ende popup
 
     def fillListBox(self, procedure=False, path=None):
         """
@@ -179,6 +198,5 @@ if __name__ == "__main__":
             myListbox.selection_set(i)
     myListbox.pack(fill=tk.BOTH, expand=True)
     #listbox.bind('<Button-3>', printRightClickItem)
-    myListbox.bind('<Button-3>', lambda event: print(
-        "Ausgewählt wurde: {0}".format(myListbox.get(myListbox.nearest(event.y)))))
+    #myListbox.bind('<Button-3>', lambda event: print( "Ausgewählt wurde: {0}".format(myListbox.get(myListbox.nearest(event.y)))))
     root.mainloop()
