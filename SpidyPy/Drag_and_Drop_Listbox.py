@@ -1,4 +1,4 @@
-# Version 0.2
+# Version 0.3
 # Aus 'stackoverflow.com' 'tkinter listbox drag and drop with python'
 # https://stackoverflow.com/questions/14459993/tkinter-listbox-drag-and-drop-with-python/39300853#39300853
 # Danke 'Moshe'
