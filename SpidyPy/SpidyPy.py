@@ -289,7 +289,7 @@ class SpidyPy(tk.Frame):
         command= self.getCurCommand()
         if command[0:1]!=':':
             self.move(str(command).strip())
-        if ECom.Wait.__str__() in command:
+        if ECom.Wait.__str__() in command:   #:Wait
             cur=self.listboxProcedure.curselection()
             if len(cur)==1:
                 n=cur[0]
@@ -511,7 +511,7 @@ class SpidyPy(tk.Frame):
                 #print("i={0};{1} ,".format(i,indx))
                 self.legScale[legNrList[indx]].set(moveList[indx][i])
             self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
-            sleep(0.1)
+            sleep(0.02)
         #self.lockMe.release()
 
     def xSteps(self,start,ziel,steps=10):
@@ -523,7 +523,7 @@ class SpidyPy(tk.Frame):
             erg.append(round(start+wert*i,2))
         return erg
 
-    def getMotionsDictionaryList(self, selLegs,steps=20):
+    def getMotionsDictionaryList(self, selLegs,steps=40):
         """Liefert ein Dictionary von Listen.
            In jeder Liste werden x Bewegungen, vom Start bis Ziel gespeichert.
            Der Startwert wird vom Slider (Scale) abgelesen
