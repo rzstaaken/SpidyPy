@@ -18,7 +18,7 @@ from enum import Enum
 from ECom import ECom
 from ERunMode import ERunMode
 from EListbox import EListbox
-from LoopRepeat import LoopRepeat
+
 
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
