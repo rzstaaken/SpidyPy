@@ -208,12 +208,17 @@ if __name__ == "__main__":
         #   print(f"Ausgewählt wurde: {myListbox.get(curIndex)}")
     root = tk.Tk()
     #myListbox = Drag_and_Drop_Listbox(root,name="myListbox")
-    myListbox = Drag_and_Drop_Listbox(master=root)
+    myListbox = Drag_and_Drop_Listbox(master=root,height=5)
     for i, name in enumerate(['name'+str(i) for i in range(10)]):
         myListbox.insert(tk.END, name)
         if i % 2 == 0:
             myListbox.selection_set(i)
-    myListbox.pack(fill=tk.BOTH, expand=True)
+    myListbox.grid()
+    #myListbox.pack(fill=tk.BOTH, expand=True)
     #listbox.bind('<Button-3>', printRightClickItem)
     #myListbox.bind('<Button-3>', lambda event: print( "Ausgewählt wurde: {0}".format(myListbox.get(myListbox.nearest(event.y)))))
+
+    scrollbar = tk.Scrollbar(root, orient='vertical')
+    scrollbar.config(command=myListbox.yview)
+    scrollbar.grid(column=1, row=0)
     root.mainloop()

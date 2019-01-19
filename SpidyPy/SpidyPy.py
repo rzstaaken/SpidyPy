@@ -108,6 +108,9 @@ class SpidyPy(tk.Frame):
         self.listboxMoves.bind('<Button-2>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         #self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
         self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
+
+        self.scrollbarMoves = tk.Scrollbar(root, orient='vertical',command=self.listboxMoves.yview)
+        self.scrollbarMoves.grid(column=i+1, row=5,rowspan=10,sticky='nes')
         
         self.listboxMoves.fillListBox(path='posi')
         
@@ -143,6 +146,9 @@ class SpidyPy(tk.Frame):
         self.listboxProcedure['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxProcedure.grid(column=i+4, row=5,rowspan=10)       
         self.listboxProcedure.fillListBox(procedure=True)
+
+        self.scrollbarProcedure= tk.Scrollbar(root, orient='vertical',command=self.listboxProcedure.yview)
+        self.scrollbarProcedure.grid(column=i+4, row=5,rowspan=10,sticky='nes')
 
         self.btnToSeq = tk.Button(root,width=10)
         self.btnToSeq["text"] = "---->"
