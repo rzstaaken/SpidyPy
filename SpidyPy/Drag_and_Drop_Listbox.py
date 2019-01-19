@@ -50,6 +50,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             self.popup_menu.grab_release()
 
     def delete_line(self):
+        sel_set=False
         line=self.nearest(self.myevent.y)
         if self.elistbox == EListbox.MOVES:
             file=self.get(line)
