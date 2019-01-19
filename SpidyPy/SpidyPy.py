@@ -1,5 +1,5 @@
 """
-V0.19 18.01.2019 8:45 SpidyPy.py 
+V0.19 19.01.2019 15:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 import getpass
