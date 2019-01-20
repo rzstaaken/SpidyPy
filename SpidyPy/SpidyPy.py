@@ -73,16 +73,30 @@ class SpidyPy(tk.Frame):
 
     def createWidgets(self):
         self.legScale=[]
+        self.legCheckbutton=[]
         for i in range(0, len(self.legsMinMax)):
-            self.legScale.append(tk.Scale(root ,  from_= self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=400, label="S" + str(i), resolution=0.01))  
+            breit=(i+1)%3==0
+            
+            self.legScale.append(tk.Scale(root ,width=9,  from_= self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=400, label="S" + str(i), resolution=0.01))  
             if "Start" in self.legsMinMax[i]:
                 self.legScale[i].set(self.legsMinMax[i]["Start"])
-            self.legScale[i].grid(row=0, column=i, rowspan=SpiderDefaults.ROWSPAN)
+            self.legScale[i].grid(row=0, column=i, rowspan=SpiderDefaults.ROWSPAN,sticky='w')
             self.legScale[i].Nummer = i
             self.legScale[i]['command'] = self.onCallbackAction(self.legScale[i])
-            self.legScale[i]['bg'] = backgroundGray #Neu
-            if (i+1)%3==0: #Um Zwischenräume einzufügen
-                self.legScale[i].grid(ipadx=20)
+            self.legScale[i]['bg'] = backgroundGray 
+            self.legCheckbutton.append(tk.Checkbutton(root))
+            self.legCheckbutton[i].Number = i
+            self.legCheckbutton[i].grid(row=15, column=i, rowspan=SpiderDefaults.ROWSPAN,padx=22, sticky='w')
+
+            if breit:
+                l=tk.Label(root, width=12)
+                l.grid(row=19, column=i, rowspan=SpiderDefaults.ROWSPAN,sticky='w')
+            #if (i+1)%3==0:
+            #    self.legScale[i].grid( width=5)
+            # if (i+1)%3!=0: #Um Zwischenräume einzufügen
+            #     self.legScale[i].grid( sticky='w' )#padx=20)
+            # else:
+            #     self.legScale[i].grid( sticky='e' )
 
         self.name.set("Pos")
         self.entryName = tk.Entry(root)

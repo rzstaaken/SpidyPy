@@ -38,9 +38,9 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         #self.bind('<<ListboxSelect>>', self.save)
         self.popup_menu = tk.Menu(self, tearoff=0)
         if self.elistbox!=None:
-            self.popup_menu.add_command(label="Delete", command= self.delete_line)
             if self.elistbox == EListbox.MOVES:
                 self.popup_menu.add_command(label="Do Move", command=self.doMove)
+            self.popup_menu.add_command(label="Delete", command= self.delete_line)
             self.bind("<Button-3>", self.popup,add='+' ) 
 
 # Popup
@@ -72,7 +72,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         line=self.nearest(self.myevent.y)
         if self.eltern:
             file=self.get(line)
-
             self.eltern.move(file)  # nicht schön!
 
     def delMove(self,posName):
