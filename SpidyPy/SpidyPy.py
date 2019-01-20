@@ -1,5 +1,5 @@
 """
-V0.19 19.01.2019 15:00 SpidyPy.py 
+V0.20 20.01.2019 14:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 import getpass
@@ -38,7 +38,11 @@ class SpidyPy(tk.Frame):
         self.legsMinMax=legsMinMax
         self.master=root
         #self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
-        root.geometry("1500x500") 
+        if withRPi:
+            root.geometry("1900x450")
+        else:
+            root.geometry("1500x450")
+
         root.title("Spidy Moving Application ")
         self.lockMe=threading.Lock()
         self.tr=None
@@ -104,7 +108,7 @@ class SpidyPy(tk.Frame):
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
         #Moving-Abschnitt
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxMoves',elistbox=EListbox.MOVES,height=20)
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,eltern=self,lbname='listboxMoves',elistbox=EListbox.MOVES,height=20)
         self.listboxMoves.bind('<Button-2>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         #self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
         self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
@@ -489,9 +493,13 @@ class SpidyPy(tk.Frame):
             return
         p=cur[0]
         p2 = p
+        self.listboxProcedure.selection_clear(p)
         for a in items:
             listbox.insert(p2,a)
-        self.onInsertWait(None)     
+
+        #Ein Check mit dem wieder setzen der Selektierung
+        self.listboxProcedure.check()
+        self.listboxProcedure.select_set(p)
         
     def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
@@ -563,7 +571,8 @@ class SpidyPy(tk.Frame):
         #j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,f"{fname}{nummer}{JsonIO.Ext()}"))
         j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,"{0}{1}{2}".format(fname,nummer,JsonIO.Ext())))
         self.setEntryNum(int(nummer) + 1)
-        self.onReset()      
+        self.onReset()   
+        #self.listboxMoves.delete(0, 'end')
         self.listboxMoves.fillListBox() #Die Listbox aktualisieren
 
     def onStart(self,event):
@@ -575,7 +584,7 @@ class SpidyPy(tk.Frame):
             for f in fileNamesIndxList:
                 fn = self.listboxMoves.get(f)
                 #print(f"({str(i)}) Es wird {fn} ausgeführt.")
-                print("({0}) Es wird {1} ausgeführt.".format(str(i),fn))
+                #print("({0}) Es wird {1} ausgeführt.".format(str(i),fn))
                 self.move(fn)
         self.onReset()
         self.btnStart.configure(state = tk.NORMAL)
@@ -584,7 +593,6 @@ class SpidyPy(tk.Frame):
         #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
         selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext())))
         dicBewegungen=self.getMotionsDictionaryList(selLegs) 
-        #print(dicBewegungen)
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
 
     def scaleGray(self,num):

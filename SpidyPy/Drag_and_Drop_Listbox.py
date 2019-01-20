@@ -1,4 +1,4 @@
-# Version 0.3
+# Version 0.4
 # Aus 'stackoverflow.com' 'tkinter listbox drag and drop with python'
 # https://stackoverflow.com/questions/14459993/tkinter-listbox-drag-and-drop-with-python/39300853#39300853
 # Danke 'Moshe'
@@ -21,10 +21,11 @@ from EListbox import EListbox
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
 
-    def __init__(self, master, lbname=None,elistbox=None, **kw):
+    def __init__(self, master,eltern=None, lbname=None,elistbox=None, **kw):
         kw['selectmode'] = tk.MULTIPLE
         kw['activestyle'] = 'none'
         tk.Listbox.__init__(self, master, kw)
+        self.eltern=eltern
         self.curIndex = None
         self.curIndex3 = None
         self.curState = None
@@ -38,7 +39,8 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.popup_menu = tk.Menu(self, tearoff=0)
         if self.elistbox!=None:
             self.popup_menu.add_command(label="Delete", command= self.delete_line)
-            #self.popup_menu.add_command(label="Select All", command=self.select_all)
+            if self.elistbox == EListbox.MOVES:
+                self.popup_menu.add_command(label="Do Move", command=self.doMove)
             self.bind("<Button-3>", self.popup,add='+' ) 
 
 # Popup
@@ -66,14 +68,19 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         if sel_set:
             self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
-    def select_all(self):
-        self.selection_set(0, 'end')
+    def doMove(self):
+        line=self.nearest(self.myevent.y)
+        if self.eltern:
+            file=self.get(line)
+
+            self.eltern.move(file)  # nicht schön!
 
     def delMove(self,posName):
         filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext()))
         print(posName)
         if tkmb.askyesno(title="Delete", message="Should the file \""+filename +"\" really be deleted?"):
-            os.rename(src=filename,dst=filename+".bak")
+            #os.rename(src=filename,dst=filename+".bak")
+            os.remove(src=filename,dst=filename)
             return True
         return False
 
@@ -85,8 +92,9 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             in der listbox dargestellt.
         """
         try:
+            self.delete(0, tk.END)            
             index=0
-            # Wenn die Datei existiert werden die gesicherten Daten geladen
+            # Wenn die CSV-Datei existiert wird sie benutzt, Eventuell gibt es diese Dateien nicht mehr oder einige sind hinzugekommen
             with open(self.lbname+'.csv', "r")as f:
                 reader = csv.DictReader(f)
                 for row in reader:
@@ -96,17 +104,18 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                     self.insert(index, Name)
                     if Selected:
                         self.select_set(index)
+            
         except:
+            #Das Einlesen der Datei mit der Reihenfolge hat nicht funktioniert.
+            #Dann einfach das Directory -> listbox
             self.delete(0, tk.END)
             if path:
-                files = SpiderDefaults.os.listdir(path)
+                #files = SpiderDefaults.os.listdir(path)
+                fnames=self.getAllFileExt(path=path,ext=JsonIO.Ext())
                 i = 0
-                for fileName in files:
-                    pos = fileName.find(JsonIO.Ext())
-                    if pos != -1:
-                        fileName = fileName[:pos]
-                        self.insert(i, fileName)
-                        i = i+1
+                for fileName in fnames:
+                    self.insert(i, fileName)
+                    i = i+1
         finally:
             if procedure:
                 if self.get(tk.END) != ECom.End.__str__():
@@ -114,6 +123,29 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 self.form()
                 if len(self.curselection())==0: #Wenn nichts selektiert ist
                     self.select_set(0)          #Die erste Zeile selektieren
+            if path:
+                self.nichtExistenteFilesEntfernen(path)
+
+    def nichtExistenteFilesEntfernen(self,path):
+        fnames=self.getAllFileExt(path=path,ext=JsonIO.Ext())
+        li = self.get(0,tk.END)
+
+        for i in reversed( range(len(li))): #Schleife rückwärts um fehlende Files zu löschen
+            if not (self.get(i) in fnames):
+                self.delete(i)
+            
+        for fileName in fnames:
+            if not fileName in li:
+                self.insert(tk.END,fileName)
+
+    def getAllFileExt(self,path,ext):
+        names=[]
+        files = SpiderDefaults.os.listdir(path)
+        for fileName in files:
+            pos = fileName.find(ext)
+            if pos != -1:
+                names.append(fileName[:pos]) # Extention weg und einordnen
+        return names
 
     def save(self):
         if(self.lbname):

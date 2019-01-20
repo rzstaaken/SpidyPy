@@ -1,8 +1,8 @@
 Index,Name,Selected
-0,:Repeat 3 (1),False
+0,:Repeat 3 (3),False
 1,  drei3,False
 2,  :Wait 1.0 (1.0),False
-3,  :Repeat 3 (1),False
+3,  :Repeat 3 (3),False
 4,    eins1,False
 5,    SpidyRunter0,False
 6,    :Wait 1.0 (1.0),False
@@ -11,7 +11,10 @@ Index,Name,Selected
 9,    SpidyRunter0,False
 10,    :Wait 1.0 (1.0),False
 11,    SpidyHoch0,False
-12,    :Wait 1.0 (0.4),True
-13,  :LoopToLine 3,False
-14,:LoopToLine 0,False
-15,:End,False
+12,    :Wait 2.5 (2.5),False
+13,    Pos0,False
+14,    SpidyHoch0,True
+15,    :Wait 1.0 (0.4),False
+16,  :LoopToLine 3,False
+17,:LoopToLine 0,False
+18,:End,False
