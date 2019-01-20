@@ -84,6 +84,7 @@ class SpidyPy(tk.Frame):
             self.legScale[i].Nummer = i
             self.legScale[i]['command'] = self.onCallbackAction(self.legScale[i])
             self.legScale[i]['bg'] = backgroundGray 
+            
             self.legCheckbutton.append(tk.Checkbutton(root))
             self.legCheckbutton[i].Number = i
             self.legCheckbutton[i].grid(row=15, column=i, rowspan=SpiderDefaults.ROWSPAN,padx=22, sticky='w')
@@ -609,14 +610,17 @@ class SpidyPy(tk.Frame):
         dicBewegungen=self.getMotionsDictionaryList(selLegs) 
         self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
 
-    def scaleGray(self,num):
+    def selectLeg(self,num,select=True):
         if type(num) is int:
             if num < len(self.legScale): 
-                self.legScale[num]['bg'] = backgroundGray
+                if select:
+                    pass
+                else:
+                    self.legScale[num]['bg'] = backgroundGray
 
     def onReset(self):
         for i in range(0, len(self.legScale)):
-            self.scaleGray(i)
+            self.selectLeg(i,False)
 
     def onAction(self, scale):
         scale['bg'] = 'lemon chiffon'#'plum1'
