@@ -40,7 +40,7 @@ class SpidyPy(tk.Frame):
         self.master=root
         #self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
         if withRPi:
-            root.geometry("1600x550")
+            root.geometry("1700x600")
         else:
             root.geometry("1500x650")
 
