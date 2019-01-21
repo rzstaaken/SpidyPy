@@ -1,5 +1,5 @@
 """
-V0.20 20.01.2019 14:00 SpidyPy.py 
+V0.21 21.01.2019 14:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 import getpass
@@ -177,6 +177,31 @@ class SpidyPy(tk.Frame):
         self.scrollbarProcedure= tk.Scrollbar(root, orient='vertical',command=self.listboxProcedure.yview)
         self.scrollbarProcedure.grid(column=i+4, row=5,rowspan=10,sticky='nes')
 
+        #Do Step
+        self.btnDoStep = tk.Button(root,width=10)
+        self.btnDoStep["text"] = "Do Step"
+        self.btnDoStep.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.STEP.value]))
+        self.btnDoStep.grid(column=i+4, columnspan=1, row=18, sticky='nw')
+
+        #Do Sequence
+        self.btnDoStep = tk.Button(root,width=10)
+        self.btnDoStep["text"] = "Do Sequence"
+        self.btnDoStep.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.SEQUENCE.value]))
+        self.btnDoStep.grid(column=i+4, columnspan=1, row=18, sticky='ne')
+
+        #Do Automatic
+        self.btnDoAutomatic = tk.Button(root,width=10)
+        self.btnDoAutomatic["text"] = "Do Automatic"
+        self.btnDoAutomatic.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.AUTOMATIC.value]))
+        self.btnDoAutomatic.grid(column=i+4, columnspan=1, row=19, sticky='nw')
+
+        #Do Stop
+        self.btnDoStop = tk.Button(root,width=10)
+        self.btnDoStop["text"] = "Do Stop"
+        self.btnDoStop.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.IDLE.value]))
+        self.btnDoStop.grid(column=i+4, columnspan=1, row=19, sticky='ne')
+
+        #---->
         self.btnToSeq = tk.Button(root,width=10)
         self.btnToSeq["text"] = "---->"
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
@@ -295,8 +320,9 @@ class SpidyPy(tk.Frame):
 
     def doStep(self):
         self.varRunMode.set(self.runModelst[ERunMode.STEP.value])
-        self.step()
-        self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
+        ret=self.step()
+        if ret!= 0:
+            self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
     
     def getCurCommand(self):
         cur=self.listboxProcedure.curselection()
@@ -321,7 +347,7 @@ class SpidyPy(tk.Frame):
             except FileNotFoundError:
                 self.outText.insert(tk.END,str("\nError: kann JSon-Datei nicht finden :"+com+JsonIO.Ext()))
                 self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
-                return
+                return -1 #Fehler
         if ECom.Wait.__str__() in command:   #:Wait
             cur=self.listboxProcedure.curselection()
             if len(cur)==1:
@@ -340,17 +366,18 @@ class SpidyPy(tk.Frame):
                         self.listboxProcedure.insert(n,x)
                         n=n+1
                         self.listboxProcedure.select_set(n)
-                        return 
+                        return 1 #Nächster Schritt melden
                     ist=ist-0.1
                     x=spaces + ECom.Wait.__str__() +' '+str(start)+' ('+ "%.1f"%(ist) +')'
                     self.listboxProcedure.delete(n)
                     self.listboxProcedure.insert(n,x)
                     self.listboxProcedure.select_set(n)
-                    return
+                    return 0 #Es wurde sich nicht bewegt
 
         n=self.nextStep()
         #print("nextStep={}".format(n))
         self.listboxProcedure.select_set(n)
+        return 1 #Nächster Schritt melden
 
     def nextStep(self):
         cur=self.listboxProcedure.curselection()

@@ -2,7 +2,7 @@ Index,Name,Selected
 0,:Repeat 3 (2),False
 1,  :Wait 1.0 (1.0),False
 2,  :Repeat 3 (3),False
-3,    SpidyRunter0,False
+3,    SpidyRunter0,True
 4,    :Wait 1.0 (1.0),False
 5,    SpidyHoch0,False
 6,    :Wait 1.0 (1.0),False
@@ -10,8 +10,6 @@ Index,Name,Selected
 8,    :Wait 1.0 (1.0),False
 9,    SpidyHoch0,False
 10,    :Wait 2.5 (2.5),False
-11,    SpidyHoch0,False
-12,    :Wait 1.0 (1.0),True
-13,  :LoopToLine 3,False
-14,:LoopToLine 0,False
-15,:End,False
+11,  :LoopToLine 2,False
+12,:LoopToLine 0,False
+13,:End,False
