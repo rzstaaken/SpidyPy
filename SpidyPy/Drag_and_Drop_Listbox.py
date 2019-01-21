@@ -40,14 +40,27 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         if self.elistbox!=None:
             if self.elistbox == EListbox.MOVES:
                 self.popup_menu.add_command(label="Do Move", command=self.doMove)
+
             self.popup_menu.add_command(label="Delete", command= self.delete_line)
+            if self.elistbox == EListbox.PROCEDURE:
+                self.popup_menu.add_command(label="Edit", command= self.edit_line)
+
             self.bind("<Button-3>", self.popup,add='+' ) 
 
 # Popup
     def popup(self, event):
         try:
             self.myevent=event  # nicht schön aber selten
+            #self.popup_menu.config()
+            line=self.nearest(self.myevent.y)
+            if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'
+                print("Wait gefunden")
+                self.popup_menu.entryconfig("Edit", state="normal")
+            else:
+                self.popup_menu.entryconfig("Edit", state="disabled")
+
             self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+            #self.popup_menu.
         finally:
             self.popup_menu.grab_release()
 
@@ -82,6 +95,19 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             os.remove(src=filename,dst=filename)
             return True
         return False
+
+    def edit_line(self):
+        sel_set=False
+        line=self.nearest(self.myevent.y)
+        if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'
+            pass
+        
+        # cur = self.curselection()
+        # if len(cur)==1 and cur[0]==line:
+        #     sel_set=True
+        # self.delete(line)
+        # if sel_set:
+        #     self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
 #ende popup
 
@@ -240,7 +266,7 @@ if __name__ == "__main__":
         #   print(f"Ausgewählt wurde: {myListbox.get(curIndex)}")
     root = tk.Tk()
     #myListbox = Drag_and_Drop_Listbox(root,name="myListbox")
-    myListbox = Drag_and_Drop_Listbox(master=root,height=5)
+    myListbox = Drag_and_Drop_Listbox(master=root,height=5,elistbox=EListbox.PROCEDURE)
     for i, name in enumerate(['name'+str(i) for i in range(10)]):
         myListbox.insert(tk.END, name)
         if i % 2 == 0:
