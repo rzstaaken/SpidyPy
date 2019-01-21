@@ -21,11 +21,11 @@ from EListbox import EListbox
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
 
-    def __init__(self, master,eltern=None, lbname=None,elistbox=None, **kw):
+    def __init__(self, master,myParent=None, lbname=None,elistbox=None, **kw):
         kw['selectmode'] = tk.MULTIPLE
         kw['activestyle'] = 'none'
         tk.Listbox.__init__(self, master, kw)
-        self.eltern=eltern
+        self.myParent=myParent
         self.curIndex = None
         self.curIndex3 = None
         self.curState = None
@@ -83,9 +83,9 @@ class Drag_and_Drop_Listbox(tk.Listbox):
 
     def doMove(self):
         line=self.nearest(self.myevent.y)
-        if self.eltern:
+        if self.myParent:
             file=self.get(line)
-            self.eltern.move(file)  # nicht schön!
+            self.myParent.move(file)  # nicht schön!
 
     def delMove(self,posName):
         filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext()))
@@ -96,7 +96,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             return True
         return False
 
-    def edit_line(self):
+    def edit_line(self):#ToDo !!!!!
         sel_set=False
         line=self.nearest(self.myevent.y)
         if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'

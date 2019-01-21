@@ -40,7 +40,7 @@ class SpidyPy(tk.Frame):
         self.master=root
         #self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
         if withRPi:
-            root.geometry("1900x650")
+            root.geometry("1600x550")
         else:
             root.geometry("1500x650")
 
@@ -108,21 +108,26 @@ class SpidyPy(tk.Frame):
 
 
         self.name.set("Pos")
-        self.entryName = tk.Entry(root)
+        self.entryName = tk.Entry(root,width=32)
         self.entryName["textvariable"] = self.name
-        self.entryName.grid(column=i+1, row=2,sticky='w')
+        self.entryName.grid(column=i+1, row=2, sticky='w')
         self.entryNum = tk.Entry(root, width=5)
         self.entryNum.grid(column=i+2, row=2,sticky='w')
         self.setEntryNum(0)
 
-        self.btnReset = tk.Button(root, text='Reset')
+        self.btnReset = tk.Button(root, text='Reset',width=10)
         self.btnReset["command"] = self.onReset
-        self.btnReset.grid(column=i+1, columnspan=1, row=3, sticky='nw')
+        self.btnReset.grid(column=i+1, columnspan=1, row=3, sticky='w')
 
         self.btnSave = tk.Button(root)
         self.btnSave["text"] = "Save"
         self.btnSave["command"] = self.onSave
-        self.btnSave.grid(column=i+1, columnspan=1, row=3, sticky='ne')
+        self.btnSave.grid(column=i+1, columnspan=1, row=3)
+
+        self.btnSaveAllAxis = tk.Button(root)
+        self.btnSaveAllAxis["text"] = "Save All Axis"
+        self.btnSaveAllAxis["command"] = self.onSaveAllAxis
+        self.btnSaveAllAxis.grid(column=i+1, columnspan=1, row=3, sticky='e')
 
         #TODO:Die Scrollbar funktioniert noch nicht
         #self.scrollbar = tk.Scrollbar(self, orient='vertical')
@@ -131,7 +136,7 @@ class SpidyPy(tk.Frame):
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
         #Moving-Abschnitt
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,eltern=self,lbname='listboxMoves',elistbox=EListbox.MOVES,height=20)
+        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,myParent=self,lbname='listboxMoves',elistbox=EListbox.MOVES,height=20,width=30)
         self.listboxMoves.bind('<Button-2>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         #self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
         self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
@@ -141,11 +146,10 @@ class SpidyPy(tk.Frame):
         
         self.listboxMoves.fillListBox(path='posi')
         
-        self.createOptionMenueOpRun(column=i+4,row=3)
+        self.createOptionMenueOpRun(column=i+5,row=3)
 
         self.labelProcedure = tk.Label(root,text="Procedure:")# Sequenz jetzt Procedure (Ablauf)
-        self.labelProcedure.grid(column=i+4, row=4)
-
+        self.labelProcedure.grid(column=i+5, row=4)
 
         #
         self.labelTimes= tk.Label(root, text = "Times:")
@@ -157,7 +161,7 @@ class SpidyPy(tk.Frame):
         entryTextTimes.set(1)
         self.entryTimes.grid(column=i+1, columnspan=1, row=17, sticky='ne')
 
-        self.btnStart = tk.Button(root)
+        self.btnStart = tk.Button(root,width=10)
         self.btnStart["text"] = "Start"
         self.btnStart.bind('<ButtonPress-1>', self.onStart)
         self.btnStart.grid(column=i+1, columnspan=1, row=18, sticky='nw')
@@ -171,77 +175,77 @@ class SpidyPy(tk.Frame):
         self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxProcedure',elistbox=EListbox.PROCEDURE,height=20,width=33,exportselection=False)
         #self.listboxProcedure.bind('<Button-3>', lambda event: self.listboxProcedure.myDelete(self.listboxProcedure.nearest(event.y)))     
         self.listboxProcedure['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
-        self.listboxProcedure.grid(column=i+4, row=5,rowspan=10)       
+        self.listboxProcedure.grid(column=i+5, row=5,rowspan=10)       
         self.listboxProcedure.fillListBox(procedure=True)
 
         self.scrollbarProcedure= tk.Scrollbar(root, orient='vertical',command=self.listboxProcedure.yview)
-        self.scrollbarProcedure.grid(column=i+4, row=5,rowspan=10,sticky='nes')
+        self.scrollbarProcedure.grid(column=i+6, row=5,rowspan=10,sticky='nes')
 
         #Do Step
         self.btnDoStep = tk.Button(root,width=10)
         self.btnDoStep["text"] = "Do Step"
         self.btnDoStep.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.STEP.value]))
-        self.btnDoStep.grid(column=i+4, columnspan=1, row=18, sticky='nw')
+        self.btnDoStep.grid(column=i+5, columnspan=1, row=18, sticky='nw')
 
         #Do Sequence
         self.btnDoStep = tk.Button(root,width=10)
         self.btnDoStep["text"] = "Do Sequence"
         self.btnDoStep.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.SEQUENCE.value]))
-        self.btnDoStep.grid(column=i+4, columnspan=1, row=18, sticky='ne')
+        self.btnDoStep.grid(column=i+5, columnspan=1, row=18, sticky='ne')
 
         #Do Automatic
         self.btnDoAutomatic = tk.Button(root,width=10)
         self.btnDoAutomatic["text"] = "Do Automatic"
         self.btnDoAutomatic.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.AUTOMATIC.value]))
-        self.btnDoAutomatic.grid(column=i+4, columnspan=1, row=19, sticky='nw')
+        self.btnDoAutomatic.grid(column=i+5, columnspan=1, row=19, sticky='nw')
 
         #Do Stop
         self.btnDoStop = tk.Button(root,width=10)
         self.btnDoStop["text"] = "Do Stop"
         self.btnDoStop.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.IDLE.value]))
-        self.btnDoStop.grid(column=i+4, columnspan=1, row=19, sticky='ne')
+        self.btnDoStop.grid(column=i+5, columnspan=1, row=19, sticky='ne')
 
         #---->
         self.btnToSeq = tk.Button(root,width=10)
         self.btnToSeq["text"] = "---->"
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
-        self.btnToSeq.grid(column=i+2, row=5)
+        self.btnToSeq.grid(column=i+3, row=5)
 
         #+1
         self.btnInc = tk.Button(root,width=10)
         self.btnInc["text"] = "  +1   "
         self.btnInc.bind('<ButtonPress-1>', self.onInc)
-        self.btnInc.grid(column=i+2, columnspan=1, row=7, sticky='nw')
+        self.btnInc.grid(column=i+3, columnspan=1, row=7, sticky='nw')
 
         #Repeat
         self.btnRep = tk.Button(root,width=10)
         self.btnRep["text"] = ECom.Repeat.__str__() +" 1"
         self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)
-        self.btnRep.grid(column=i+2, columnspan=1, row=8, sticky='nw')
+        self.btnRep.grid(column=i+3, columnspan=1, row=8, sticky='nw')
 
         #-1
         self.btnDec = tk.Button(root,width=10)
         self.btnDec["text"] = "  -1   "
         self.btnDec.bind('<ButtonPress-1>', self.onDec)
-        self.btnDec.grid(column=i+2, columnspan=1, row=9, sticky='nw')
+        self.btnDec.grid(column=i+3, columnspan=1, row=9, sticky='nw')
 
         #LOOP
         self.btnLOOP = tk.Button(root,width=10)
         self.btnLOOP["text"] = ECom.LoopToLine.__str__()
         self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
-        self.btnLOOP.grid(column=i+2, columnspan=1, row=10, sticky='nw')
+        self.btnLOOP.grid(column=i+3, columnspan=1, row=10, sticky='nw')
 
         #Wait
         self.btnWait = tk.Button(root,width=10)
         self.btnWait["text"] = ECom.Wait.__str__()
         self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
-        self.btnWait.grid(column=i+2, columnspan=1, row=11, sticky='nw')
+        self.btnWait.grid(column=i+3, columnspan=1, row=11, sticky='nw')
 
         #Wait Textfeld (float) für die Sekunden
         self.vcmd = root.register(self.is_number)
         self.entryTextWaitSec = tk.StringVar()
         self.entryWaitSec = tk.Entry(root,justify='right',textvariable=self.entryTextWaitSec, width=12)
-        self.entryWaitSec.grid(column=i+2, columnspan=1, row=13, sticky='nw')
+        self.entryWaitSec.grid(column=i+3, columnspan=1, row=13, sticky='nw')
         self.entryWaitSec['validate']='key'
         self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
         self.entryTextWaitSec.set(2.5)
@@ -250,7 +254,7 @@ class SpidyPy(tk.Frame):
         self.btnDelSequLine = tk.Button(root,width=10)
         self.btnDelSequLine["text"] = "Delete Line"
         self.btnDelSequLine.bind('<ButtonPress-1>', self.onDelSequLine)
-        self.btnDelSequLine.grid(column=i+2, columnspan=1, row=14, sticky='nw')
+        self.btnDelSequLine.grid(column=i+3, columnspan=1, row=14, sticky='nw')
 
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
         self.runMode=ERunMode.IDLE
@@ -610,7 +614,7 @@ class SpidyPy(tk.Frame):
     def onExit(self):
         self.destroy()
 
-    def onSave(self):
+    def onSave(self,all=False):
         """
         Die Scale-Positionen in eine Datei schreiben
         """
@@ -618,9 +622,12 @@ class SpidyPy(tk.Frame):
         nummer=self.entryNum.get()
         dic = {}
         for i in range(len(self.legScale)):
-            if self.legScale[i]['bg'] != backgroundGray:
+            if all==True:
                 dic.update({i: self.legScale[i].get()})
-        print(dic) 
+            else:
+                if self.legScale[i]['bg'] != backgroundGray:
+                    dic.update({i: self.legScale[i].get()})
+        #print(dic) 
         if not SpiderDefaults.os.path.exists(SpiderDefaults.posiPath):
             SpiderDefaults.os.mkdir(SpiderDefaults.posiPath)
         j=JsonIO()
@@ -630,6 +637,9 @@ class SpidyPy(tk.Frame):
         self.onReset()   
         #self.listboxMoves.delete(0, 'end')
         self.listboxMoves.fillListBox() #Die Listbox aktualisieren
+
+    def onSaveAllAxis(self):
+        self.onSave(all=True)
 
     def onStart(self,event):
         self.btnStart.configure(state = tk.DISABLED)
