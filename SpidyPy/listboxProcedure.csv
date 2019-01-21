@@ -1,20 +1,17 @@
 Index,Name,Selected
-0,:Repeat 3 (3),False
-1,  drei3,False
-2,  :Wait 1.0 (1.0),False
-3,  :Repeat 3 (3),False
-4,    eins1,False
-5,    SpidyRunter0,False
+0,:Repeat 3 (2),False
+1,  :Wait 1.0 (1.0),False
+2,  :Repeat 3 (3),False
+3,    SpidyRunter0,False
+4,    :Wait 1.0 (1.0),False
+5,    SpidyHoch0,False
 6,    :Wait 1.0 (1.0),False
-7,    SpidyHoch0,False
+7,    SpidyRunter0,False
 8,    :Wait 1.0 (1.0),False
-9,    SpidyRunter0,False
-10,    :Wait 1.0 (1.0),False
+9,    SpidyHoch0,False
+10,    :Wait 2.5 (2.5),False
 11,    SpidyHoch0,False
-12,    :Wait 2.5 (2.5),False
-13,    Pos0,False
-14,    SpidyHoch0,True
-15,    :Wait 1.0 (0.4),False
-16,  :LoopToLine 3,False
-17,:LoopToLine 0,False
-18,:End,False
+12,    :Wait 1.0 (1.0),True
+13,  :LoopToLine 3,False
+14,:LoopToLine 0,False
+15,:End,False

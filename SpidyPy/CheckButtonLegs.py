@@ -8,7 +8,7 @@ class CheckButtonLegs(tk.Checkbutton):
         tk.Checkbutton.__init__(self, master, kw)
         self.nr=nr
         self.var = tk.IntVar()
-        self.config(variable=self.var)
+        self.config(variable=self.var,offvalue=0,onvalue=1)
         #self.bind("<Shift-ButtonPress-1>",partial( self.my_callback,name='Anton'),add=True)
 
     def get(self):

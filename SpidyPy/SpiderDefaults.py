@@ -49,14 +49,18 @@ def ReadDefLegs(filename=fNameMinMax):
     DefLegs lesen
     Testen ob das File existiert wird nicht geprüft!
     """
-    with open(filename,'r') as f:
-        return json.load(f)
+    try:
+        with open(filename,'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise
+
 
 def WriteDefLegs(filename=fNameMinMax):
     with open(filename,'w') as f:
         json.dump(LegsMinMax,f,indent=4,separators=(',',':'))
         #print(LegsMinMax)
-        return LegsMinMax
+    return LegsMinMax
 
 if __name__ == "__main__":
     LegsMinMax = ReadDefLegsIf()

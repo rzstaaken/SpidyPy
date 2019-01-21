@@ -18,6 +18,7 @@ from enum import Enum
 from ECom import ECom
 from ERunMode import ERunMode
 from EListbox import EListbox
+import datetime
 
 
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
@@ -39,9 +40,9 @@ class SpidyPy(tk.Frame):
         self.master=root
         #self.pack(padx=SpiderDefaults.PADX, pady=SpiderDefaults.PADX, fill="both")
         if withRPi:
-            root.geometry("1900x450")
+            root.geometry("1900x650")
         else:
-            root.geometry("1500x450")
+            root.geometry("1500x650")
 
         root.title("Spidy Moving Application ")
         self.lockMe=threading.Lock()
@@ -85,9 +86,9 @@ class SpidyPy(tk.Frame):
             self.legScale[i]['command'] = self.onCallbackAction(self.legScale[i])
             self.legScale[i]['bg'] = backgroundGray 
             
-            self.legCheckbutton.append(tk.Checkbutton(root))
-            self.legCheckbutton[i].Number = i
-            self.legCheckbutton[i].grid(row=15, column=i, rowspan=SpiderDefaults.ROWSPAN,padx=22, sticky='w')
+            # self.legCheckbutton.append(tk.Checkbutton(root))
+            # self.legCheckbutton[i].Number = i
+            # self.legCheckbutton[i].grid(row=15, column=i, rowspan=SpiderDefaults.ROWSPAN,padx=22, sticky='w')
 
             if breit:
                 l=tk.Label(root, width=12)
@@ -98,6 +99,13 @@ class SpidyPy(tk.Frame):
             #     self.legScale[i].grid( sticky='w' )#padx=20)
             # else:
             #     self.legScale[i].grid( sticky='e' )
+
+        self.outText = tk.Text(root, height=10, width=120)
+        self.outText.grid(row=25, column=0, columnspan=12)
+        self.outText.insert(tk.END,str(datetime.datetime.now())+" Started!")
+        self.scrollbarOutText = tk.Scrollbar(root, orient='vertical',command=self.outText.yview)
+        self.scrollbarOutText.grid(column=0, row=25,columnspan=12,sticky='nes')
+
 
         self.name.set("Pos")
         self.entryName = tk.Entry(root)
@@ -307,7 +315,13 @@ class SpidyPy(tk.Frame):
     def step(self):
         command= self.getCurCommand()
         if command[0:1]!=':':
-            self.move(str(command).strip())
+            try:
+                com=str(command).strip()
+                self.move(com)
+            except FileNotFoundError:
+                self.outText.insert(tk.END,str("\nError: kann JSon-Datei nicht finden :"+com+JsonIO.Ext()))
+                self.varRunMode.set(self.runModelst[ERunMode.IDLE.value])
+                return
         if ECom.Wait.__str__() in command:   #:Wait
             cur=self.listboxProcedure.curselection()
             if len(cur)==1:
@@ -595,20 +609,29 @@ class SpidyPy(tk.Frame):
         fileNamesIndxList = []
         fileNamesIndxList = self.listboxMoves.curselection()
         times=int(self.entryTimes.get())
-        for i in range(times):
-            for f in fileNamesIndxList:
-                fn = self.listboxMoves.get(f)
-                #print(f"({str(i)}) Es wird {fn} ausgeführt.")
-                #print("({0}) Es wird {1} ausgeführt.".format(str(i),fn))
-                self.move(fn)
-        self.onReset()
-        self.btnStart.configure(state = tk.NORMAL)
+        try:
+            for i in range(times):
+                for f in fileNamesIndxList:
+                    fn = self.listboxMoves.get(f)
+                    #print(f"({str(i)}) Es wird {fn} ausgeführt.")
+                    #print("({0}) Es wird {1} ausgeführt.".format(str(i),fn))
+                    self.move(fn)
+        except:
+            self.outText.insert(tk.END,str("Error: kann JSon-Datei nicht finden :"+fn+JsonIO.Ext()))
+        finally:
+
+            self.onReset()
+            self.btnStart.configure(state = tk.NORMAL)
 
     def move(self,posName):
-        #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
-        selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext())))
-        dicBewegungen=self.getMotionsDictionaryList(selLegs) 
-        self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
+        try:
+            #selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', f"{posName}{JsonIO.Ext()}"))
+            selLegs=SpiderDefaults.ReadDefLegs(filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext())))
+
+            dicBewegungen=self.getMotionsDictionaryList(selLegs) 
+            self.animiereSliderAsync(dicBewegungen)#----Überspringe Async 
+        except FileNotFoundError:
+            raise
 
     def selectLeg(self,num,select=True):
         if type(num) is int:
