@@ -16,6 +16,7 @@ import SpiderDefaults
 from ECom import ECom
 from LoopRepeat import LoopRepeat
 from EListbox import EListbox
+import EditLine as el
 
 
 class Drag_and_Drop_Listbox(tk.Listbox):
@@ -38,6 +39,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         #self.bind('<<ListboxSelect>>', self.save)
         self.popup_menu = tk.Menu(self, tearoff=0)
         if self.elistbox!=None:
+            self.popup_menu.add_command(label="------", command=self.doNothing,state="disabled")
             if self.elistbox == EListbox.MOVES:
                 self.popup_menu.add_command(label="Do Move", command=self.doMove)
 
@@ -63,6 +65,10 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             #self.popup_menu.
         finally:
             self.popup_menu.grab_release()
+    
+    def doNothing(self):
+        pass
+
 
     def delete_line(self):
         sel_set=False
@@ -99,8 +105,14 @@ class Drag_and_Drop_Listbox(tk.Listbox):
     def edit_line(self):
         sel_set=False
         line=self.nearest(self.myevent.y)
-        if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'
-            pass
+        #if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'
+        win = tk.Tk()
+        # popup = tk.Toplevel(win)
+        # popup.wm_title("Input")
+        # popup.tkraise(popup)
+        le=el.EditLine(win,parent=self.eltern,listbox=self,lineNr=line)
+        #win.mainloop()
+
         
         # cur = self.curselection()
         # if len(cur)==1 and cur[0]==line:
@@ -265,17 +277,24 @@ if __name__ == "__main__":
         #   curIndex = myListbox.nearest(event.y)
         #   print(f"Ausgewählt wurde: {myListbox.get(curIndex)}")
     root = tk.Tk()
+    root.wm_title("Test Pullup")
     #myListbox = Drag_and_Drop_Listbox(root,name="myListbox")
-    myListbox = Drag_and_Drop_Listbox(master=root,height=5,elistbox=EListbox.PROCEDURE)
-    for i, name in enumerate(['name'+str(i) for i in range(10)]):
-        myListbox.insert(tk.END, name)
-        if i % 2 == 0:
-            myListbox.selection_set(i)
-    myListbox.grid()
-    #myListbox.pack(fill=tk.BOTH, expand=True)
-    #listbox.bind('<Button-3>', printRightClickItem)
-    #myListbox.bind('<Button-3>', lambda event: print( "Ausgewählt wurde: {0}".format(myListbox.get(myListbox.nearest(event.y)))))
+    myListbox = Drag_and_Drop_Listbox(master=root,height=20,elistbox=EListbox.PROCEDURE,width=40)
+    #for i, name in enumerate(['name'+str(i) for i in range(10)]):
+    myListbox.insert(tk.END, ECom.Wait.__str__()+" 1.7 (1.7)")
+    myListbox.insert(tk.END, ""+ECom.Repeat.__str__()+" 5 (3)")
+    myListbox.insert(tk.END, "   Spidy Platz")
+    myListbox.insert(tk.END, "   "+ECom.Wait.__str__()+" 1.7 (1.7)")
+    myListbox.insert(tk.END, "   Spidy Sitz")
+    myListbox.insert(tk.END, "   "+ECom.Wait.__str__()+" 3.2 (3.2)")
+    myListbox.insert(tk.END, ""+ECom.LoopToLine.__str__()+" 1")
+    myListbox.insert(tk.END, ECom.End.__str__()+"")
 
+
+
+        # if i % 2 == 0:
+        #     myListbox.selection_set(i)
+    myListbox.grid()
     scrollbar = tk.Scrollbar(root, orient='vertical')
     scrollbar.config(command=myListbox.yview)
     scrollbar.grid(column=1, row=0)
