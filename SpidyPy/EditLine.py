@@ -1,5 +1,7 @@
 import tkinter as tk
-from math import *
+#from math import *
+from ECom import ECom
+
 
 
 
@@ -34,10 +36,11 @@ class EditLine(tk.Widget):
         self.entryWaitSec.pack(side="top")
         #self.entryTextWaitSec.set(2.5)
 
-        self.res.pack()
+        #self.res.pack()
 
     def evaluate(self,event):
-        self.res.configure(text = "Ergebnis: " + str(eval(self.entry.get())))
+        pass
+        #self.res.configure(text = "Ergebnis: " + str(eval(self.entry.get())))
 
     # Callback functions
     def is_number(self,data):
@@ -48,7 +51,7 @@ class EditLine(tk.Widget):
             #print('value:', data)
         except ValueError:
             return False
-        self.btnWait['text']=ECom.Wait.__str__()+' '+data
+        #self.btnWait['text']=ECom.Wait.__str__()+' '+data
         return True
 
 if __name__ == "__main__":
