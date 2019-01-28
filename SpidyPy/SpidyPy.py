@@ -618,6 +618,8 @@ class SpidyPy(tk.Frame):
         """
         Die Scale-Positionen in eine Datei schreiben
         """
+        self.listboxMoves.save()  # Erst mal csv-Datei schreiben falls sich die Positionen der Einträge geändert hat
+        
         fname=self.entryName.get()
         nummer=self.entryNum.get()
         dic = {}
@@ -636,7 +638,7 @@ class SpidyPy(tk.Frame):
         self.setEntryNum(int(nummer) + 1)
         self.onReset()   
         #self.listboxMoves.delete(0, 'end')
-        self.listboxMoves.fillListBox() #Die Listbox aktualisieren
+        self.listboxMoves.fillListBox(path=SpiderDefaults.posiPath) #Die Listbox aktualisieren
 
     def onSaveAllAxis(self):
         self.onSave(all=True)

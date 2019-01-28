@@ -110,7 +110,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         # popup = tk.Toplevel(win)
         # popup.wm_title("Input")
         # popup.tkraise(popup)
-        le=el.EditLine(win,parent=self.eltern,listbox=self,lineNr=line)
+        le=el.EditLine(win,parent=self.myParent,listbox=self,lineNr=line)
         #win.mainloop()
 
         
@@ -162,6 +162,8 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                     self.select_set(0)          #Die erste Zeile selektieren
             if path:
                 self.nichtExistenteFilesEntfernen(path)
+                self.save()
+
 
     def nichtExistenteFilesEntfernen(self,path):
         fnames=self.getAllFileExt(path=path,ext=JsonIO.Ext())
@@ -170,10 +172,14 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         for i in reversed( range(len(li))): #Schleife rückwärts um fehlende Files zu löschen
             if not (self.get(i) in fnames):
                 self.delete(i)
-            
+                
+        li = self.get(0,tk.END)
+        #Neue Files eintragen
         for fileName in fnames:
             if not fileName in li:
                 self.insert(tk.END,fileName)
+                print(fileName+" eingetragen!")
+        
 
     def getAllFileExt(self,path,ext):
         names=[]

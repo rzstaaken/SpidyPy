@@ -3,8 +3,6 @@ import tkinter as tk
 from ECom import ECom
 
 
-
-
 class EditLine(tk.Widget):
     """ A tk listbox with drag'n'drop reordering of entries. """
 

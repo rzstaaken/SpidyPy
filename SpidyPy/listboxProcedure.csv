@@ -5,8 +5,8 @@ Index,Name,Selected
 3,  :Repeat 3 (3),False
 4,    SpidyRunter0,False
 5,    :Wait 1.0 (1.0),False
-6,    SpidyHoch0,True
-7,    :Wait 1.0 (1.0),False
+6,    SpidyHoch0,False
+7,    :Wait 1.0 (1.0),True
 8,    SpidyRunter0,False
 9,    :Wait 1.0 (1.0),False
 10,    SpidyHoch0,False
