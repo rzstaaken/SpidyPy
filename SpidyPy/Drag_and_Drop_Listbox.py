@@ -16,7 +16,7 @@ import SpiderDefaults
 from ECom import ECom
 from LoopRepeat import LoopRepeat
 from EListbox import EListbox
-import EditLine as el
+from EditLine import EditLine
 
 
 class Drag_and_Drop_Listbox(tk.Listbox):
@@ -54,9 +54,12 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         try:
             self.myevent=event  # nicht schön aber selten
             #self.popup_menu.config()
-            line=self.nearest(self.myevent.y)
-            if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'
-                print("Wait gefunden")
+            #Die aktuelle Zeile merken, weil sich der Mauszeiger verschiebt 
+            self.puLineNr = self.nearest(self.myevent.y)
+            self.puLineStr = self.get(self.nearest(self.myevent.y))
+            eCom = ECom.findECom(self.puLineStr)
+            if eCom != ECom.LoopToLine:  # Nur LoopToLine nicht editieren
+                print("Commando zum editieren gefunden")
                 self.popup_menu.entryconfig("Edit", state="normal")
             else:
                 self.popup_menu.entryconfig("Edit", state="disabled")
@@ -72,7 +75,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
 
     def delete_line(self):
         sel_set=False
-        line=self.nearest(self.myevent.y)
+        line=self.puLineNr #self.nearest(self.myevent.y)
         if self.elistbox == EListbox.MOVES:
             file=self.get(line)
             if not self.delMove(file):  # Zeigt Messagebox, bei ja wird gelöscht
@@ -88,7 +91,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
     def doMove(self):
-        line=self.nearest(self.myevent.y)
+        line=self.puLineNr  #self.nearest(self.myevent.y)
         if self.myParent:
             file=self.get(line)
             self.myParent.move(file)  # nicht schön!
@@ -104,16 +107,13 @@ class Drag_and_Drop_Listbox(tk.Listbox):
 
     def edit_line(self):#ToDo !!!!!
         sel_set=False
-        line=self.nearest(self.myevent.y)
+        line=self.puLineNr
         #if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'
         win = tk.Tk()
-        # popup = tk.Toplevel(win)
-        # popup.wm_title("Input")
-        # popup.tkraise(popup)
-        le=el.EditLine(win,parent=self.myParent,listbox=self,lineNr=line)
-        #win.mainloop()
-
-        
+        le= EditLine(win, parent = self.myParent, elistbox = self.elistbox, listbox = self, lineNr = line)
+        root.wait_window(le.top)
+        print('Hallo')
+    
         # cur = self.curselection()
         # if len(cur)==1 and cur[0]==line:
         #     sel_set=True
