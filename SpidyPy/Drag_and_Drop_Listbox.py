@@ -72,7 +72,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
     def doNothing(self):
         pass
 
-
     def delete_line(self):
         sel_set=False
         line=self.puLineNr #self.nearest(self.myevent.y)
@@ -106,20 +105,21 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         return False
 
     def edit_line(self):#ToDo !!!!!
-        sel_set=False
         line=self.puLineNr
-        #if ECom.Wait.__str__() in self.get(line):  # bei ':WAIT'
-        win = tk.Tk()
-        le= EditLine(win, parent = self.myParent, elistbox = self.elistbox, listbox = self, lineNr = line)
-        root.wait_window(le.top)
-        print('Hallo')
+        
+        sel_set=False
+        cur = self.curselection()
+
+        self.my_top = tk.Toplevel(self)
+        self.my_top.transient(self)
+        self.my_top.grab_set()
+        EditLine(self.my_top, elistbox = self.elistbox, listbox = self, lineNr = line)
+        root.wait_window(self.my_top)
     
-        # cur = self.curselection()
-        # if len(cur)==1 and cur[0]==line:
-        #     sel_set=True
-        # self.delete(line)
-        # if sel_set:
-        #     self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
+        if len(cur)==1 and cur[0]==line:
+            sel_set=True
+        if sel_set:
+            self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
 #ende popup
 

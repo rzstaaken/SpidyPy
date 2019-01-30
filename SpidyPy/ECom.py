@@ -7,6 +7,21 @@ class ECom(IntEnum):
     Repeat = 2
     Wait = 3
 
+
+    @staticmethod
+    def get_min_val(eCom):
+        ''' Liefert den minimalen Wert des Commandos
+        '''
+        if eCom==ECom.End:
+            return None
+        elif eCom==ECom.LoopToLine:
+            return None # Das System bestimmt selber die Rücksprungsadresse
+        elif eCom==ECom.Repeat:
+            return 1
+        elif eCom==ECom.Wait:
+            return 0.1
+        return None
+
     @staticmethod
     def getNames():
         return [name for name,member in ECom.__members__.items()]
@@ -106,6 +121,9 @@ if __name__ == "__main__":
     print(ECom.getNames())
     print(ECom.getValues())
     print(ECom.getCommands())
+
+    x=ECom.get_min_val(ECom.Repeat)
+    print("ECom.get_min_val(ECom.Repeat) = "+str(x))
 
     x=ECom.getValue('    :Repeat 5 (3)')
     print("ECom.getValue('    :Repeat 5 (3)') + "+str(x))

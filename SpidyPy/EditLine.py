@@ -2,26 +2,20 @@ import tkinter as tk
 from ECom import ECom
 from EListbox import EListbox
 
-
 class EditLine(tk.Widget):
     """ A tk listbox with drag'n'drop reordering of entries. """
 
-    def __init__(self, master,parent=None,elistbox=None,listbox=None,lineNr=0, **kw):
+    def __init__(self, master,elistbox=None,listbox=None,lineNr=0, **kw):
         #super().__init__(self.popup)
-
-        self.top = tk.Toplevel(parent)
-        self.top.transient(parent)
-        self.top.grab_set()
-
-
+        self.master=master
         self.elistbox = elistbox
         self.listbox = listbox
         
         self.lineNr = lineNr
         st = self.listbox.get(self.lineNr)
-        tk.Label(master, text="Neuer Float Wert:",width=40).pack(side="left")
+        tk.Label(master, text="New Line:",width=20,takefocus=1, highlightthickness=2).pack(side="left")
 
-        master.title("Ausgewählte Zeile:"+st)
+        master.title("Original Line "+str(lineNr)+" :"+st)
         
         self.retStr = st
 
@@ -31,30 +25,53 @@ class EditLine(tk.Widget):
 
         self.vcmd = master.register(self.is_number)
         self.entryText = tk.StringVar()
-        #self.entryText.set("Hello")
-        self.entryVal = tk.Entry(master,justify='right',textvariable=self.entryText, width=12)
+
+        self.entryVal = tk.Entry(master,justify='right',textvariable=self.entryText, width=12,takefocus=1, highlightthickness=2)
         self.entryVal.bind("<Return>", self.ok)
         self.entryVal.bind("<Escape>", self.cancel)
+        self.entryVal.bind("<Up>", self.specialKey)
+        self.entryVal.bind("<Down>", self.specialKey)
+
+
         self.entryVal['validate']='key'
 
         self.entryVal['validatecommand']=(self.vcmd,'%P')
         self.entryVal.pack(side="top")
+        self.entryVal.focus_set()
 
         if elistbox == EListbox.PROCEDURE:
             if listbox:
                 self.origStr = listbox.get(lineNr)
                 self.origECom = ECom.findECom(self.origStr)
                 self.origNumber = ECom.getNumber(inpStr = self.origStr)
+                self.data=self.origNumber
                 self.entryVal.insert(tk.END,str(self.origNumber))
 
+    def specialKey(self, event=None):
+        if event.keysym == 'Up' and event.state == 262152:
+            data=float(self.data)+1.0#set Value
+        if event.keysym == 'Up' and event.state == 262153:#With Shift
+            data=float(self.data)+10.0
+        
+        if event.keysym == 'Down' and event.state == 262152:
+            data=float(self.data)-1.0#set Value
+        if event.keysym == 'Down' and event.state == 262153:#With Shift
+            data=float(self.data)-10.0
+        if data>= ECom.get_min_val(self.origECom):
+            self.entryVal.delete(0,tk.END)
+            self.entryVal.insert(0,str(round(data,1)))
+        #print(event.keysym+"   "+str(event.state))
+
+
+
     def ok(self, event=None):
-        #print "Has escrito ...", self.e.get()
-        #self.valor.set(self.e.get())
         self.retStr=self.labelNew['text']
-        self.top.destroy()
+        self.listbox.delete(self.lineNr)
+        self.listbox.insert(self.lineNr,self.retStr)
+        self.master.destroy()
  
     def cancel(self, event=None):
-        self.top.destroy()
+        self.master.destroy()
 
     # Callback functions
     def is_number(self,data):
@@ -67,6 +84,7 @@ class EditLine(tk.Widget):
             return False
         #self.btnWait['text']=ECom.Wait.__str__()+' '+data
         self.labelNew['text']=ECom.insertNumber(inpStr= self.origStr,number=data)
+        self.data=data
         return True
 
 if __name__ == "__main__":
