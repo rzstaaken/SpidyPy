@@ -5,22 +5,29 @@ from EListbox import EListbox
 class EditLine(tk.Widget):
     """ A tk listbox with drag'n'drop reordering of entries. """
 
-    def __init__(self, master,elistbox=None,listbox=None,lineNr=0, **kw):
+    def __init__(self, master,opa,elistbox=None,listbox=None,popup_line_nr=0, **kw):
         #super().__init__(self.popup)
         self.master=master
+        self.opa=opa
+
         self.elistbox = elistbox
         self.listbox = listbox
         
-        self.lineNr = lineNr
-        st = self.listbox.get(self.lineNr)
-        tk.Label(master, text="New Line:",width=20,takefocus=1, highlightthickness=2).pack(side="left")
+        self.popup_line_nr = popup_line_nr
 
-        master.title("Original Line "+str(lineNr)+" :"+st)
+        self.line_is_selected=False
+        if  self.popup_line_nr in listbox.curselection():
+            self.line_is_selected=True
+
+        st = self.listbox.get(self.popup_line_nr)
+        #tk.Label(master, text="New Line:",width=20,takefocus=1, highlightthickness=2).pack(side="left")
+
+        #master.title("Original Line "+str(lineNr)+" :"+st)
         
         self.retStr = st
 
         self.labelNew = tk.Label(master,text=st)
-        self.labelNew.configure(background='gray') 
+        #self.labelNew.configure(background='gray') 
         self.labelNew.pack(side="left")
 
         self.vcmd = master.register(self.is_number)
@@ -41,11 +48,22 @@ class EditLine(tk.Widget):
 
         if elistbox == EListbox.PROCEDURE:
             if listbox:
-                self.origStr = listbox.get(lineNr)
+                self.origStr = listbox.get(popup_line_nr)
                 self.origECom = ECom.findECom(self.origStr)
                 self.origNumber = ECom.getNumber(inpStr = self.origStr)
                 self.data=self.origNumber
                 self.entryVal.insert(tk.END,str(self.origNumber))
+
+        x = self.opa.winfo_x()
+        y = self.opa.winfo_y()
+        w = self.master.winfo_width()
+        #h = self.master.winfo_height()  
+        h=20
+        dx=0
+        dy=0
+        self.master.geometry("{}x{}+{}+{}".format(w, h, x + dx, y + dy))
+
+        #overrideredirect(True) 
 
     def specialKey(self, event=None):
         if event.keysym == 'Up' and event.state == 262152:
@@ -66,8 +84,12 @@ class EditLine(tk.Widget):
 
     def ok(self, event=None):
         self.retStr=self.labelNew['text']
-        self.listbox.delete(self.lineNr)
-        self.listbox.insert(self.lineNr,self.retStr)
+        self.listbox.delete(self.popup_line_nr)
+        self.listbox.insert(self.popup_line_nr,self.retStr)
+
+        if self.line_is_selected:
+            self.listbox.selection_set(self.popup_line_nr) #Wenn die popup Zeile selektiert war, dann die Zeile wieder selektieren
+
         self.master.destroy()
  
     def cancel(self, event=None):

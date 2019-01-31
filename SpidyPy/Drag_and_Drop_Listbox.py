@@ -26,6 +26,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         kw['selectmode'] = tk.MULTIPLE
         kw['activestyle'] = 'none'
         tk.Listbox.__init__(self, master, kw)
+        self.master=master
         self.myParent=myParent
         self.curIndex = None
         self.curIndex3 = None
@@ -55,7 +56,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             self.myevent=event  # nicht schön aber selten
             #self.popup_menu.config()
             #Die aktuelle Zeile merken, weil sich der Mauszeiger verschiebt 
-            self.puLineNr = self.nearest(self.myevent.y)
+            self.popup_line_nr = self.nearest(self.myevent.y)
             self.puLineStr = self.get(self.nearest(self.myevent.y))
             eCom = ECom.findECom(self.puLineStr)
             if eCom != ECom.LoopToLine:  # Nur LoopToLine nicht editieren
@@ -74,7 +75,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
 
     def delete_line(self):
         sel_set=False
-        line=self.puLineNr #self.nearest(self.myevent.y)
+        line=self.popup_line_nr #self.nearest(self.myevent.y)
         if self.elistbox == EListbox.MOVES:
             file=self.get(line)
             if not self.delMove(file):  # Zeigt Messagebox, bei ja wird gelöscht
@@ -90,7 +91,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
     def doMove(self):
-        line=self.puLineNr  #self.nearest(self.myevent.y)
+        line=self.popup_line_nr  #self.nearest(self.myevent.y)
         if self.myParent:
             file=self.get(line)
             self.myParent.move(file)  # nicht schön!
@@ -104,22 +105,14 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             return True
         return False
 
-    def edit_line(self):#ToDo !!!!!
-        line=self.puLineNr
-        
-        sel_set=False
-        cur = self.curselection()
+    def edit_line(self):
 
-        self.my_top = tk.Toplevel(self)
+        self.my_top = tk.Toplevel(self)       
         self.my_top.transient(self)
         self.my_top.grab_set()
-        EditLine(self.my_top, elistbox = self.elistbox, listbox = self, lineNr = line)
+        EditLine(self.my_top,opa=self.master, elistbox = self.elistbox, listbox = self, popup_line_nr = self.popup_line_nr)
         root.wait_window(self.my_top)
     
-        if len(cur)==1 and cur[0]==line:
-            sel_set=True
-        if sel_set:
-            self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
 #ende popup
 
