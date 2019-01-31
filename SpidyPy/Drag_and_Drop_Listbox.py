@@ -109,8 +109,8 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.my_top = tk.Toplevel(self)       
         self.my_top.transient(self)
         self.my_top.grab_set()
-        EditLine(self.my_top,opa=self.master, elistbox = self.elistbox, listbox = self, popup_line_nr = self.popup_line_nr)
-        root.wait_window(self.my_top)
+        EditLine(self.my_top,myParent2=self.myParent, opa=self.master, elistbox = self.elistbox, listbox = self, popup_line_nr = self.popup_line_nr)
+        self.master.wait_window(self.my_top)
     
 
 #ende popup

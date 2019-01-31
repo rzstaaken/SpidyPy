@@ -4,11 +4,11 @@ from EListbox import EListbox
 
 class EditLine(tk.Widget):
 
-    def __init__(self, master,opa,elistbox=None,listbox=None,popup_line_nr=0, **kw):
+    def __init__(self, master,opa,myParent2,elistbox=None,listbox=None,popup_line_nr=0, **kw):
         #super().__init__(self.popup)
         self.master=master
         self.opa=opa
-
+        self.myParent2=myParent2
         self.elistbox = elistbox
         self.listbox = listbox
         
@@ -21,7 +21,7 @@ class EditLine(tk.Widget):
         st = self.listbox.get(self.popup_line_nr)
         #tk.Label(master, text="New Line:",width=20,takefocus=1, highlightthickness=2).pack(side="left")
 
-        #master.title("Original Line "+str(lineNr)+" :"+st)
+        master.title("Original Line "+str(popup_line_nr)+" :"+st)
         
         self.retStr = st
 
@@ -37,10 +37,7 @@ class EditLine(tk.Widget):
         self.entryVal.bind("<Escape>", self.cancel)
         self.entryVal.bind("<Up>", self.specialKey)
         self.entryVal.bind("<Down>", self.specialKey)
-
-
         self.entryVal['validate']='key'
-
         self.entryVal['validatecommand']=(self.vcmd,'%P')
         self.entryVal.pack(side="top")
         self.entryVal.focus_set()
@@ -55,10 +52,10 @@ class EditLine(tk.Widget):
 
         x = self.opa.winfo_x()
         y = self.opa.winfo_y()
-        w = self.master.winfo_width()
+        w = 250#  self.opa.winfo_width()
         #h = self.master.winfo_height()  
         h=20
-        dx=0
+        dx=self.opa.winfo_width()-w
         dy=0
         self.master.geometry("{}x{}+{}+{}".format(w, h, x + dx, y + dy))
 

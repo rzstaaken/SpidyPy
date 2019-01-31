@@ -172,7 +172,7 @@ class SpidyPy(tk.Frame):
         self.btnDelMovesLine.grid(column=i+1, columnspan=1, row=18, sticky='ne')
 
         #Procedure-Box
-        self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,lbname='listboxProcedure',elistbox=EListbox.PROCEDURE,height=20,width=33,exportselection=False)
+        self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,myParent=self,lbname='listboxProcedure',elistbox=EListbox.PROCEDURE,height=20,width=33,exportselection=False)
         #self.listboxProcedure.bind('<Button-3>', lambda event: self.listboxProcedure.myDelete(self.listboxProcedure.nearest(event.y)))     
         self.listboxProcedure['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxProcedure.grid(column=i+5, row=5,rowspan=10)       
