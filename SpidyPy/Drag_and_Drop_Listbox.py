@@ -106,7 +106,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         return False
 
     def edit_line(self):
-
         self.my_top = tk.Toplevel(self)       
         self.my_top.transient(self)
         self.my_top.grab_set()

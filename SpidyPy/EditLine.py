@@ -3,7 +3,6 @@ from ECom import ECom
 from EListbox import EListbox
 
 class EditLine(tk.Widget):
-    """ A tk listbox with drag'n'drop reordering of entries. """
 
     def __init__(self, master,opa,elistbox=None,listbox=None,popup_line_nr=0, **kw):
         #super().__init__(self.popup)
