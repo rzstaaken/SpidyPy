@@ -20,15 +20,16 @@ from ERunMode import ERunMode
 from EListbox import EListbox
 import datetime
 
-lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
-backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
-withRPi = False # Keine Hardware angeschlossen
-if getpass.getuser() == 'pi':
-    import TrialPCA01
-    withRPi = True # Das Prg. läuft auf dem RPi
-    print('Das Prg. läuft auf dem RPi!')
-else:
-    print('Das Prg. läuft NICHT auf dem RPi!')
+if __name__ == "__main__":
+    lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
+    backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
+    withRPi = False # Keine Hardware angeschlossen
+    if getpass.getuser() == 'pi':
+        import TrialPCA01
+        withRPi = True # Das Prg. läuft auf dem RPi
+        print('Das Prg. läuft auf dem RPi!')
+    else:
+        print('Das Prg. läuft NICHT auf dem RPi!')
 
 class SpidyPy(tk.Frame):
 
@@ -195,11 +196,11 @@ class SpidyPy(tk.Frame):
         self.btnDoStop.bind('<ButtonPress-1>', lambda event: self.varRunMode.set(self.runModelst[ERunMode.IDLE.value]))
         self.btnDoStop.grid(column=i+5, columnspan=1, row=19, sticky='ne')
 
-        #---->
-        self.btnToSeq = tk.Button(root,width=10)
-        self.btnToSeq["text"] = "---->"
-        self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
-        self.btnToSeq.grid(column=i+3, row=5)
+        # #---->
+        # self.btnToSeq = tk.Button(root,width=10)
+        # self.btnToSeq["text"] = "---->"
+        # self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
+        # self.btnToSeq.grid(column=i+3, row=5)
 
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
         self.runMode=ERunMode.IDLE
@@ -361,27 +362,27 @@ class SpidyPy(tk.Frame):
             self.listboxMoves.check()
             self.listboxMoves.select_set(p)
 
-    def onToSeq(self,event):
-        #---->
-        sz= self.listboxMoves.curselection()#liefert die Indexe der selektierten Zeilen
-        items=[]
-        for i in sz:
-            items.append(self.listboxMoves.get(i))
-        self.einfuegen(listbox=self.listboxProcedure,items=items)
+    # def onToSeq(self,event):
+    #     #---->
+    #     sz= self.listboxMoves.curselection()#liefert die Indexe der selektierten Zeilen
+    #     items=[]
+    #     for i in sz:
+    #         items.append(self.listboxMoves.get(i))
+    #     self.einfuegen(listbox=self.listboxProcedure,items=items)
 
-    def einfuegen(self,listbox,items):
-        cur=self.listboxProcedure.curselection()
-        if len(cur)!=1:
-            return
-        p=cur[0]
-        p2 = p
-        self.listboxProcedure.selection_clear(p)
-        for a in items:
-            listbox.insert(p2,a)
+    # def einfuegen(self,listbox,items):
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)!=1:
+    #         return
+    #     p=cur[0]
+    #     p2 = p
+    #     self.listboxProcedure.selection_clear(p)
+    #     for a in items:
+    #         listbox.insert(p2,a)
 
-        #Ein Check mit dem wieder setzen der Selektierung
-        self.listboxProcedure.check()
-        self.listboxProcedure.select_set(p)
+    #     #Ein Check mit dem wieder setzen der Selektierung
+    #     self.listboxProcedure.check()
+    #     self.listboxProcedure.select_set(p)
         
     def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))
@@ -477,6 +478,7 @@ class SpidyPy(tk.Frame):
                     #print(f"({str(i)}) Es wird {fn} ausgeführt.")
                     #print("({0}) Es wird {1} ausgeführt.".format(str(i),fn))
                     self.move(fn)
+                    i=i
         except:
             self.outText.insert(tk.END,str("Error: kann JSon-Datei nicht finden :"+fn+JsonIO.Ext()))
         finally:

@@ -13,6 +13,7 @@ from ECom import ECom
 from LoopRepeat import LoopRepeat
 from EListbox import EListbox
 from EditLine import EditLine
+from SpidyPy import SpidyPy
 
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
@@ -47,7 +48,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 self.popup_menu.add_command(label=self.insertStr +' '+ECom.getStr(ECom.LoopToLine)    , command= self.insertLoopToLine)
                 self.popup_menu.add_command(label=self.insertStr +' '+ECom.getStr(ECom.Repeat)    , command= self.insertRepeat)
                 self.popup_menu.add_command(label=self.insertStr +' '+ECom.getStr(ECom.Wait)    , command= self.insertWait)
-
+                self.popup_menu.add_command(label="Insert Moves Lines", command= self.insert_selected_moves_lines)
             self.bind("<Button-3>", self.popup,add='+' ) 
 
 # Popup
@@ -65,10 +66,40 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 else:
                     print("Commando zum editieren gefunden")
                     self.popup_menu.entryconfig("Edit", state="normal")
+                #if isinstance(self.myParent,SpidyPy.SpidyPy):
+                    #print("Parent ist SpidyPy")
+                cur = self.myParent.listboxMoves.curselection()
+                if len(cur)>=1:
+                    self.popup_menu.entryconfig("Insert Moves Lines", state="normal")
+                else:
+                    self.popup_menu.entryconfig("Insert Moves Lines", state="disabled")
             self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
         finally:
             self.popup_menu.grab_release()
     
+    def insert_selected_moves_lines(self):
+        print("Selected lines gefunden!")
+        cur_src = self.myParent.listboxMoves.curselection()
+        if len(cur_src)>=1:
+            items=[]
+            for i in cur_src:
+                items.append(self.myParent.listboxMoves.get(i))
+            print(str(items))
+
+            sel_set=False
+            line=self.popup_line_nr 
+            cur=self.curselection()
+            if len(cur)==1 and cur[0]==line:
+                sel_set=True# Die Zeile war selektiert
+            self.selection_clear(line)
+            #for s in items: #TODO das muss eine Rückwärtsschleife werden
+            for i in reversed( range(len(items))): #Schleife rückwärts
+                self.insert(line,items[i]) 
+            self.check()
+            if sel_set:
+                self.selection_set(line) #Wenn die selektierte Zeile war, dann die Zeile wieder selektieren
+
+
     def doNothing(self):
         pass
 
