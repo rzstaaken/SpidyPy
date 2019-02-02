@@ -37,6 +37,8 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.bind('<Button-1>', self.getState, add='+')
         self.bind('<Button-1>', self.setCurrent, add='+')
         self.bind('<B1-Motion>', self.shiftSelection)
+
+        self.insertStr = "Insert"
         #self.bind('<<ListboxSelect>>', self.save)
         self.popup_menu = tk.Menu(self, tearoff=0)
         if self.elistbox!=None:
@@ -47,6 +49,9 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             self.popup_menu.add_command(label="Delete", command= self.delete_line)
             if self.elistbox == EListbox.PROCEDURE:
                 self.popup_menu.add_command(label="Edit", command= self.edit_line)
+                self.popup_menu.add_command(label=self.insertStr +' '+ECom.getStr(ECom.LoopToLine)    , command= self.insertLoopToLine)
+                self.popup_menu.add_command(label=self.insertStr +' '+ECom.getStr(ECom.Repeat)    , command= self.insertRepeat)
+                self.popup_menu.add_command(label=self.insertStr +' '+ECom.getStr(ECom.Wait)    , command= self.insertWait)
 
             self.bind("<Button-3>", self.popup,add='+' ) 
 
@@ -59,11 +64,18 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             self.popup_line_nr = self.nearest(self.myevent.y)
             self.puLineStr = self.get(self.nearest(self.myevent.y))
             eCom = ECom.findECom(self.puLineStr)
-            if eCom != ECom.LoopToLine:  # Nur LoopToLine nicht editieren
-                print("Commando zum editieren gefunden")
-                self.popup_menu.entryconfig("Edit", state="normal")
-            else:
-                self.popup_menu.entryconfig("Edit", state="disabled")
+            if self.elistbox==EListbox.PROCEDURE:
+                if eCom == None or eCom == ECom.LoopToLine:
+                    self.popup_menu.entryconfig("Edit", state="disabled")
+                else:
+                    print("Commando zum editieren gefunden")
+                    self.popup_menu.entryconfig("Edit", state="normal")
+
+                
+                #insert
+                #self.popup_menu.entryconfig( "Insert ", state="normal")
+
+            #nnn
 
             self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
             #self.popup_menu.
@@ -72,6 +84,63 @@ class Drag_and_Drop_Listbox(tk.Listbox):
     
     def doNothing(self):
         pass
+
+    def insertLoopToLine(self):
+        self.insertCom(ECom.LoopToLine)
+
+    def insertRepeat(self):
+        self.insertCom(ECom.Repeat)
+
+    def insertWait(self):
+        self.insertCom(ECom.Wait)
+
+    def insertCom(self,com):
+        sel_set=False
+        line=self.popup_line_nr 
+        cur=self.curselection()
+        if len(cur)==1 and cur[0]==line:
+            sel_set=True# Die Zeile war selektiert
+        self.selection_clear(line)
+        s="" 
+        if com==ECom.LoopToLine:
+            pass        
+        if com==ECom.Repeat:
+            s=' 1 (1)'
+        if com==ECom.Wait:
+            s=' 1.0 (1.0)' 
+        self.insert(line,ECom.getStr(com)+s)
+        self.check()
+        if sel_set:
+            self.selection_set(line) #Wenn die selektierte Zeile war, dann die Zeile wieder selektieren
+
+    # def onInsertRepeat(self,event):
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxProcedure.selection_clear(p)
+    #         self.listboxProcedure.insert(p,self.btnRep["text"])
+    #         self.listboxProcedure.check()
+    #         self.listboxProcedure.select_set(p)
+
+
+    # def onInsertWait(self,event):
+    #     wert=self.entryWaitSec.get()
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxProcedure.selection_clear(p)
+    #         self.listboxProcedure.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
+    #         self.listboxProcedure.check()
+    #         self.listboxProcedure.select_set(p)
+
+    # def onLOOP(self,event):
+    #     #LOOP X
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxProcedure.selection_clear(p)
+    #         self.listboxProcedure.insert(p,self.btnLOOP["text"])
+    #         self.onInsertWait(None)
 
     def delete_line(self):
         sel_set=False
@@ -87,6 +156,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         if len(cur)==1 and cur[0]==line:
             sel_set=True
         self.delete(line)
+        self.check()
         if sel_set:
             self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 

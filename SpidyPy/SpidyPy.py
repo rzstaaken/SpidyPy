@@ -211,50 +211,50 @@ class SpidyPy(tk.Frame):
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
         self.btnToSeq.grid(column=i+3, row=5)
 
-        #+1
-        self.btnInc = tk.Button(root,width=10)
-        self.btnInc["text"] = "  +1   "
-        self.btnInc.bind('<ButtonPress-1>', self.onInc)
-        self.btnInc.grid(column=i+3, columnspan=1, row=7, sticky='nw')
+        # #+1
+        # self.btnInc = tk.Button(root,width=10)
+        # self.btnInc["text"] = "  +1   "
+        # self.btnInc.bind('<ButtonPress-1>', self.onInc)
+        # self.btnInc.grid(column=i+3, columnspan=1, row=7, sticky='nw')
 
-        #Repeat
-        self.btnRep = tk.Button(root,width=10)
-        self.btnRep["text"] = ECom.Repeat.__str__() +" 1"
-        self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)
-        self.btnRep.grid(column=i+3, columnspan=1, row=8, sticky='nw')
+        # #Repeat
+        # self.btnRep = tk.Button(root,width=10)
+        # self.btnRep["text"] = ECom.Repeat.__str__() +" 1"
+        # self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)
+        # self.btnRep.grid(column=i+3, columnspan=1, row=8, sticky='nw')
 
-        #-1
-        self.btnDec = tk.Button(root,width=10)
-        self.btnDec["text"] = "  -1   "
-        self.btnDec.bind('<ButtonPress-1>', self.onDec)
-        self.btnDec.grid(column=i+3, columnspan=1, row=9, sticky='nw')
+        # #-1
+        # self.btnDec = tk.Button(root,width=10)
+        # self.btnDec["text"] = "  -1   "
+        # self.btnDec.bind('<ButtonPress-1>', self.onDec)
+        # self.btnDec.grid(column=i+3, columnspan=1, row=9, sticky='nw')
 
-        #LOOP
-        self.btnLOOP = tk.Button(root,width=10)
-        self.btnLOOP["text"] = ECom.LoopToLine.__str__()
-        self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
-        self.btnLOOP.grid(column=i+3, columnspan=1, row=10, sticky='nw')
+        # #LOOP
+        # self.btnLOOP = tk.Button(root,width=10)
+        # self.btnLOOP["text"] = ECom.LoopToLine.__str__()
+        # self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
+        # self.btnLOOP.grid(column=i+3, columnspan=1, row=10, sticky='nw')
 
-        #Wait
-        self.btnWait = tk.Button(root,width=10)
-        self.btnWait["text"] = ECom.Wait.__str__()
-        self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
-        self.btnWait.grid(column=i+3, columnspan=1, row=11, sticky='nw')
+        # #Wait
+        # self.btnWait = tk.Button(root,width=10)
+        # self.btnWait["text"] = ECom.Wait.__str__()
+        # self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
+        # self.btnWait.grid(column=i+3, columnspan=1, row=11, sticky='nw')
 
-        #Wait Textfeld (float) für die Sekunden
-        self.vcmd = root.register(self.is_number)
-        self.entryTextWaitSec = tk.StringVar()
-        self.entryWaitSec = tk.Entry(root,justify='right',textvariable=self.entryTextWaitSec, width=12)
-        self.entryWaitSec.grid(column=i+3, columnspan=1, row=13, sticky='nw')
-        self.entryWaitSec['validate']='key'
-        self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
-        self.entryTextWaitSec.set(2.5)
-        #self.result.bind('<<UpdateNeeded>>', self.do_update)
+        # #Wait Textfeld (float) für die Sekunden
+        # self.vcmd = root.register(self.is_number)
+        # self.entryTextWaitSec = tk.StringVar()
+        # self.entryWaitSec = tk.Entry(root,justify='right',textvariable=self.entryTextWaitSec, width=12)
+        # self.entryWaitSec.grid(column=i+3, columnspan=1, row=13, sticky='nw')
+        # self.entryWaitSec['validate']='key'
+        # self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
+        # self.entryTextWaitSec.set(2.5)
 
-        self.btnDelSequLine = tk.Button(root,width=10)
-        self.btnDelSequLine["text"] = "Delete Line"
-        self.btnDelSequLine.bind('<ButtonPress-1>', self.onDelSequLine)
-        self.btnDelSequLine.grid(column=i+3, columnspan=1, row=14, sticky='nw')
+
+        # self.btnDelSequLine = tk.Button(root,width=10)
+        # self.btnDelSequLine["text"] = "Delete Line"
+        # self.btnDelSequLine.bind('<ButtonPress-1>', self.onDelSequLine)
+        # self.btnDelSequLine.grid(column=i+3, columnspan=1, row=14, sticky='nw')
 
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
         self.runMode=ERunMode.IDLE
@@ -425,7 +425,6 @@ class SpidyPy(tk.Frame):
             return n
         return 0
 
-
     def windowDelHandler(self):
         self.is_mw = False 
         self.saveListboxes()
@@ -436,82 +435,82 @@ class SpidyPy(tk.Frame):
         self.listboxMoves.save()
         self.listboxProcedure.save()
 
-    def increment(self,s):
-        """ look for the last sequence of number(s) in a string and increment """
-        m = lastNum.search(s)
-        if m:
-            next = str(int(m.group(1))+1)
-            start, end = m.span(1)
-            s = s[:max(end-len(next), start)] + next + s[end:]
-        return s
+    # def increment(self,s):
+    #     """ look for the last sequence of number(s) in a string and increment """
+    #     m = lastNum.search(s)
+    #     if m:
+    #         next = str(int(m.group(1))+1)
+    #         start, end = m.span(1)
+    #         s = s[:max(end-len(next), start)] + next + s[end:]
+    #     return s
 
-    def decrement(self,s,min=1):
-        """ look for the last sequence of number(s) in a string and decrement """
-        m = lastNum.search(s)
-        if m:
-            if int(m.group(1)) < min+1:
-                return s
-            next = str(int(m.group(1))-1)
-            start, end = m.span(1)
-            s = s[:max(end-len(next), start)] + next + s[end:]
-        return s
+    # def decrement(self,s,min=1):
+    #     """ look for the last sequence of number(s) in a string and decrement """
+    #     m = lastNum.search(s)
+    #     if m:
+    #         if int(m.group(1)) < min+1:
+    #             return s
+    #         next = str(int(m.group(1))-1)
+    #         start, end = m.span(1)
+    #         s = s[:max(end-len(next), start)] + next + s[end:]
+    #     return s
 
-    def onInc(self,event):
-        #+1
-        #Testen ob die Sequenzen selektiert sind und ein Repeat ausgewählt ist
-        cur=self.listboxProcedure.curselection()
-        if len(cur)==1:
-            p=cur[0]
-            st=self.listboxProcedure.get(p)
-            st=st.strip()
-            a = st.split(' ')
-            st = a[0]+' '+a[1]
-            if p >= 0 and 'Repeat' in st:
-                s=self.increment(st)
-                self.listboxProcedure.delete(p)
-                self.listboxProcedure.insert(p,s)
-                self.listboxProcedure.check()
-                self.listboxProcedure.select_set(p)
-                return
-        self.btnRep["text"] = self.increment(self.btnRep["text"])
+    # def onInc(self,event):
+    #     #+1
+    #     #Testen ob die Sequenzen selektiert sind und ein Repeat ausgewählt ist
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         st=self.listboxProcedure.get(p)
+    #         st=st.strip()
+    #         a = st.split(' ')
+    #         st = a[0]+' '+a[1]
+    #         if p >= 0 and 'Repeat' in st:
+    #             s=self.increment(st)
+    #             self.listboxProcedure.delete(p)
+    #             self.listboxProcedure.insert(p,s)
+    #             self.listboxProcedure.check()
+    #             self.listboxProcedure.select_set(p)
+    #             return
+    #     self.btnRep["text"] = self.increment(self.btnRep["text"])
 
-    def onDec(self,event):
-        #-1
-        cur=self.listboxProcedure.curselection()
-        if len(cur)==1:
-            p=cur[0]
-            st=self.listboxProcedure.get(p)
-            st=st.strip()
-            a = st.split(' ')
-            st = a[0]+' '+a[1]
-            if p >= 0 and ECom.Repeat.__str__() in st:
-                s=self.decrement(st)
-                self.listboxProcedure.delete(p)
-                self.listboxProcedure.insert(p,s)
-                self.listboxProcedure.check()
-                self.listboxProcedure.select_set(p)
-                return
-        self.btnRep["text"] = self.decrement(self.btnRep["text"])
+    # def onDec(self,event):
+    #     #-1
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         st=self.listboxProcedure.get(p)
+    #         st=st.strip()
+    #         a = st.split(' ')
+    #         st = a[0]+' '+a[1]
+    #         if p >= 0 and ECom.Repeat.__str__() in st:
+    #             s=self.decrement(st)
+    #             self.listboxProcedure.delete(p)
+    #             self.listboxProcedure.insert(p,s)
+    #             self.listboxProcedure.check()
+    #             self.listboxProcedure.select_set(p)
+    #             return
+    #     self.btnRep["text"] = self.decrement(self.btnRep["text"])
 
-    def onInsertRepeat(self,event):
-        cur=self.listboxProcedure.curselection()
-        if len(cur)==1:
-            p=cur[0]
-            self.listboxProcedure.selection_clear(p)
-            self.listboxProcedure.insert(p,self.btnRep["text"])
-            self.listboxProcedure.check()
-            self.listboxProcedure.select_set(p)
+    # def onInsertRepeat(self,event):
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxProcedure.selection_clear(p)
+    #         self.listboxProcedure.insert(p,self.btnRep["text"])
+    #         self.listboxProcedure.check()
+    #         self.listboxProcedure.select_set(p)
 
 
-    def onInsertWait(self,event):
-        wert=self.entryWaitSec.get()
-        cur=self.listboxProcedure.curselection()
-        if len(cur)==1:
-            p=cur[0]
-            self.listboxProcedure.selection_clear(p)
-            self.listboxProcedure.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
-            self.listboxProcedure.check()
-            self.listboxProcedure.select_set(p)
+    # def onInsertWait(self,event):
+    #     wert=self.entryWaitSec.get()
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxProcedure.selection_clear(p)
+    #         self.listboxProcedure.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
+    #         self.listboxProcedure.check()
+    #         self.listboxProcedure.select_set(p)
 
     #TODO doppelter code
     def onDelMovesLine(self,event):
@@ -522,22 +521,22 @@ class SpidyPy(tk.Frame):
             self.listboxMoves.check()
             self.listboxMoves.select_set(p)
 
-    def onDelSequLine(self,event):
-        cur=self.listboxProcedure.curselection()
-        if len(cur)==1:
-            p=cur[0]
-            self.listboxProcedure.delete(p)
-            self.listboxProcedure.check()
-            self.listboxProcedure.select_set(p)
+    # def onDelSequLine(self,event):
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxProcedure.delete(p)
+    #         self.listboxProcedure.check()
+    #         self.listboxProcedure.select_set(p)
             
-    def onLOOP(self,event):
-        #LOOP X
-        cur=self.listboxProcedure.curselection()
-        if len(cur)==1:
-            p=cur[0]
-            self.listboxProcedure.selection_clear(p)
-            self.listboxProcedure.insert(p,self.btnLOOP["text"])
-            self.onInsertWait(None)
+    # def onLOOP(self,event):
+    #     #LOOP X
+    #     cur=self.listboxProcedure.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxProcedure.selection_clear(p)
+    #         self.listboxProcedure.insert(p,self.btnLOOP["text"])
+    #         self.onInsertWait(None)
 
     def onToSeq(self,event):
         #---->
