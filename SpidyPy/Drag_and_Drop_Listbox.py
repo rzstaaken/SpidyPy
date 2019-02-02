@@ -126,10 +126,10 @@ class Drag_and_Drop_Listbox(tk.Listbox):
 
     def delMove(self,posName):
         filename= os.path.join( 'posi', "{0}{1}".format(posName,JsonIO.Ext()))
-        print(posName)
+        #print(posName)
         if tkmb.askyesno(title="Delete", message="Should the file \""+filename +"\" really be deleted?"):
             #os.rename(src=filename,dst=filename+".bak")
-            os.remove(src=filename,dst=filename)
+            os.remove(filename)
             return True
         return False
 
