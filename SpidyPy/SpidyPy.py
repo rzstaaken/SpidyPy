@@ -20,7 +20,6 @@ from ERunMode import ERunMode
 from EListbox import EListbox
 import datetime
 
-
 lastNum = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 backgroundGray = 'gray93' #Anders geht es beim RPi nicht 85
 withRPi = False # Keine Hardware angeschlossen
@@ -76,8 +75,7 @@ class SpidyPy(tk.Frame):
         self.legScale=[]
         self.legCheckbutton=[]
         for i in range(0, len(self.legsMinMax)):
-            breit=(i+1)%3==0
-            
+            breit=(i+1)%3==0           
             self.legScale.append(tk.Scale(root ,width=9,  from_= self.legsMinMax[i]["Min"], to=self.legsMinMax[i]["Max"], length=400, label="S" + str(i), resolution=0.01))  
             if "Start" in self.legsMinMax[i]:
                 self.legScale[i].set(self.legsMinMax[i]["Start"])
@@ -93,19 +91,12 @@ class SpidyPy(tk.Frame):
             if breit:
                 l=tk.Label(root, width=12)
                 l.grid(row=19, column=i, rowspan=SpiderDefaults.ROWSPAN,sticky='w')
-            #if (i+1)%3==0:
-            #    self.legScale[i].grid( width=5)
-            # if (i+1)%3!=0: #Um Zwischenräume einzufügen
-            #     self.legScale[i].grid( sticky='w' )#padx=20)
-            # else:
-            #     self.legScale[i].grid( sticky='e' )
 
         self.outText = tk.Text(root, height=10, width=120)
         self.outText.grid(row=25, column=0, columnspan=12)
         self.outText.insert(tk.END,str(datetime.datetime.now())+" Started!")
         self.scrollbarOutText = tk.Scrollbar(root, orient='vertical',command=self.outText.yview)
         self.scrollbarOutText.grid(column=0, row=25,columnspan=12,sticky='nes')
-
 
         self.name.set("Pos")
         self.entryName = tk.Entry(root,width=32)
@@ -151,7 +142,6 @@ class SpidyPy(tk.Frame):
         self.labelProcedure = tk.Label(root,text="Procedure:")# Sequenz jetzt Procedure (Ablauf)
         self.labelProcedure.grid(column=i+5, row=4)
 
-        #
         self.labelTimes= tk.Label(root, text = "Times:")
         self.labelTimes.grid(column=i+1, columnspan=1, row=17, sticky='nw')
 
@@ -211,73 +201,11 @@ class SpidyPy(tk.Frame):
         self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
         self.btnToSeq.grid(column=i+3, row=5)
 
-        # #+1
-        # self.btnInc = tk.Button(root,width=10)
-        # self.btnInc["text"] = "  +1   "
-        # self.btnInc.bind('<ButtonPress-1>', self.onInc)
-        # self.btnInc.grid(column=i+3, columnspan=1, row=7, sticky='nw')
-
-        # #Repeat
-        # self.btnRep = tk.Button(root,width=10)
-        # self.btnRep["text"] = ECom.Repeat.__str__() +" 1"
-        # self.btnRep.bind('<ButtonPress-1>', self.onInsertRepeat)
-        # self.btnRep.grid(column=i+3, columnspan=1, row=8, sticky='nw')
-
-        # #-1
-        # self.btnDec = tk.Button(root,width=10)
-        # self.btnDec["text"] = "  -1   "
-        # self.btnDec.bind('<ButtonPress-1>', self.onDec)
-        # self.btnDec.grid(column=i+3, columnspan=1, row=9, sticky='nw')
-
-        # #LOOP
-        # self.btnLOOP = tk.Button(root,width=10)
-        # self.btnLOOP["text"] = ECom.LoopToLine.__str__()
-        # self.btnLOOP.bind('<ButtonPress-1>', self.onLOOP)
-        # self.btnLOOP.grid(column=i+3, columnspan=1, row=10, sticky='nw')
-
-        # #Wait
-        # self.btnWait = tk.Button(root,width=10)
-        # self.btnWait["text"] = ECom.Wait.__str__()
-        # self.btnWait.bind('<ButtonPress-1>', self.onInsertWait)
-        # self.btnWait.grid(column=i+3, columnspan=1, row=11, sticky='nw')
-
-        # #Wait Textfeld (float) für die Sekunden
-        # self.vcmd = root.register(self.is_number)
-        # self.entryTextWaitSec = tk.StringVar()
-        # self.entryWaitSec = tk.Entry(root,justify='right',textvariable=self.entryTextWaitSec, width=12)
-        # self.entryWaitSec.grid(column=i+3, columnspan=1, row=13, sticky='nw')
-        # self.entryWaitSec['validate']='key'
-        # self.entryWaitSec['validatecommand']=(self.vcmd,'%P')
-        # self.entryTextWaitSec.set(2.5)
-
-
-        # self.btnDelSequLine = tk.Button(root,width=10)
-        # self.btnDelSequLine["text"] = "Delete Line"
-        # self.btnDelSequLine.bind('<ButtonPress-1>', self.onDelSequLine)
-        # self.btnDelSequLine.grid(column=i+3, columnspan=1, row=14, sticky='nw')
-
         self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
         self.runMode=ERunMode.IDLE
         self.th_runner = Thread(target=self.runner,args=(0,))
         self.th_runner.setDaemon(True) #Damit lässt sich die Anwendung ohne Fehler beenden
         self.th_runner.start()
-
-# Callback functions
-    def is_number(self,data):
-        if data == '':
-            return True
-        try:
-            float(data)
-            #print('value:', data)
-        except ValueError:
-            return False
-        self.btnWait['text']=ECom.Wait.__str__()+' '+data
-        return True
-
-    def do_update(self,event):
-        w = event.widget
-        number = float(self.entryWaitSec.get())
-        w['text'] = '{}'.format(number)
 
     def runner(self,a):
         global thread_started
@@ -304,23 +232,14 @@ class SpidyPy(tk.Frame):
         thread_started=False
         #lock.release()
         
-
     def startSeq(self,mode=ERunMode.STEP): 
         self.varRunMode.set(self.runModelst[mode.value])
         while True:
             self.step()
             if self.varRunMode.get() != ERunMode.AUTOMATIC.value:
                 break
-
-            # if self.varRunMode.get() == ERunMode.IDLE.value:
-            #     break
-            # if self.varRunMode.get() == ERunMode.STEP.value:
-            #     break
             self.update()
             self.update_idletasks()#Wichtig!  ohne diese Zeile wird nur die letzte Position ausgegeben. 
-            
-        #widget = self.listboxSequenz
-        #widget.configure(state = tk.DISABLED)
 
     def doStep(self):
         self.varRunMode.set(self.runModelst[ERunMode.STEP.value])
@@ -339,7 +258,6 @@ class SpidyPy(tk.Frame):
         posName = self.listboxProcedure.get(cur)
         striped=posName.strip()
         spacesNr=len(posName) - len(striped)
-
         return ' ' * spacesNr #Liefert  x spaces
 
     def step(self):
@@ -377,7 +295,6 @@ class SpidyPy(tk.Frame):
                     self.listboxProcedure.insert(n,x)
                     self.listboxProcedure.select_set(n)
                     return 0 #Es wurde sich nicht bewegt
-
         n=self.nextStep()
         #print("nextStep={}".format(n))
         self.listboxProcedure.select_set(n)
@@ -435,83 +352,6 @@ class SpidyPy(tk.Frame):
         self.listboxMoves.save()
         self.listboxProcedure.save()
 
-    # def increment(self,s):
-    #     """ look for the last sequence of number(s) in a string and increment """
-    #     m = lastNum.search(s)
-    #     if m:
-    #         next = str(int(m.group(1))+1)
-    #         start, end = m.span(1)
-    #         s = s[:max(end-len(next), start)] + next + s[end:]
-    #     return s
-
-    # def decrement(self,s,min=1):
-    #     """ look for the last sequence of number(s) in a string and decrement """
-    #     m = lastNum.search(s)
-    #     if m:
-    #         if int(m.group(1)) < min+1:
-    #             return s
-    #         next = str(int(m.group(1))-1)
-    #         start, end = m.span(1)
-    #         s = s[:max(end-len(next), start)] + next + s[end:]
-    #     return s
-
-    # def onInc(self,event):
-    #     #+1
-    #     #Testen ob die Sequenzen selektiert sind und ein Repeat ausgewählt ist
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         st=self.listboxProcedure.get(p)
-    #         st=st.strip()
-    #         a = st.split(' ')
-    #         st = a[0]+' '+a[1]
-    #         if p >= 0 and 'Repeat' in st:
-    #             s=self.increment(st)
-    #             self.listboxProcedure.delete(p)
-    #             self.listboxProcedure.insert(p,s)
-    #             self.listboxProcedure.check()
-    #             self.listboxProcedure.select_set(p)
-    #             return
-    #     self.btnRep["text"] = self.increment(self.btnRep["text"])
-
-    # def onDec(self,event):
-    #     #-1
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         st=self.listboxProcedure.get(p)
-    #         st=st.strip()
-    #         a = st.split(' ')
-    #         st = a[0]+' '+a[1]
-    #         if p >= 0 and ECom.Repeat.__str__() in st:
-    #             s=self.decrement(st)
-    #             self.listboxProcedure.delete(p)
-    #             self.listboxProcedure.insert(p,s)
-    #             self.listboxProcedure.check()
-    #             self.listboxProcedure.select_set(p)
-    #             return
-    #     self.btnRep["text"] = self.decrement(self.btnRep["text"])
-
-    # def onInsertRepeat(self,event):
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxProcedure.selection_clear(p)
-    #         self.listboxProcedure.insert(p,self.btnRep["text"])
-    #         self.listboxProcedure.check()
-    #         self.listboxProcedure.select_set(p)
-
-
-    # def onInsertWait(self,event):
-    #     wert=self.entryWaitSec.get()
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxProcedure.selection_clear(p)
-    #         self.listboxProcedure.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
-    #         self.listboxProcedure.check()
-    #         self.listboxProcedure.select_set(p)
-
     #TODO doppelter code
     def onDelMovesLine(self,event):
         cur=self.listboxMoves.curselection()
@@ -520,23 +360,6 @@ class SpidyPy(tk.Frame):
             self.listboxMoves.delete(p)
             self.listboxMoves.check()
             self.listboxMoves.select_set(p)
-
-    # def onDelSequLine(self,event):
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxProcedure.delete(p)
-    #         self.listboxProcedure.check()
-    #         self.listboxProcedure.select_set(p)
-            
-    # def onLOOP(self,event):
-    #     #LOOP X
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxProcedure.selection_clear(p)
-    #         self.listboxProcedure.insert(p,self.btnLOOP["text"])
-    #         self.onInsertWait(None)
 
     def onToSeq(self,event):
         #---->
@@ -674,9 +497,7 @@ class SpidyPy(tk.Frame):
     def selectLeg(self,num,select=True):
         if type(num) is int:
             if num < len(self.legScale): 
-                if select:
-                    pass
-                else:
+                if not select:
                     self.legScale[num]['bg'] = backgroundGray
 
     def onReset(self):

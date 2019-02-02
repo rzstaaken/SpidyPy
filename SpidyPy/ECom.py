@@ -7,7 +7,6 @@ class ECom(IntEnum):
     Repeat = 2
     Wait = 3
 
-
     @staticmethod
     def get_min_val(eCom):
         ''' Liefert den minimalen Wert des Commandos

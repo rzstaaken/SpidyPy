@@ -56,7 +56,6 @@ def ReadDefLegs(filename=fNameMinMax):
     except FileNotFoundError:
         raise
 
-
 def WriteDefLegs(filename=fNameMinMax):
     with open(filename,'w') as f:
         #json.dump(LegsMinMax,f,indent=4,separators=(',',':'))

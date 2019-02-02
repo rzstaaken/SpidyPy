@@ -1,8 +1,4 @@
-# Version 0.4
-# Aus 'stackoverflow.com' 'tkinter listbox drag and drop with python'
-# https://stackoverflow.com/questions/14459993/tkinter-listbox-drag-and-drop-with-python/39300853#39300853
-# Danke 'Moshe'
-# Vielen Dank 'Jarad' für die auf Selectmode 'MULTIPLE' umgeschriebene Fassung
+# Version 0.5
 
 # Wenn 'name' angegeben wird, wird die Reihenfolge und der Inhalt als CSV gespeichert.
 #   Filename ist dann name.csv
@@ -17,7 +13,6 @@ from ECom import ECom
 from LoopRepeat import LoopRepeat
 from EListbox import EListbox
 from EditLine import EditLine
-
 
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
@@ -70,15 +65,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 else:
                     print("Commando zum editieren gefunden")
                     self.popup_menu.entryconfig("Edit", state="normal")
-
-                
-                #insert
-                #self.popup_menu.entryconfig( "Insert ", state="normal")
-
-            #nnn
-
             self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
-            #self.popup_menu.
         finally:
             self.popup_menu.grab_release()
     
@@ -112,35 +99,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.check()
         if sel_set:
             self.selection_set(line) #Wenn die selektierte Zeile war, dann die Zeile wieder selektieren
-
-    # def onInsertRepeat(self,event):
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxProcedure.selection_clear(p)
-    #         self.listboxProcedure.insert(p,self.btnRep["text"])
-    #         self.listboxProcedure.check()
-    #         self.listboxProcedure.select_set(p)
-
-
-    # def onInsertWait(self,event):
-    #     wert=self.entryWaitSec.get()
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxProcedure.selection_clear(p)
-    #         self.listboxProcedure.insert(p,ECom.Wait.__str__()+' '+wert+ ' ('+wert+')')# TODO
-    #         self.listboxProcedure.check()
-    #         self.listboxProcedure.select_set(p)
-
-    # def onLOOP(self,event):
-    #     #LOOP X
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxProcedure.selection_clear(p)
-    #         self.listboxProcedure.insert(p,self.btnLOOP["text"])
-    #         self.onInsertWait(None)
 
     def delete_line(self):
         sel_set=False
@@ -181,7 +139,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         self.my_top.grab_set()
         EditLine(self.my_top,myParent2=self.myParent, opa=self.master, elistbox = self.elistbox, listbox = self, popup_line_nr = self.popup_line_nr)
         self.master.wait_window(self.my_top)
-    
 
 #ende popup
 
@@ -226,7 +183,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 self.nichtExistenteFilesEntfernen(path)
                 self.save()
 
-
     def nichtExistenteFilesEntfernen(self,path):
         fnames=self.getAllFileExt(path=path,ext=JsonIO.Ext())
         li = self.get(0,tk.END)
@@ -242,7 +198,6 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 self.insert(tk.END,fileName)
                 print(fileName+" eingetragen!")
         
-
     def getAllFileExt(self,path,ext):
         names=[]
         files = SpiderDefaults.os.listdir(path)
@@ -290,8 +245,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             if len(cursel)==1:
                 self.select_set(cursel[0])
         except:
-            print("exeption in form():",sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
-        
+            print("exeption in form():",sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])     
         return True
 
     def check(self):
@@ -346,9 +300,7 @@ if __name__ == "__main__":
         #   print(f"Ausgewählt wurde: {myListbox.get(curIndex)}")
     root = tk.Tk()
     root.wm_title("Test Pullup")
-    #myListbox = Drag_and_Drop_Listbox(root,name="myListbox")
     myListbox = Drag_and_Drop_Listbox(master=root,height=20,elistbox=EListbox.PROCEDURE,width=40)
-    #for i, name in enumerate(['name'+str(i) for i in range(10)]):
     myListbox.insert(tk.END, ECom.Wait.__str__()+" 1.7 (1.7)")
     myListbox.insert(tk.END, ""+ECom.Repeat.__str__()+" 5 (3)")
     myListbox.insert(tk.END, "   Spidy Platz")
@@ -358,10 +310,6 @@ if __name__ == "__main__":
     myListbox.insert(tk.END, ""+ECom.LoopToLine.__str__()+" 1")
     myListbox.insert(tk.END, ECom.End.__str__()+"")
 
-
-
-        # if i % 2 == 0:
-        #     myListbox.selection_set(i)
     myListbox.grid()
     scrollbar = tk.Scrollbar(root, orient='vertical')
     scrollbar.config(command=myListbox.yview)

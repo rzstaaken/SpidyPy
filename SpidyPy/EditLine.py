@@ -10,21 +10,15 @@ class EditLine(tk.Widget):
         self.opa=opa
         self.myParent2=myParent2
         self.elistbox = elistbox
-        self.listbox = listbox
-        
+        self.listbox = listbox    
         self.popup_line_nr = popup_line_nr
-
         self.line_is_selected=False
         if  self.popup_line_nr in listbox.curselection():
             self.line_is_selected=True
-
         st = self.listbox.get(self.popup_line_nr)
         #tk.Label(master, text="New Line:",width=20,takefocus=1, highlightthickness=2).pack(side="left")
-
-        master.title("Original Line "+str(popup_line_nr)+" :"+st)
-        
+        master.title("Original Line "+str(popup_line_nr)+" :"+st)     
         self.retStr = st
-
         self.labelNew = tk.Label(master,text=st)
         #self.labelNew.configure(background='gray') 
         self.labelNew.pack(side="left")
@@ -59,8 +53,6 @@ class EditLine(tk.Widget):
         dy=0
         self.master.geometry("{}x{}+{}+{}".format(w, h, x + dx, y + dy))
 
-        #overrideredirect(True) 
-
     def specialKey(self, event=None):
         if event.keysym == 'Up' and event.state == 262152:
             data=float(self.data)+1.0#set Value
@@ -75,8 +67,6 @@ class EditLine(tk.Widget):
             self.entryVal.delete(0,tk.END)
             self.entryVal.insert(0,str(round(data,1)))
         #print(event.keysym+"   "+str(event.state))
-
-
 
     def ok(self, event=None):
         self.retStr=self.labelNew['text']
@@ -104,8 +94,3 @@ class EditLine(tk.Widget):
         self.labelNew['text']=ECom.insertNumber(inpStr= self.origStr,number=data)
         self.data=data
         return True
-
-if __name__ == "__main__":
-    pass
-
-
