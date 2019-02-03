@@ -356,37 +356,6 @@ class SpidyPy(tk.Frame):
     def saveListboxes(self):
         self.listboxMoves.save()
         self.listboxProcedure.save()
-
-    ##TODO doppelter code
-    # def onDelMovesLine(self,event):
-    #     cur=self.listboxMoves.curselection()
-    #     if len(cur)==1:
-    #         p=cur[0]
-    #         self.listboxMoves.delete(p)
-    #         self.listboxMoves.check()
-    #         self.listboxMoves.select_set(p)
-
-    # def onToSeq(self,event):
-    #     #---->
-    #     sz= self.listboxMoves.curselection()#liefert die Indexe der selektierten Zeilen
-    #     items=[]
-    #     for i in sz:
-    #         items.append(self.listboxMoves.get(i))
-    #     self.einfuegen(listbox=self.listboxProcedure,items=items)
-
-    # def einfuegen(self,listbox,items):
-    #     cur=self.listboxProcedure.curselection()
-    #     if len(cur)!=1:
-    #         return
-    #     p=cur[0]
-    #     p2 = p
-    #     self.listboxProcedure.selection_clear(p)
-    #     for a in items:
-    #         listbox.insert(p2,a)
-
-    #     #Ein Check mit dem wieder setzen der Selektierung
-    #     self.listboxProcedure.check()
-    #     self.listboxProcedure.select_set(p)
         
     def animiereSliderStart(self,dicBewegungen):
         self.Fred = threading.Thread(target=self.animiereSliderAsync,args =(  dicBewegungen,))

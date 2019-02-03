@@ -13,7 +13,7 @@ from ECom import ECom
 from LoopRepeat import LoopRepeat
 from EListbox import EListbox
 from EditLine import EditLine
-from SpidyPy import SpidyPy
+#from SpidyPy import SpidyPy
 
 class Drag_and_Drop_Listbox(tk.Listbox):
     """ A tk listbox with drag'n'drop reordering of entries. """
@@ -186,16 +186,18 @@ class Drag_and_Drop_Listbox(tk.Listbox):
 
 #ende popup
 
-    def fillListBox(self, procedure=False, path=None):
+    def fillListBox(self, procedure=False, path=None,filename=None):
         """
             Aus dem Directory path werden die json-Dateien gelesen und
             in der listbox dargestellt.
         """
         try:
+            if not filename:
+                filename = self.lbname+'.csv'
             self.delete(0, tk.END)            
             index=0
             # Wenn die CSV-Datei existiert wird sie benutzt, Eventuell gibt es diese Dateien nicht mehr oder einige sind hinzugekommen
-            with open(self.lbname+'.csv', "r")as f:
+            with open(filename, "r")as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     index = row['Index']
@@ -208,14 +210,15 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         except:
             #Das Einlesen der Datei mit der Reihenfolge hat nicht funktioniert.
             #Dann einfach das Directory -> listbox
-            self.delete(0, tk.END)
-            if path:
-                #files = SpiderDefaults.os.listdir(path)
-                fnames=self.getAllFileExt(path=path,ext=JsonIO.Ext())
-                i = 0
-                for fileName in fnames:
-                    self.insert(i, fileName)
-                    i = i+1
+            if(not procedure):
+                self.delete(0, tk.END)
+                if path:
+                    #files = SpiderDefaults.os.listdir(path)
+                    fnames=self.getAllFileExt(path=path,ext=JsonIO.Ext())
+                    i = 0
+                    for fileName in fnames:
+                        self.insert(i, fileName)
+                        i = i+1
         finally:
             if procedure:
                 if self.get(tk.END) != ECom.End.__str__():
@@ -251,11 +254,12 @@ class Drag_and_Drop_Listbox(tk.Listbox):
                 names.append(fileName[:pos]) # Extention weg und einordnen
         return names
 
-    def save(self):
-        if(self.lbname):
-            #print("Save Reihenfolge {}".format(self.lbname))
+    def save(self,filename=None):
+        if not filename:
+            filename=self.lbname+'.csv'
+        if(filename):
             fieldnames = ['Index', 'Name', 'Selected']
-            with open(self.lbname+'.csv', "w") as f:
+            with open(filename, "w") as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 writer.writeheader()
                 li = self.get(0, tk.END)
