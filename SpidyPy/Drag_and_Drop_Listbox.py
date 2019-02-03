@@ -40,7 +40,11 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         if self.elistbox!=None:
             self.popup_menu.add_command(label="------", command=self.doNothing,state="disabled")
             if self.elistbox == EListbox.MOVES:
-                self.popup_menu.add_command(label="Do Move", command=self.doMove)
+                self.popup_menu.add_command(label="Do Move Line", command=self.doMoveLine)
+                self.popup_menu.add_command(label="Do Move Selected", state="disabled", command=self.doMoveSelected)
+                self.popup_menu.add_command(label="Edit Name", state="disabled", command=self.ppEditName)
+                self.popup_menu.add_command(label="Copy Line", state="disabled", command=self.ppCopyLine)           
+
 
             self.popup_menu.add_command(label="Delete", command= self.delete_line)
             if self.elistbox == EListbox.PROCEDURE:
@@ -76,7 +80,16 @@ class Drag_and_Drop_Listbox(tk.Listbox):
             self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
         finally:
             self.popup_menu.grab_release()
-    
+
+    def doMoveSelected(self):
+        pass
+
+    def ppEditName(self):
+        pass
+
+    def ppCopyLine(self):
+        pass          
+
     def insert_selected_moves_lines(self):
         print("Selected lines gefunden!")
         cur_src = self.myParent.listboxMoves.curselection()
@@ -149,7 +162,7 @@ class Drag_and_Drop_Listbox(tk.Listbox):
         if sel_set:
             self.selection_set(line) #Wenn die selektierte Zeile gelöscht wurde, dann die Zeile wieder selektieren
 
-    def doMove(self):
+    def doMoveLine(self):
         line=self.popup_line_nr  #self.nearest(self.myevent.y)
         if self.myParent:
             file=self.get(line)

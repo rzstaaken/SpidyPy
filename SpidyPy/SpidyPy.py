@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 V0.21 21.01.2019 14:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
@@ -11,9 +12,10 @@ from threading import Thread
 from JsonIO import JsonIO
 import tkinter as tk
 import SpiderDefaults
+from SpidyMenu import SpidyMenu
 from time import sleep
 import threading
-import Drag_and_Drop_Listbox as DDListbox
+import Drag_and_Drop_Listbox as DD_Listbox #Muss ein Fehler in VS-Code sein, anders geht es nicht!
 from enum import Enum
 from ECom import ECom
 from ERunMode import ERunMode
@@ -49,6 +51,8 @@ class SpidyPy(tk.Frame):
         self.tr=None
         if withRPi:
             self.tr=TrialPCA01.Trial()
+
+        SpidyMenu(root,parent=self)
         self.createWidgets()
 
     def createOptionMenueOpRun(self,column=0,row=0):
@@ -107,9 +111,9 @@ class SpidyPy(tk.Frame):
         self.entryNum.grid(column=i+2, row=2,sticky='w')
         self.setEntryNum(0)
 
-        self.btnReset = tk.Button(root, text='Reset',width=10)
-        self.btnReset["command"] = self.onReset
-        self.btnReset.grid(column=i+1, columnspan=1, row=3, sticky='w')
+        # self.btnReset = tk.Button(root, text='Reset',width=10)
+        # self.btnReset["command"] = self.onReset
+        # self.btnReset.grid(column=i+1, columnspan=1, row=3, sticky='w')
 
         self.btnSave = tk.Button(root)
         self.btnSave["text"] = "Save"
@@ -128,7 +132,7 @@ class SpidyPy(tk.Frame):
         self.labelBew.grid(column=i+1, columnspan=3, row=4, sticky='nw')
 
         #Moving-Abschnitt
-        self.listboxMoves=DDListbox.Drag_and_Drop_Listbox(root,myParent=self,lbname='listboxMoves',elistbox=EListbox.MOVES,height=20,width=30)
+        self.listboxMoves=DD_Listbox.Drag_and_Drop_Listbox(root,myParent=self,lbname='listboxMoves',elistbox=EListbox.MOVES,height=20,width=30)
         self.listboxMoves.bind('<Button-2>', lambda event: self.move( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))     
         #self.listboxMoves.bind('<Double-Button-1>', lambda event: self.delMove( self.listboxMoves.get(self.listboxMoves.nearest(event.y))))  
         self.listboxMoves.grid(column=i+1, row=5,rowspan=10)
@@ -157,13 +161,13 @@ class SpidyPy(tk.Frame):
         self.btnStart.bind('<ButtonPress-1>', self.onStart)
         self.btnStart.grid(column=i+1, columnspan=1, row=18, sticky='nw')
 
-        self.btnDelMovesLine = tk.Button(root,width=10)
-        self.btnDelMovesLine["text"] = "Delete Line"
-        self.btnDelMovesLine.bind('<ButtonPress-1>', self.onDelMovesLine)
-        self.btnDelMovesLine.grid(column=i+1, columnspan=1, row=18, sticky='ne')
+        # self.btnDelMovesLine = tk.Button(root,width=10)
+        # self.btnDelMovesLine["text"] = "Delete Line"
+        # self.btnDelMovesLine.bind('<ButtonPress-1>', self.onDelMovesLine)
+        # self.btnDelMovesLine.grid(column=i+1, columnspan=1, row=18, sticky='ne')
 
         #Procedure-Box
-        self.listboxProcedure=DDListbox.Drag_and_Drop_Listbox(root,myParent=self,lbname='listboxProcedure',elistbox=EListbox.PROCEDURE,height=20,width=33,exportselection=False)
+        self.listboxProcedure=DD_Listbox.Drag_and_Drop_Listbox(root,myParent=self,lbname='listboxProcedure',elistbox=EListbox.PROCEDURE,height=20,width=33,exportselection=False)
         #self.listboxProcedure.bind('<Button-3>', lambda event: self.listboxProcedure.myDelete(self.listboxProcedure.nearest(event.y)))     
         self.listboxProcedure['selectmode'] = tk.SINGLE  #kw['selectmode'] = tk.MULTIPLE
         self.listboxProcedure.grid(column=i+5, row=5,rowspan=10)       
@@ -202,7 +206,7 @@ class SpidyPy(tk.Frame):
         # self.btnToSeq.bind('<ButtonPress-1>', self.onToSeq)
         # self.btnToSeq.grid(column=i+3, row=5)
 
-        self.master.protocol(name="WM_DELETE_WINDOW", func=self.windowDelHandler) 
+        self.master.protocol(name="WM_DELETE_WINDOW", func=self.spidy_exit) # Exit
         self.runMode=ERunMode.IDLE
         self.th_runner = Thread(target=self.runner,args=(0,))
         self.th_runner.setDaemon(True) #Damit lässt sich die Anwendung ohne Fehler beenden
@@ -343,7 +347,7 @@ class SpidyPy(tk.Frame):
             return n
         return 0
 
-    def windowDelHandler(self):
+    def spidy_exit(self):
         self.is_mw = False 
         self.saveListboxes()
         self.master.quit() 
@@ -353,14 +357,14 @@ class SpidyPy(tk.Frame):
         self.listboxMoves.save()
         self.listboxProcedure.save()
 
-    #TODO doppelter code
-    def onDelMovesLine(self,event):
-        cur=self.listboxMoves.curselection()
-        if len(cur)==1:
-            p=cur[0]
-            self.listboxMoves.delete(p)
-            self.listboxMoves.check()
-            self.listboxMoves.select_set(p)
+    ##TODO doppelter code
+    # def onDelMovesLine(self,event):
+    #     cur=self.listboxMoves.curselection()
+    #     if len(cur)==1:
+    #         p=cur[0]
+    #         self.listboxMoves.delete(p)
+    #         self.listboxMoves.check()
+    #         self.listboxMoves.select_set(p)
 
     # def onToSeq(self,event):
     #     #---->
@@ -434,8 +438,8 @@ class SpidyPy(tk.Frame):
         self.num.set(n)
         self.entryNum["textvariable"] = self.num
 
-    def onExit(self):
-        self.destroy()
+    # def onExit(self):
+    #     self.destroy()
 
     def onSave(self,all=False):
         """
@@ -502,7 +506,7 @@ class SpidyPy(tk.Frame):
                 if not select:
                     self.legScale[num]['bg'] = backgroundGray
 
-    def onReset(self):
+    def onReset(self,event=None):
         for i in range(0, len(self.legScale)):
             self.selectLeg(i,False)
 
