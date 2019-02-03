@@ -11,7 +11,6 @@ from tkinter import filedialog
 
 class SpidyMenu(tk.Frame):
     def __init__(self, master=None, parent=None):
-        # parameters that you want to send through the Frame class. 
         tk.Frame.__init__(self, master)                 
         self.master = master
         self.parent=parent
@@ -21,10 +20,6 @@ class SpidyMenu(tk.Frame):
 
         self.movingsMenu = tk.Menu(self.menu)
         self.menu.add_cascade(label= "Movings", menu = self.movingsMenu)                                            #Control M
-        self.movingsMenu.add_command(label="Load", state="disabled", command = self.procedureLoadFileDialog)              #Control L
-
-        # Sichert Movings im Ordner 'moves'
-        self.movingsMenu.add_command(label="Save As", state="disabled", command = self.ausgeben)                    #Control shift S
         self.movingsMenu.add_separator()
         self.movingsMenu.add_command(label="Save Selected Axis", state="disabled", command = self.ausgeben)         #Control A
         self.movingsMenu.add_command(label="Save All Axis", state="disabled", command = self.ausgeben)              #Control S
