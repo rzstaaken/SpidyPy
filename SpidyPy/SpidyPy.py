@@ -16,7 +16,6 @@ from SpidyMenu import SpidyMenu
 from time import sleep
 import threading
 import Drag_and_Drop_Listbox as DD_Listbox #Muss ein Fehler in VS-Code sein, anders geht es nicht!
-from enum import Enum
 from ECom import ECom
 from ERunMode import ERunMode
 from EListbox import EListbox
