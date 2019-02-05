@@ -12,7 +12,7 @@ import SpiderDefaults
 from ECom import ECom
 from LoopRepeat import LoopRepeat
 from EListbox import EListbox
-import EditLine
+from EditLine import EditLine
 
 
 # from SpidyPy import SpidyPy

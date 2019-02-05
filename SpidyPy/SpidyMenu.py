@@ -16,31 +16,35 @@ class SpidyMenu(tk.Frame):
         self.movingsMenu = tk.Menu(self.menu)
         self.menu.add_cascade(label="Movings", menu=self.movingsMenu)                                      
         self.movingsMenu.add_separator()
-        self.movingsMenu.add_command(label="Save Selected Axis", state="disabled"
-            , command=self.ausgeben)                                                    # Control A
-        self.movingsMenu.add_command(label="Save All Axis", state="disabled"
-            , command=self.ausgeben)                                                    # Control S
         if self.parent:
+            self.movingsMenu.add_command(label="Save Selected Axis", state="normal"
+                , command=self.movings_save_sel, accelerator="Ctrl+S")                             # Control S
+            self.bind_all("<Control-s>", self.movings_save_sel)
+
+            self.movingsMenu.add_command(label="Save All Axis", state="normal"
+                , command=self.movings_save_all, accelerator="Ctrl+A")                             # Control A
+            self.bind_all("<Control-a>", self.movings_save_all)
+
             self.movingsMenu.add_separator()
             # self.movingsMenu.add_command(label="Reset Slider", command =( (SpidyPy) self.parent).onReset))
             self.movingsMenu.add_command(label="Reset Slider", command=self.parent.onReset,
-                                         accelerator="Ctrl+R")  # Control R
+                                         accelerator="Ctrl+R")                                      # Control R
             self.bind_all("<Control-r>", self.parent.onReset)
 
             self.movingsMenu.add_separator()
-        self.movingsMenu.add_command(label="Exit", command=self.exit, accelerator="Ctrl+E")  # Control E
-        self.bind_all("<Control-e>", self.exit)
+        self.movingsMenu.add_command(label="Exit", command=self.exit, accelerator="Ctrl+X")         # Control X
+        self.bind_all("<Control-x>", self.exit)
 
         self.procedureMenu = tk.Menu(self.menu)
         self.menu.add_cascade(label="Procedure", menu=self.procedureMenu)
         # self.fileMenu.add_command(label = "Neues Projekt anlegen", command = self.ausgeben)
 
         self.procedureMenu.add_command(label="Load", state="normal"
-            , command=self.procedureLoadFileDialog, accelerator="Alt+L")                     # alt L
+            , command=self.procedureLoadFileDialog, accelerator="Alt+L")                            # alt L
         self.bind_all("<Alt-l>", self.procedureLoadFileDialog)
 
         self.procedureMenu.add_command(label="Save As", state="normal"
-            , command=self.procedureSaveAsFileDialog, accelerator="Alt+S")                  # Alt S
+            , command=self.procedureSaveAsFileDialog, accelerator="Alt+S")                          # Alt S
         self.bind_all("<Alt-s>", self.procedureSaveAsFileDialog)
         
 
@@ -68,8 +72,27 @@ class SpidyMenu(tk.Frame):
             self.parent.outText.insert(tk.END
                 , str("\nError: procedureSaveAsFileDialog() es wurde kein filename angegeben:" + filename))
 
-    def ausgeben(self):
-        print("Wurde geklickt")
+    def movings_save_sel(self, event=None):
+        print("movings_save_sel Wurde geklickt")
+        fname = filedialog.asksaveasfilename(
+            title='Save Selected Slider Positions',
+            defaultextension=".json",
+            initialdir="posi/",
+            filetypes=(("Moving File", "*.json"),))
+        if fname:
+            print(fname)      
+            self.parent.onSaveAxis( all=False, fname=fname)
+
+    def movings_save_all(self, event=None):
+        print("movings_save_all Wurde geklickt")
+        fname = filedialog.asksaveasfilename(
+            title='Save All Slider Positions',
+            defaultextension=".json",
+            initialdir="posi/",
+            filetypes=(("Moving File", "*.json"),))
+        if fname:
+            print(fname)  
+            self.parent.onSaveAxis( all=True, fname=fname)
 
     def exit(self, event=None):
         print("Exit geklickt")

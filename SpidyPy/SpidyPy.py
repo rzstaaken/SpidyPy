@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-V0.21 21.01.2019 14:00 SpidyPy.py 
+V0.22 05.02.2019 20:00 SpidyPy.py 
 https://github.com/rzstaaken/SpidyPy
 """
 import getpass
@@ -102,27 +102,27 @@ class SpidyPy(tk.Frame):
         self.scrollbarOutText = tk.Scrollbar(root, orient='vertical',command=self.outText.yview)
         self.scrollbarOutText.grid(column=0, row=25,columnspan=12,sticky='nes')
 
-        self.name.set("Pos")
-        self.entryName = tk.Entry(root,width=32)
-        self.entryName["textvariable"] = self.name
-        self.entryName.grid(column=i+1, row=2, sticky='w')
-        self.entryNum = tk.Entry(root, width=5)
-        self.entryNum.grid(column=i+2, row=2,sticky='w')
-        self.setEntryNum(0)
+        # self.name.set("Pos")
+        # self.entryName = tk.Entry(root,width=32)
+        # self.entryName["textvariable"] = self.name
+        # self.entryName.grid(column=i+1, row=2, sticky='w')
+        # self.entryNum = tk.Entry(root, width=5)
+        # self.entryNum.grid(column=i+2, row=2,sticky='w')
+        # self.setEntryNum(0)
 
         # self.btnReset = tk.Button(root, text='Reset',width=10)
         # self.btnReset["command"] = self.onReset
         # self.btnReset.grid(column=i+1, columnspan=1, row=3, sticky='w')
 
-        self.btnSave = tk.Button(root)
-        self.btnSave["text"] = "Save"
-        self.btnSave["command"] = self.onSave
-        self.btnSave.grid(column=i+1, columnspan=1, row=3)
+        # self.btnSave = tk.Button(root)
+        # self.btnSave["text"] = "Save"
+        # self.btnSave["command"] = self.onSaveAxis
+        # self.btnSave.grid(column=i+1, columnspan=1, row=3)
 
-        self.btnSaveAllAxis = tk.Button(root)
-        self.btnSaveAllAxis["text"] = "Save All Axis"
-        self.btnSaveAllAxis["command"] = self.onSaveAllAxis
-        self.btnSaveAllAxis.grid(column=i+1, columnspan=1, row=3, sticky='e')
+        # self.btnSaveAllAxis = tk.Button(root)
+        # self.btnSaveAllAxis["text"] = "Save All Axis"
+        # self.btnSaveAllAxis["command"] = self.onSaveAllAxis
+        # self.btnSaveAllAxis.grid(column=i+1, columnspan=1, row=3, sticky='e')
 
         #TODO:Die Scrollbar funktioniert noch nicht
         #self.scrollbar = tk.Scrollbar(self, orient='vertical')
@@ -398,25 +398,27 @@ class SpidyPy(tk.Frame):
             digBewegungen[i] = self.xSteps(start,ziel,steps=steps)
         return digBewegungen
 
-    def setEntryNum(self, n):
-        """
-        Die Laufnummer in das Entry schreiben
-        """
-        self.num = tk.IntVar()
-        self.num.set(n)
-        self.entryNum["textvariable"] = self.num
+    # def setEntryNum(self, n):
+    #     """
+    #     Die Laufnummer in das Entry schreiben
+    #     """
+    #     self.num = tk.IntVar()
+    #     self.num.set(n)
+    #     self.entryNum["textvariable"] = self.num
 
     # def onExit(self):
     #     self.destroy()
 
-    def onSave(self,all=False):
+    def onSaveAxis(self, all=False, fname=None):
         """
         Die Scale-Positionen in eine Datei schreiben
         """
+        if fname == None:
+            raise Exception('filename==None')
         self.listboxMoves.save()  # Erst mal csv-Datei schreiben falls sich die Positionen der Einträge geändert hat
         
-        fname=self.entryName.get()
-        nummer=self.entryNum.get()
+        #fname=self.entryName.get()
+        #nummer=self.entryNum.get()
         dic = {}
         for i in range(len(self.legScale)):
             if all==True:
@@ -428,15 +430,17 @@ class SpidyPy(tk.Frame):
         if not SpiderDefaults.os.path.exists(SpiderDefaults.posiPath):
             SpiderDefaults.os.mkdir(SpiderDefaults.posiPath)
         j=JsonIO()
-        #j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,f"{fname}{nummer}{JsonIO.Ext()}"))
-        j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,"{0}{1}{2}".format(fname,nummer,JsonIO.Ext())))
-        self.setEntryNum(int(nummer) + 1)
+
+        if str(fname).endswith(JsonIO.Ext()):
+            j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,"{0}".format(fname)))
+        else:
+            j.WriteP(dic, os.path.join(SpiderDefaults.posiPath,"{0}{1}".format(fname,JsonIO.Ext())))
         self.onReset()   
         #self.listboxMoves.delete(0, 'end')
         self.listboxMoves.fillListBox(path=SpiderDefaults.posiPath) #Die Listbox aktualisieren
 
-    def onSaveAllAxis(self):
-        self.onSave(all=True)
+    # def onSaveAllAxis(self):
+    #     self.onSaveAxis(all=True)
 
     def onStart(self,event):
         self.btnStart.configure(state = tk.DISABLED)
